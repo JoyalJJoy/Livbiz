@@ -28,6 +28,15 @@ const wordVariants: Variants = {
   }
 };
 
+const subtitleVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { delay: 1, duration: 0.8, ease: "easeOut" }
+  }
+};
+
 export default function Hero() {
   const titleWords = "India's Largest Coworking Space".split(" ");
 
@@ -72,9 +81,7 @@ export default function Hero() {
           </h1>
           <motion.p 
             className={styles.subtitle}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8, ease: "easeOut" }}
+            variants={subtitleVariants}
           >
             More space for focus. Premium spaces for professionals.
           </motion.p>
