@@ -1,5 +1,34 @@
+"use client";
+
 import styles from './FeaturesGrid.module.css';
 import { Network, Coffee, Monitor, KeyRound } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2
+    }
+  }
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 40, scale: 0.95 },
+  show: { 
+    opacity: 1, 
+    y: 0,
+    scale: 1,
+    transition: { 
+      type: "spring", 
+      stiffness: 40, 
+      damping: 15,
+      mass: 1
+    }
+  }
+};
 
 export default function FeaturesGrid() {
   const features = [
@@ -29,21 +58,45 @@ export default function FeaturesGrid() {
     <section id="features" className={styles.section}>
       <div className={`container ${styles.container}`}>
         <div className={styles.header}>
-          <h2>The LivBiz Coworking & Conference Hub Edge</h2>
-          <p>Elevate your work experience with meticulously designed environments, enterprise-grade amenities, and zero-compromise infrastructure.</p>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            The LivBiz Coworking & Conference Hub Edge
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            Elevate your work experience with meticulously designed environments, enterprise-grade amenities, and zero-compromise infrastructure.
+          </motion.p>
         </div>
 
-        <div className={styles.grid}>
+        <motion.div 
+          className={styles.grid}
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-50px" }}
+        >
           {features.map((feature, index) => (
-            <div key={index} className={`${styles.card} animate-on-scroll`} style={{ animationDelay: `${index * 0.1}s` }}>
+            <motion.div 
+              key={index} 
+              className={styles.card}
+              variants={cardVariants}
+            >
               <div className={styles.iconWrapper}>
                 {feature.icon}
               </div>
               <h3 className={styles.title}>{feature.title}</h3>
               <p className={styles.description}>{feature.description}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
