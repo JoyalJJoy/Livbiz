@@ -1,5 +1,6 @@
 import styles from './LocationMap.module.css';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import MagneticButton from './MagneticButton';
 
 export default function LocationMap() {
   return (
@@ -36,9 +37,11 @@ export default function LocationMap() {
               href="https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className={styles.directionsBtn}
+              style={{ display: 'block', textDecoration: 'none' }}
             >
-              Get Directions
+              <MagneticButton className={styles.directionsBtn} style={{ width: '100%' }}>
+                Get Directions
+              </MagneticButton>
             </a>
           </div>
 

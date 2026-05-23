@@ -1,3 +1,4 @@
+import SmoothScroll from '@/components/SmoothScroll';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import StatsBanner from '@/components/StatsBanner';
@@ -11,8 +12,9 @@ import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
-    <main>
-      <Navbar />
+    <SmoothScroll>
+      <main>
+        <Navbar />
       <Hero />
       <StatsBanner />
       <CommunityBanner />
@@ -21,7 +23,8 @@ export default function Home() {
       <DayInTheLife />
       <Testimonials />
       <LocationMap />
-      <Footer />
-    </main>
+        <Footer />
+      </main>
+    </SmoothScroll>
   );
 }

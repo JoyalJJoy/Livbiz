@@ -47,7 +47,7 @@
 @media (min-width: 900px) {
   .card {
     flex-direction: row;
-    height: 320px;
+    min-height: 350px;
   }
   /* Alternate layout */
   .card:nth-child(even) {
@@ -126,9 +126,29 @@
 
 .amenities {
   display: flex;
-  gap: var(--space-md);
-  color: var(--color-neutral-500);
+  gap: var(--space-sm);
   margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.amenityBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  background-color: var(--color-bg-alt);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.amenityBadge:hover {
+  background-color: var(--color-brand-primary);
+  color: white;
+  border-color: var(--color-brand-primary);
 }
 
 .footer {

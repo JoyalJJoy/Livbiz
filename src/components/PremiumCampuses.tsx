@@ -2,6 +2,7 @@ import styles from './PremiumCampuses.module.css';
 import Image from 'next/image';
 import { MapPin, Wifi, Coffee, Shield } from 'lucide-react';
 import Link from 'next/link';
+import MagneticButton from './MagneticButton';
 
 const campuses = [
   {
@@ -57,9 +58,15 @@ export default function PremiumCampuses() {
                 </div>
                 <p className={styles.description}>{campus.description}</p>
                 <div className={styles.amenities}>
-                  <Wifi size={20} />
-                  <Coffee size={20} />
-                  <Shield size={20} />
+                  <div className={styles.amenityBadge}>
+                    <Wifi size={16} /> Fast Wi-Fi
+                  </div>
+                  <div className={styles.amenityBadge}>
+                    <Coffee size={16} /> Café
+                  </div>
+                  <div className={styles.amenityBadge}>
+                    <Shield size={16} /> 24/7 Access
+                  </div>
                 </div>
                 <div className={styles.footer}>
                   <div className={styles.pricing}>
@@ -71,7 +78,7 @@ export default function PremiumCampuses() {
                     <Link href={campus.mapUrl} target="_blank" rel="noopener noreferrer" className={styles.mapLink}>
                       <MapPin size={18} /> View on Map
                     </Link>
-                    <button className={styles.enquireBtn}>Enquire</button>
+                    <MagneticButton className={styles.enquireBtn}>Enquire</MagneticButton>
                   </div>
                 </div>
               </div>
