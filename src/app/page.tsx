@@ -10,7 +10,7 @@ const FeaturesGrid = dynamic(() => import('@/components/FeaturesGrid'), { ssr: t
 const PremiumCampuses = dynamic(() => import('@/components/PremiumCampuses'), { ssr: true });
 const DayInTheLife = dynamic(() => import('@/components/DayInTheLife'), { ssr: true });
 const Testimonials = dynamic(() => import('@/components/Testimonials'), { ssr: true });
-const LocationMap = dynamic(() => import('@/components/LocationMap'), { ssr: false }); // Heavy iframe map, no SSR
+const LocationMap = dynamic(() => import('@/components/LocationMap'), { ssr: true }); // Heavy iframe map
 const Footer = dynamic(() => import('@/components/Footer'), { ssr: true });
 
 export default function Home() {
