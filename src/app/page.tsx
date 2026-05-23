@@ -6,6 +6,7 @@ import PremiumCampuses from '@/components/PremiumCampuses';
 import FeaturesGrid from '@/components/FeaturesGrid';
 import DayInTheLife from '@/components/DayInTheLife';
 import Testimonials from '@/components/Testimonials';
+import LocationMap from '@/components/LocationMap';
 import Footer from '@/components/Footer';
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
       <FeaturesGrid />
       <DayInTheLife />
       <Testimonials />
+      <LocationMap />
       <Footer />
     </main>
   );

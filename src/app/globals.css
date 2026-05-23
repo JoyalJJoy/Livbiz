@@ -92,16 +92,21 @@
 @layer base {
   body {
     font-family: var(--font-body);
-    line-height: 1.6;
+    line-height: 1.7;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
-    font-weight: 700;
-    line-height: 1.2;
+    font-weight: 600;
+    line-height: 1.15;
     text-wrap: balance;
+    letter-spacing: -0.02em;
   }
   p {
     text-wrap: pretty;
+    color: var(--color-text-muted);
   }
   
   /* Focus management */
@@ -142,19 +147,19 @@
   /* Scrollytelling / Scroll-Driven Animations */
   @supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
     @keyframes fade-in-up {
-      from { opacity: 0; transform: translateY(30px); }
+      from { opacity: 0; transform: translateY(40px); }
       to { opacity: 1; transform: translateY(0); }
     }
     
     @keyframes scale-in {
-      from { opacity: 0; transform: scale(0.9); }
+      from { opacity: 0; transform: scale(0.95); }
       to { opacity: 1; transform: scale(1); }
     }
 
     .animate-on-scroll {
-      animation: fade-in-up auto linear both;
+      animation: fade-in-up auto cubic-bezier(0.25, 1, 0.5, 1) both;
       animation-timeline: view();
-      animation-range: entry 10% cover 30%;
+      animation-range: entry 10% cover 25%;
     }
     
     .animate-scale-on-scroll {

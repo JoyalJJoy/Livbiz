@@ -1,0 +1,118 @@
+.section {
+  padding-block: var(--space-2xl);
+  background-color: var(--color-bg-alt);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.header {
+  text-align: center;
+}
+
+.header h2 {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  margin-bottom: var(--space-xs);
+  color: var(--color-brand-primary);
+}
+
+.header p {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+}
+
+.mapGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 900px) {
+  .mapGrid {
+    grid-template-columns: 350px 1fr;
+  }
+}
+
+.infoCard {
+  background-color: var(--color-bg);
+  padding: var(--space-xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+}
+
+.infoCard h3 {
+  font-size: 1.5rem;
+  color: var(--color-brand-primary);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  flex-grow: 1;
+}
+
+.infoItem {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: flex-start;
+}
+
+.icon {
+  color: var(--color-brand-secondary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.infoItem p {
+  color: var(--color-text);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.directionsBtn {
+  background-color: var(--color-brand-primary);
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: background-color 0.2s;
+  display: block;
+}
+
+.directionsBtn:hover {
+  background-color: var(--color-brand-secondary);
+}
+
+.mapWrapper {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  height: 400px;
+}
+
+@media (min-width: 900px) {
+  .mapWrapper {
+    height: 100%;
+    min-height: 500px;
+  }
+}
+
+.iframe {
+  filter: grayscale(20%) contrast(1.1); /* Slight filter for a more premium embedded look */
+  transition: filter 0.3s ease;
+}
+
+.mapWrapper:hover .iframe {
+  filter: grayscale(0%) contrast(1);
+}

@@ -35,19 +35,24 @@
 }
 
 .card {
-  padding: var(--space-lg);
+  padding: var(--space-xl);
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(0,0,0,0.03);
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+  background: var(--color-bg);
 }
 
 .iconWrapper {
-  background-color: rgba(10, 61, 107, 0.05);
+  background-color: var(--color-bg);
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -56,14 +61,14 @@
   justify-content: center;
   margin-bottom: var(--space-md);
   color: var(--color-brand-secondary);
-  transition: background-color 0.3s ease;
+  transition: all 0.4s ease;
+  box-shadow: var(--shadow-sm);
 }
-
-
 
 .card:hover .iconWrapper {
   background-color: var(--color-brand-secondary);
   color: white;
+  transform: scale(1.1);
 }
 
 .title {

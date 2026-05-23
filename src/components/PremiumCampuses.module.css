@@ -36,12 +36,12 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
 }
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1);
 }
 
 @media (min-width: 900px) {
@@ -59,6 +59,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
+  overflow: hidden;
 }
 
 @media (min-width: 900px) {
@@ -71,6 +72,12 @@
 
 .image {
   object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+.card:hover .image {
+  transform: scale(1.05);
 }
 
 .contentCol {

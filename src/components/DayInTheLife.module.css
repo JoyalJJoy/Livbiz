@@ -1,22 +1,20 @@
 .section {
-  padding-block: var(--space-2xl);
-  background-color: var(--color-bg-alt);
+  padding-top: var(--space-2xl);
+  background-color: var(--color-bg);
+  position: relative;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xl);
+.header {
   text-align: center;
+  margin-bottom: var(--space-xl);
+  padding-inline: var(--space-md);
 }
 
 .header h2 {
-  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
   margin-bottom: var(--space-sm);
   color: var(--color-brand-primary);
 }
-
-
 
 .header p {
   color: var(--color-text-muted);
@@ -25,72 +23,98 @@
   margin-inline: auto;
 }
 
-.timeline {
+.scrollyContainer {
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
   position: relative;
 }
 
-@media (min-width: 768px) {
-  .timeline {
+@media (min-width: 900px) {
+  .scrollyContainer {
     flex-direction: row;
-    gap: var(--space-md);
+    align-items: flex-start;
   }
 }
 
-.step {
-  flex: 1;
+.stickyCol {
+  width: 100%;
+  position: relative;
+  height: 50vh;
+}
+
+@media (min-width: 900px) {
+  .stickyCol {
+    width: 50%;
+    position: sticky;
+    top: 15vh;
+    height: 70vh;
+  }
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.imageWrapper {
+  position: absolute;
+  inset: 0;
+  will-change: opacity, transform;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.contentCol {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  position: relative;
-  z-index: 1;
 }
 
-.iconBox {
-  background-color: white;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-brand-secondary);
-  box-shadow: var(--shadow-md);
-  margin-bottom: var(--space-md);
-  border: 2px solid var(--color-bg-alt);
-  z-index: 2;
-}
-
-
-
-.title {
-  font-size: 1.2rem;
-  margin-bottom: var(--space-sm);
-}
-
-.description {
-  color: var(--color-text-muted);
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.connector {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .connector {
-    display: block;
-    position: absolute;
-    top: 30px;
-    right: -50%;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(to right, var(--color-neutral-300), transparent);
-    z-index: 0;
+@media (min-width: 900px) {
+  .contentCol {
+    width: 50%;
+    padding-left: var(--space-xl);
   }
-  
-  
+}
+
+.stepContent {
+  height: 50vh; /* space them out for scrolling */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 900px) {
+  .stepContent {
+    height: 100vh; /* full height to force scroll over sticky element */
+  }
+}
+
+.timeLabel {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--color-brand-secondary);
+  margin-bottom: var(--space-sm);
+  font-weight: 600;
+}
+
+.stepContent h3 {
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  margin-bottom: var(--space-md);
+  color: var(--color-brand-primary);
+}
+
+.stepContent p {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--color-text-muted);
 }
