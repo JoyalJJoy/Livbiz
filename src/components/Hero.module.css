@@ -51,7 +51,8 @@
   font-size: clamp(1.1rem, 2vw, 1.5rem);
   font-weight: 400;
   opacity: 0.9;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  color: #f8f9fa; /* Light white to override global p tag styles */
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 
 .searchBar {
