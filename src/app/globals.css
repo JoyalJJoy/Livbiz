@@ -12,7 +12,7 @@
     font: inherit;
   }
   html {
-    color-scheme: light dark;
+    color-scheme: light;
     -webkit-text-size-adjust: 100%;
   }
   body {
@@ -63,14 +63,6 @@
     --color-bg-alt: var(--color-neutral-200);
     --color-text: var(--color-neutral-900);
     --color-text-muted: var(--color-neutral-700);
-    
-    /* Dark Mode overwrites */
-    @media (prefers-color-scheme: dark) {
-      --color-bg: var(--color-neutral-900);
-      --color-bg-alt: var(--color-neutral-800);
-      --color-text: var(--color-neutral-100);
-      --color-text-muted: var(--color-neutral-300);
-    }
 
     /* Typography */
     --font-heading: 'Outfit', sans-serif;
@@ -126,13 +118,7 @@
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
-  
-  @media (prefers-color-scheme: dark) {
-    .glass {
-      background: rgba(30, 30, 30, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-  }
+
 
   .container {
     width: 100%;

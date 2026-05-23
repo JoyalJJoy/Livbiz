@@ -4,11 +4,7 @@
   border-top: 1px solid var(--color-neutral-300);
 }
 
-@media (prefers-color-scheme: dark) {
-  .footer {
-    border-top: 1px solid var(--color-neutral-800);
-  }
-}
+
 
 .container {
   display: flex;
@@ -35,11 +31,7 @@
   color: var(--color-brand-primary);
 }
 
-@media (prefers-color-scheme: dark) {
-  .brand h3 {
-    color: var(--color-neutral-100);
-  }
-}
+
 
 .brand p {
   color: var(--color-text-muted);
@@ -89,11 +81,7 @@
   border-top: 1px solid var(--color-neutral-300);
 }
 
-@media (prefers-color-scheme: dark) {
-  .bottomBar {
-    border-top: 1px solid var(--color-neutral-800);
-  }
-}
+
 
 .bottomBar p {
   color: var(--color-text-muted);

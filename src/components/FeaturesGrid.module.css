@@ -18,11 +18,7 @@
   margin-inline: auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  .header h2 {
-    color: var(--color-neutral-100);
-  }
-}
+
 
 .header p {
   color: var(--color-text-muted);
@@ -63,12 +59,7 @@
   transition: background-color 0.3s ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  .iconWrapper {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: #4da3ff;
-  }
-}
+
 
 .card:hover .iconWrapper {
   background-color: var(--color-brand-secondary);

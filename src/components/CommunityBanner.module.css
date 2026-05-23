@@ -1,15 +1,10 @@
 .section {
-  background-color: var(--color-neutral-800);
-  color: white;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   padding-block: var(--space-2xl);
   text-align: center;
 }
 
-@media (prefers-color-scheme: dark) {
-  .section {
-    background-color: #111;
-  }
-}
 
 .container {
   display: flex;
@@ -20,12 +15,12 @@
 .header h2 {
   font-size: clamp(2rem, 4vw, 3.5rem);
   margin-bottom: var(--space-md);
-  color: white;
+  color: var(--color-brand-primary);
 }
 
 .header p {
   font-size: clamp(1.1rem, 2vw, 1.25rem);
-  color: var(--color-neutral-300);
+  color: var(--color-text-muted);
   max-width: 800px;
   margin: 0 auto;
 }
@@ -45,14 +40,14 @@
 
 .statItem h3 {
   font-size: clamp(3rem, 6vw, 5rem);
-  color: white;
+  color: var(--color-brand-secondary);
   margin-bottom: var(--space-xs);
   line-height: 1;
 }
 
 .statItem p {
   font-size: 1.1rem;
-  color: var(--color-neutral-300);
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
 }

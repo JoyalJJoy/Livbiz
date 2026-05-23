@@ -10,11 +10,7 @@
   border-bottom: 1px solid var(--color-neutral-300);
 }
 
-@media (prefers-color-scheme: dark) {
-  .statsContainer {
-    border-bottom: 1px solid var(--color-neutral-800);
-  }
-}
+
 
 .statsHeading {
   color: var(--color-brand-secondary);

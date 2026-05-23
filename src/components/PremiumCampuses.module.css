@@ -15,11 +15,7 @@
   color: var(--color-brand-primary);
 }
 
-@media (prefers-color-scheme: dark) {
-  .header h2 {
-    color: var(--color-neutral-100);
-  }
-}
+
 
 .header p {
   color: var(--color-text-muted);
@@ -112,16 +108,7 @@
   color: #d48b00;
 }
 
-@media (prefers-color-scheme: dark) {
-  .status {
-    color: #4ade80;
-    background-color: rgba(74, 222, 128, 0.1);
-  }
-  .status.waitlist {
-    color: #fbbf24;
-    background-color: rgba(251, 191, 36, 0.1);
-  }
-}
+
 
 .description {
   color: var(--color-text-muted);
@@ -147,11 +134,7 @@
   gap: var(--space-md);
 }
 
-@media (prefers-color-scheme: dark) {
-  .footer {
-    border-top-color: var(--color-neutral-800);
-  }
-}
+
 
 .pricing {
   display: flex;
@@ -209,11 +192,4 @@
   background-color: var(--color-brand-secondary);
 }
 
-@media (prefers-color-scheme: dark) {
-  .enquireBtn {
-    background-color: var(--color-brand-secondary);
-  }
-  .enquireBtn:hover {
-    background-color: #3388ff;
-  }
-}
+

@@ -19,11 +19,7 @@
   color: var(--color-brand-primary);
 }
 
-@media (prefers-color-scheme: dark) {
-  .header h2 {
-    color: var(--color-neutral-100);
-  }
-}
+
 
 .header p {
   color: var(--color-text-muted);
@@ -152,11 +148,7 @@
   font-family: var(--font-heading);
 }
 
-@media (prefers-color-scheme: dark) {
-  .featuredQuote {
-    color: var(--color-neutral-100);
-  }
-}
+
 
 .featuredText {
   font-size: 1.1rem;

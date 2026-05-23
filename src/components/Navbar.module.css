@@ -11,12 +11,7 @@
   transition: all 0.3s ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  .header {
-    background: rgba(15, 15, 15, 0.85);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-}
+
 
 .navContainer {
   display: flex;
@@ -31,11 +26,7 @@
   color: var(--color-brand-primary);
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo a {
-    color: var(--color-neutral-100);
-  }
-}
+
 
 .logoText {
   font-family: var(--font-heading);
@@ -91,11 +82,4 @@
   box-shadow: var(--shadow-md);
 }
 
-@media (prefers-color-scheme: dark) {
-  .button {
-    background-color: var(--color-brand-secondary);
-  }
-  .button:hover {
-    background-color: #3388ff;
-  }
-}
+
