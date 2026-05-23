@@ -1,49 +1,199 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer reset, base, theme, components, utilities;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    font: inherit;
+  }
+  html {
+    color-scheme: light dark;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    min-block-size: 100vh;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+  img, picture, video, canvas, svg {
+    display: block;
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  button {
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+  ul, ol {
+    list-style: none;
   }
 }
 
-html {
-  height: 100%;
+@layer theme {
+  :root {
+    /* Brand Colors */
+    --color-brand-primary: #0a3d6b; /* Premium Navy Blue */
+    --color-brand-secondary: #0056b3; /* Bright Blue */
+    --color-brand-accent: #f8f9fa; /* Off-White / Light Gray */
+    --color-brand-gold: #c5a880; /* Subtle Gold for accents */
+
+    /* Neutrals */
+    --color-neutral-100: #ffffff;
+    --color-neutral-200: #f1f3f5;
+    --color-neutral-300: #e9ecef;
+    --color-neutral-500: #adb5bd;
+    --color-neutral-700: #495057;
+    --color-neutral-800: #343a40;
+    --color-neutral-900: #212529;
+
+    /* Base Colors mapped */
+    --color-bg: var(--color-neutral-100);
+    --color-bg-alt: var(--color-neutral-200);
+    --color-text: var(--color-neutral-900);
+    --color-text-muted: var(--color-neutral-700);
+    
+    /* Dark Mode overwrites */
+    @media (prefers-color-scheme: dark) {
+      --color-bg: var(--color-neutral-900);
+      --color-bg-alt: var(--color-neutral-800);
+      --color-text: var(--color-neutral-100);
+      --color-text-muted: var(--color-neutral-300);
+    }
+
+    /* Typography */
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+
+    /* Fluid sizes */
+    --space-xs: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+    --space-sm: clamp(0.75rem, 0.65rem + 0.5vw, 1rem);
+    --space-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+    --space-lg: clamp(1.5rem, 1.1rem + 2vw, 2.5rem);
+    --space-xl: clamp(2.5rem, 1.5rem + 5vw, 5rem);
+    --space-2xl: clamp(4rem, 2.5rem + 7vw, 8rem);
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+@layer base {
+  body {
+    font-family: var(--font-body);
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  
+  /* Focus management */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-secondary);
+    outline-offset: 2px;
+  }
 }
 
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .glass {
+      background: rgba(30, 30, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
+  .container {
+    width: 100%;
+    max-inline-size: 1200px;
+    margin-inline: auto;
+    padding-inline: var(--space-md);
+  }
+  
+  .flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  /* Scrollytelling / Scroll-Driven Animations */
+  @supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes scale-in {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+    .animate-on-scroll {
+      animation: fade-in-up auto linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 30%;
+    }
+    
+    .animate-scale-on-scroll {
+      animation: scale-in auto linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 40%;
+    }
+  }
+
+  /* Fallback for browsers without scroll-driven animations handled in layout/components via IntersectionObserver if needed, 
+     but for now we default to visible, or let progressive enhancement do its job */
+  @supports not ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+    .animate-on-scroll,
+    .animate-scale-on-scroll {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-on-scroll,
+    .animate-scale-on-scroll {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 }

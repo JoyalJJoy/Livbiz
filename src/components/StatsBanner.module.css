@@ -1,0 +1,115 @@
+.section {
+  padding-block: var(--space-2xl);
+  background-color: var(--color-bg);
+}
+
+.statsContainer {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+  padding-bottom: var(--space-xl);
+  border-bottom: 1px solid var(--color-neutral-300);
+}
+
+@media (prefers-color-scheme: dark) {
+  .statsContainer {
+    border-bottom: 1px solid var(--color-neutral-800);
+  }
+}
+
+.statsHeading {
+  color: var(--color-brand-secondary);
+  font-size: clamp(2rem, 3vw, 3.5rem);
+  margin-bottom: var(--space-xs);
+}
+
+.statsSubheading {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.campusesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.campusesHeader {
+  text-align: center;
+}
+
+.campusesHeader h2 {
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  margin-bottom: var(--space-xs);
+}
+
+.campusesHeader p {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-lg);
+}
+
+.card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+}
+
+.imageWrapper {
+  position: relative;
+  aspect-ratio: 4/3;
+  width: 100%;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+}
+
+.tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-lg);
+}
+
+.cardTitle {
+  color: white;
+  font-size: 1.5rem;
+  margin: 0;
+}
