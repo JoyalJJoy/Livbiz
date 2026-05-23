@@ -101,7 +101,7 @@
   font-family: var(--font-heading);
   font-size: 0.9rem;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   color: var(--color-brand-secondary);
   margin-bottom: var(--space-sm);
   font-weight: 600;

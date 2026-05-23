@@ -65,8 +65,8 @@
     --color-text-muted: var(--color-neutral-700);
 
     /* Typography */
-    --font-heading: 'Outfit', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --font-heading: var(--font-playfair), Georgia, serif;
+    --font-body: var(--font-inter), system-ui, sans-serif;
 
     /* Fluid sizes */
     --space-xs: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
@@ -99,10 +99,10 @@
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
-    font-weight: 600;
+    font-weight: 500; /* Playfair looks best at 400-600 */
     line-height: 1.15;
     text-wrap: balance;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
   }
   p {
     text-wrap: pretty;
