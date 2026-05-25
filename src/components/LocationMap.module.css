@@ -14,7 +14,7 @@
 }
 
 .header h2 {
-  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-size: 2.25rem;
   margin-bottom: var(--space-xs);
   color: var(--color-brand-primary);
 }
@@ -88,6 +88,7 @@
   font-weight: 600;
   transition: background-color 0.2s;
   display: block;
+  width: 100%;
 }
 
 .directionsBtn:hover {
@@ -115,4 +116,10 @@
 
 .mapWrapper:hover .iframe {
   filter: grayscale(0%) contrast(1);
+}
+
+@media (min-width: 768px) {
+  .header h2 {
+    font-size: 3rem;
+  }
 }

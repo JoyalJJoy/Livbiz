@@ -13,13 +13,13 @@
 }
 
 .header h2 {
-  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-size: 2.25rem;
   margin-bottom: var(--space-md);
   color: var(--color-brand-primary);
 }
 
 .header p {
-  font-size: clamp(1.1rem, 2vw, 1.25rem);
+  font-size: 1.12rem;
   color: var(--color-text-muted);
   max-width: 800px;
   margin: 0 auto;
@@ -39,7 +39,7 @@
 }
 
 .statItem h3 {
-  font-size: clamp(3rem, 6vw, 5rem);
+  font-size: 3.1rem;
   color: var(--color-brand-secondary);
   margin-bottom: var(--space-xs);
   line-height: 1;
@@ -50,4 +50,18 @@
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+@media (min-width: 768px) {
+  .header h2 {
+    font-size: 3.35rem;
+  }
+
+  .header p {
+    font-size: 1.25rem;
+  }
+
+  .statItem h3 {
+    font-size: 4.8rem;
+  }
 }

@@ -18,12 +18,14 @@
   align-items: center;
   justify-content: space-between;
   height: 80px;
+  gap: 1rem;
 }
 
 .logo a {
   display: flex;
   flex-direction: column;
   color: var(--color-brand-primary);
+  min-width: 0;
 }
 
 
@@ -64,6 +66,10 @@
   color: var(--color-brand-secondary);
 }
 
+.action {
+  flex: 0 0 auto;
+}
+
 .button {
   background-color: var(--color-brand-primary);
   color: white;
@@ -82,4 +88,21 @@
   box-shadow: var(--shadow-md);
 }
 
+@media (max-width: 520px) {
+  .navContainer {
+    height: 72px;
+  }
 
+  .logoSubtext {
+    display: none;
+  }
+
+  .action {
+    display: none;
+  }
+
+  .button {
+    padding: 0.55rem 1rem;
+    font-size: 0.88rem;
+  }
+}

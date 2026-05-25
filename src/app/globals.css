@@ -14,6 +14,7 @@
   html {
     color-scheme: light;
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
   }
   body {
     min-block-size: 100vh;
@@ -44,19 +45,19 @@
 @layer theme {
   :root {
     /* Brand Colors */
-    --color-brand-primary: #0a3d6b; /* Premium Navy Blue */
-    --color-brand-secondary: #0056b3; /* Bright Blue */
-    --color-brand-accent: #f8f9fa; /* Off-White / Light Gray */
-    --color-brand-gold: #c5a880; /* Subtle Gold for accents */
+    --color-brand-primary: #07323d;
+    --color-brand-secondary: #0e7490;
+    --color-brand-accent: #f8f7f2;
+    --color-brand-gold: #b58a4a;
 
     /* Neutrals */
     --color-neutral-100: #ffffff;
-    --color-neutral-200: #f1f3f5;
-    --color-neutral-300: #e9ecef;
-    --color-neutral-500: #adb5bd;
-    --color-neutral-700: #495057;
-    --color-neutral-800: #343a40;
-    --color-neutral-900: #212529;
+    --color-neutral-200: #f5f3ee;
+    --color-neutral-300: #e7e2d8;
+    --color-neutral-500: #9b9a94;
+    --color-neutral-700: #5a625f;
+    --color-neutral-800: #263633;
+    --color-neutral-900: #16211f;
 
     /* Base Colors mapped */
     --color-bg: var(--color-neutral-100);
@@ -65,8 +66,8 @@
     --color-text-muted: var(--color-neutral-700);
 
     /* Typography */
-    --font-heading: var(--font-playfair), Georgia, serif;
-    --font-body: var(--font-inter), system-ui, sans-serif;
+    --font-heading: var(--font-display), Georgia, serif;
+    --font-body: var(--font-manrope), system-ui, sans-serif;
 
     /* Fluid sizes */
     --space-xs: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
@@ -79,7 +80,7 @@
     /* Border Radius */
     --radius-sm: 4px;
     --radius-md: 8px;
-    --radius-lg: 16px;
+    --radius-lg: 8px;
     --radius-full: 9999px;
 
     /* Shadows */
@@ -92,17 +93,17 @@
 @layer base {
   body {
     font-family: var(--font-body);
-    line-height: 1.7;
+    line-height: 1.65;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
-    font-weight: 500; /* Playfair looks best at 400-600 */
+    font-weight: 400;
     line-height: 1.15;
     text-wrap: balance;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
   }
   p {
     text-wrap: pretty;
@@ -118,10 +119,8 @@
 
 @layer utilities {
   .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(255, 255, 255, 0.52);
   }
 
 
@@ -130,6 +129,11 @@
     max-inline-size: 1200px;
     margin-inline: auto;
     padding-inline: var(--space-md);
+  }
+
+  main > section:not(:first-child) {
+    content-visibility: auto;
+    contain-intrinsic-size: 720px;
   }
   
   .flex-center {
@@ -180,6 +184,10 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
     .animate-on-scroll,
     .animate-scale-on-scroll {
       animation: none !important;

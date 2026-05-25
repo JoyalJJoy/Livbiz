@@ -14,7 +14,7 @@
 
 .statsHeading {
   color: var(--color-brand-secondary);
-  font-size: clamp(2rem, 3vw, 3.5rem);
+  font-size: 2.35rem;
   margin-bottom: var(--space-xs);
 }
 
@@ -37,7 +37,7 @@
 }
 
 .campusesHeader h2 {
-  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-size: 2.15rem;
   margin-bottom: var(--space-xs);
 }
 
@@ -108,4 +108,14 @@
   color: white;
   font-size: 1.5rem;
   margin: 0;
+}
+
+@media (min-width: 768px) {
+  .statsHeading {
+    font-size: 3.35rem;
+  }
+
+  .campusesHeader h2 {
+    font-size: 2.5rem;
+  }
 }

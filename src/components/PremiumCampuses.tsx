@@ -11,7 +11,7 @@ const campuses = [
     status: 'Available',
     description: 'A highly sought-after, premium workspace offering unmatched connectivity and prestige for elite professional teams.',
     price: '15,000',
-    image: '/images/campus-lavelle.png',
+    image: '/images/campus-lavelle.jpg',
     mapUrl: 'https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac',
   },
   {
@@ -20,7 +20,7 @@ const campuses = [
     status: 'Available',
     description: 'Bespoke spaces designed for modern businesses, combining classic elegance with cutting-edge amenities.',
     price: '12,500',
-    image: '/images/campus-museum.png',
+    image: '/images/campus-museum.jpg',
     mapUrl: 'https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac',
   },
   {
@@ -29,7 +29,7 @@ const campuses = [
     status: 'Waitlist',
     description: 'An expansive, enterprise-grade facility ideal for large corporate headquarters and growing teams.',
     price: '18,000',
-    image: '/images/campus-whitefield.png',
+    image: '/images/campus-whitefield.jpg',
     mapUrl: 'https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac',
   }
 ];
@@ -47,7 +47,13 @@ export default function PremiumCampuses() {
           {campuses.map((campus, index) => (
             <div key={campus.id} className={`${styles.card} animate-on-scroll`} style={{ animationDelay: `${index * 0.1}s` }}>
               <div className={styles.imageCol}>
-                <Image src={campus.image} alt={campus.name} fill className={styles.image} />
+                <Image
+                  src={campus.image}
+                  alt={campus.name}
+                  fill
+                  sizes="(max-width: 899px) 100vw, 45vw"
+                  className={styles.image}
+                />
               </div>
               <div className={styles.contentCol}>
                 <div className={styles.cardHeader}>

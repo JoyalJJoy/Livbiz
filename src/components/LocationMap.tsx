@@ -1,6 +1,5 @@
 import styles from './LocationMap.module.css';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
-import MagneticButton from './MagneticButton';
 
 export default function LocationMap() {
   return (
@@ -8,7 +7,7 @@ export default function LocationMap() {
       <div className={`container ${styles.container}`}>
         <div className={styles.header}>
           <h2>Visit Our Premium Campus</h2>
-          <p>Located in the heart of Bengaluru's thriving business district.</p>
+          <p>Located in the heart of Bengaluru&apos;s thriving business district.</p>
         </div>
 
         <div className={styles.mapGrid}>
@@ -37,16 +36,15 @@ export default function LocationMap() {
               href="https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac" 
               target="_blank" 
               rel="noopener noreferrer" 
-              style={{ display: 'block', textDecoration: 'none' }}
+              className={styles.directionsBtn}
             >
-              <MagneticButton className={styles.directionsBtn} style={{ width: '100%' }}>
-                Get Directions
-              </MagneticButton>
+              Get Directions
             </a>
           </div>
 
           <div className={`${styles.mapWrapper} animate-on-scroll`} style={{ animationDelay: '0.2s' }}>
             <iframe 
+              title="LivBiz Coworking campus location map"
               src="https://maps.google.com/maps?q=First+Floor,+LivBiz+Coworking+%26+Conference+Hub,+Shakunthala+Plaza-2,+K.Narayanapura,+P+O,+Kothanur,+Bengaluru,+Karnataka+560077&t=&z=15&ie=UTF8&iwloc=&output=embed"
               width="100%" 
               height="100%" 

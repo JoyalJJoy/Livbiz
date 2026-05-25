@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { DM_Serif_Display, Manrope } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ 
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: '--font-inter',
-  display: 'swap',
+  variable: "--font-manrope",
+  display: "swap",
+  fallback: ["system-ui", "Arial", "sans-serif"],
 });
 
-const playfair = Playfair_Display({
+const dmSerif = DM_Serif_Display({
+  weight: "400",
   subsets: ["latin"],
-  variable: '--font-playfair',
-  display: 'swap',
+  variable: "--font-display",
+  display: "swap",
+  fallback: ["Georgia", "Times New Roman", "serif"],
 });
 
 export const metadata: Metadata = {
@@ -29,7 +32,7 @@ export const metadata: Metadata = {
     siteName: 'LivBiz',
     images: [
       {
-        url: '/images/hero-bg.png',
+        url: '/images/hero-bg.jpg',
         width: 1200,
         height: 630,
         alt: 'LivBiz Premium Coworking',
@@ -42,7 +45,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'LivBiz Coworking & Conference Hub',
     description: "Experience India's largest premium coworking space in Bengaluru.",
-    images: ['/images/hero-bg.png'],
+    images: ['/images/hero-bg.jpg'],
   },
   robots: {
     index: true,
@@ -63,7 +66,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${manrope.variable} ${dmSerif.variable}`} suppressHydrationWarning>
       <body className="antialiased">
         {children}
       </body>

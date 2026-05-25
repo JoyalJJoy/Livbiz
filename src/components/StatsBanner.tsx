@@ -2,9 +2,9 @@ import styles from './StatsBanner.module.css';
 import Image from 'next/image';
 
 const campuses = [
-  { id: 1, name: 'Lavelle Road', image: '/images/campus-lavelle.png', tag: 'Premium' },
-  { id: 2, name: 'Museum Road', image: '/images/campus-museum.png', tag: 'Elite' },
-  { id: 3, name: 'Whitefield', image: '/images/campus-whitefield.png', tag: 'Corporate' },
+  { id: 1, name: 'Lavelle Road', image: '/images/campus-lavelle.jpg', tag: 'Premium' },
+  { id: 2, name: 'Museum Road', image: '/images/campus-museum.jpg', tag: 'Elite' },
+  { id: 3, name: 'Whitefield', image: '/images/campus-whitefield.jpg', tag: 'Corporate' },
 ];
 
 export default function StatsBanner() {
@@ -33,6 +33,7 @@ export default function StatsBanner() {
                   src={campus.image} 
                   alt={campus.name} 
                   fill 
+                  sizes="(max-width: 767px) 100vw, 33vw"
                   className={styles.image}
                 />
                 <div className={styles.tag}>{campus.tag}</div>

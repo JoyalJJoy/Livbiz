@@ -10,7 +10,7 @@
 }
 
 .header h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: 2.25rem;
   margin-bottom: var(--space-xs);
   color: var(--color-brand-primary);
 }
@@ -220,4 +220,8 @@
   background-color: var(--color-brand-secondary);
 }
 
-
+@media (min-width: 768px) {
+  .header h2 {
+    font-size: 3rem;
+  }
+}

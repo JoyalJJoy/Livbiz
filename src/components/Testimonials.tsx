@@ -13,12 +13,18 @@ export default function Testimonials() {
         <div className={styles.gridTop}>
           <div className={`${styles.card} animate-on-scroll`}>
             <div className={styles.imageWrapper}>
-              <Image src="/images/testimonial-woman.png" alt="Client Story" fill className={styles.image} />
+              <Image
+                src="/images/testimonial-woman.jpg"
+                alt="Client Story"
+                fill
+                sizes="(max-width: 767px) 100vw, 50vw"
+                className={styles.image}
+              />
             </div>
             <div className={styles.content}>
               <div className={styles.quoteIcon}>&ldquo;</div>
               <p className={styles.quote}>
-                "LivBiz Coworking & Conference Hub provided the most sophisticated environment for growing our tech startup. The premium amenities and vibrant community allowed us to focus completely on our work while networking with like-minded individuals."
+                &ldquo;LivBiz Coworking & Conference Hub provided the most sophisticated environment for growing our tech startup. The premium amenities and vibrant community allowed us to focus completely on our work while networking with like-minded individuals.&rdquo;
               </p>
               <div className={styles.author}>
                 <h4>Sarah Jenkins</h4>
@@ -29,12 +35,18 @@ export default function Testimonials() {
 
           <div className={`${styles.card} animate-on-scroll`} style={{ animationDelay: '0.2s' }}>
             <div className={styles.imageWrapper}>
-              <Image src="/images/testimonial-man.png" alt="Client Story" fill className={styles.image} />
+              <Image
+                src="/images/testimonial-man.jpg"
+                alt="Client Story"
+                fill
+                sizes="(max-width: 767px) 100vw, 50vw"
+                className={styles.image}
+              />
             </div>
             <div className={styles.content}>
               <div className={styles.quoteIcon}>&ldquo;</div>
               <p className={styles.quote}>
-                "Moving to LivBiz was a strategic decision for us. We needed a space that reflects our brand's premium value, and the Lavelle Road campus exceeded our expectations. The staff is exceptional and the workspace is truly world-class."
+                &ldquo;Moving to LivBiz was a strategic decision for us. We needed a space that reflects our brand&apos;s premium value, and the Lavelle Road campus exceeded our expectations. The staff is exceptional and the workspace is truly world-class.&rdquo;
               </p>
               <div className={styles.author}>
                 <h4>David Chen</h4>
@@ -46,15 +58,21 @@ export default function Testimonials() {
 
         <div className={`${styles.featuredCard} animate-on-scroll`} style={{ animationDelay: '0.4s' }}>
           <div className={styles.featuredImageWrapper}>
-            <Image src="/images/featured-testimonial-man.png" alt="Featured Client" fill className={styles.featuredImage} />
+            <Image
+              src="/images/featured-testimonial-man.jpg"
+              alt="Featured Client"
+              fill
+              sizes="(max-width: 899px) 100vw, 38vw"
+              className={styles.featuredImage}
+            />
           </div>
           <div className={styles.featuredContent}>
             <div className={styles.quoteIconLarge}>&ldquo;</div>
             <h3 className={styles.featuredQuote}>
-              "A space that reflects the standard of my work."
+              &ldquo;A space that reflects the standard of my work.&rdquo;
             </h3>
             <p className={styles.featuredText}>
-              "LivBiz Coworking Hub isn't just about desks; it's about an atmosphere that promotes success. Every detail is perfect, making it a true environment for excellence."
+              &ldquo;LivBiz Coworking Hub isn&apos;t just about desks; it&apos;s about an atmosphere that promotes success. Every detail is perfect, making it a true environment for excellence.&rdquo;
             </p>
             <div className={styles.featuredAuthor}>
               <h4>Michael Sterling</h4>
