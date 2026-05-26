@@ -1,0 +1,435 @@
+.loginWrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  font-family: var(--font-manrope), sans-serif;
+  background-color: #ffffff;
+}
+
+/* LEFT VIEW - DARK BANNER */
+.leftBanner {
+  width: 50%;
+  background-color: #0f172a;
+  color: #ffffff;
+  padding: 3rem 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  width: fit-content;
+  transition: transform 0.2s ease;
+  padding: 0;
+}
+
+.backBtn:hover {
+  transform: translateX(-4px);
+}
+
+.illustrationContainer {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.illustrationImg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  margin-bottom: 2.5rem;
+}
+
+.welcomeHeading {
+  font-family: var(--font-display), serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 1rem 0;
+  line-height: 1.1;
+  text-align: left;
+  width: 100%;
+}
+
+.welcomeText {
+  color: #94a3b8;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.footerCopyright {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* RIGHT VIEW - CREDENTIALS FORM */
+.rightFormArea {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 4rem;
+  background-color: #ffffff;
+}
+
+.formCard {
+  width: 100%;
+  max-width: 420px;
+}
+
+.formHeader {
+  margin-bottom: 2rem;
+}
+
+.formHeader h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
+}
+
+.formHeader p {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.25rem;
+}
+
+.formLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #475569;
+  display: flex;
+  align-items: center;
+}
+
+.inputField {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.85rem 1rem 0.85rem 2.75rem;
+  font-size: 0.95rem;
+  color: #0f172a;
+  transition: all 0.2s ease;
+  background-color: #ffffff;
+}
+
+.inputField:focus {
+  outline: none;
+  border-color: #0f172a;
+  box-shadow: 0 0 0 1px #0f172a;
+}
+
+.inputToggleEye {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.inputToggleEye:hover {
+  color: #475569;
+}
+
+/* ACTIONS BAR */
+.actionsBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.75rem;
+  font-size: 0.85rem;
+}
+
+.rememberMe {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #475569;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rememberMe input {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+}
+
+.forgotLink {
+  color: #0f172a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.forgotLink:hover {
+  text-decoration: underline;
+}
+
+.forgotLinkButton {
+  color: #0f172a;
+  font-weight: 700;
+  text-decoration: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.forgotLinkButton:hover {
+  text-decoration: underline;
+}
+
+/* BUTTONS */
+.submitBtn {
+  width: 100%;
+  background-color: #0f172a;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background-color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.otpBtn {
+  width: 100%;
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.otpBtn:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.orSeparator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 1.5rem 0;
+}
+
+.orSeparator::before,
+.orSeparator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.orSeparator:not(:empty)::before {
+  margin-right: .75em;
+}
+
+.orSeparator:not(:empty)::after {
+  margin-left: .75em;
+}
+
+.toggleText {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 1.5rem;
+}
+
+.toggleLink {
+  color: #0f172a;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.toggleLink:hover {
+  text-decoration: underline;
+}
+
+.errorBanner {
+  background-color: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #ef4444;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.successBanner {
+  background-color: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  color: #047857;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.devResetLink {
+  display: block;
+  color: #0f172a;
+  font-size: 0.85rem;
+  font-weight: 800;
+  margin: -0.25rem 0 1.25rem;
+  text-align: center;
+}
+
+/* NAME ROW */
+.nameRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* ID ROW */
+.idRow {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.idSelect {
+  min-width: 140px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+}
+
+.idSelect:focus {
+  outline: none;
+  border-color: #0f172a;
+  box-shadow: 0 0 0 1px #0f172a;
+}
+
+.idRow .inputWrapper {
+  flex: 1;
+}
+
+.optionalTag {
+  font-weight: 500;
+  color: #94a3b8;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.75rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .loginWrapper {
+    flex-direction: column;
+  }
+  .leftBanner, .rightFormArea {
+    width: 100%;
+    padding: 3rem 2rem;
+  }
+  .leftBanner {
+    min-height: 350px;
+    justify-content: center;
+    gap: 2rem;
+  }
+  .illustrationContainer {
+    padding: 0;
+  }
+  .welcomeHeading {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nameRow {
+    grid-template-columns: 1fr;
+  }
+
+  .idRow {
+    flex-direction: column;
+  }
+
+  .idSelect {
+    width: 100%;
+  }
+}

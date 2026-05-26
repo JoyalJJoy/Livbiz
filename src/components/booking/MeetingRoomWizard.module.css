@@ -1,0 +1,824 @@
+.modalContainer {
+  display: flex;
+  width: 100%;
+  max-width: 1250px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  min-height: 650px;
+}
+
+/* LEFT SIDEBAR */
+.leftSidebar {
+  width: 30%;
+  background-color: #0f172a;
+  color: white;
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+.leftSidebarTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.leftSidebarText {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.contactInfo {
+  margin-top: auto;
+  padding-top: 3rem;
+}
+
+.contactTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #f1f5f9;
+}
+
+.contactText {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+/* MIDDLE COLUMN */
+.mainContent {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e2e8f0;
+  background-color: #ffffff;
+}
+
+.contentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.contentHeader h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.closeBtn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.contentBody {
+  padding: 2rem;
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.subTitle {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.passCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+}
+
+.passCard:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.passCard.selected {
+  border-color: #0f172a;
+  background-color: #f8fafc;
+  box-shadow: 0 0 0 1px #0f172a;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.iconWrapper {
+  width: 48px;
+  height: 48px;
+  background-color: #f1f5f9;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  color: #475569;
+}
+
+.cardTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.cardPrice {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.cardPrice span {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.featureIcon {
+  margin-right: 0.5rem;
+  color: #0f172a;
+}
+
+/* STEP 2: DURATION HORIZONTAL CARDS */
+.durationContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.durationCardHorizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+}
+
+.durationCardHorizontal:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.durationCardHorizontal.selected {
+  border-color: #0f172a;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 1.5px #0f172a;
+}
+
+.durationCardLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.circularIconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.durationCardHorizontal.selected .circularIconWrapper {
+  background-color: #0f172a;
+  color: white;
+}
+
+.durationTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.15rem;
+}
+
+.durationSubtitle {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.durationPrice {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* STEP 3: CUSTOM CALENDAR */
+.calendarWrapper {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.calendarNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.calendarMonthTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.calendarNavBtn {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.calendarNavBtn:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.weekLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-align: center;
+  padding-bottom: 0.5rem;
+}
+
+.calendarCell {
+  position: relative;
+  aspect-ratio: 1;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #334155;
+  transition: all 0.2s ease;
+  min-height: 52px;
+}
+
+.calendarCell:hover:not(.disabled) {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+}
+
+.calendarCell.disabled {
+  background-color: #f8fafc;
+  cursor: not-allowed;
+  border-color: #f1f5f9;
+}
+
+.calendarCell.disabledNum {
+  color: #94a3b8;
+}
+
+.calendarCell.selected {
+  border-color: #f97316;
+  box-shadow: 0 0 0 1.5px #f97316;
+}
+
+.calendarCell.full {
+  background-color: #f8fafc;
+}
+
+.fullBadge {
+  background-color: #ef4444;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+  letter-spacing: 0.5px;
+}
+
+.cellOrangeDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #f97316;
+  margin-top: 0.2rem;
+}
+
+.legendContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #f1f5f9;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dotGreen { background-color: #10b981; }
+.dotOrange { background-color: #f97316; }
+.dotGray { background-color: #94a3b8; }
+.dotLightGray { background-color: #cbd5e1; }
+
+/* STEP 4: TIME SLOT GRID */
+.timeSlotsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.timePill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.9rem 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.timePill:hover {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+}
+
+.timePill.selected {
+  border-color: #0f172a;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 1.5px #0f172a;
+}
+
+/* STEP 5: SEATS COUNTER & ALERT */
+.seatsOuterContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  padding: 1rem 0;
+}
+
+.seatsCounterBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 0.75rem 1.5rem;
+  background-color: white;
+  width: 100%;
+  max-width: 280px;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.seatsBtn {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.seatsBtn:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  color: #0f172a;
+  background-color: #f8fafc;
+}
+
+.seatsBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.seatsDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.seatsNumber {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.seatsLabelText {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  margin-top: 0.15rem;
+}
+
+.yellowAlertBanner {
+  background-color: #fef3c7;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.85rem 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+/* STEP 6: EMBEDDED LOGIN FORM */
+.loginFormContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.25rem;
+}
+
+.formLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.inputField {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.85rem 1rem 0.85rem 2.75rem;
+  font-size: 0.95rem;
+  color: #0f172a;
+  transition: all 0.2s;
+  background-color: white;
+}
+
+.inputField:focus {
+  outline: none;
+  border-color: #0f172a;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+}
+
+.inputToggleEye {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.inputToggleEye:hover {
+  color: #475569;
+}
+
+.rowLinks {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.linkBtn {
+  background: none;
+  border: none;
+  color: #0f172a;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 600;
+}
+
+.linkBtn:hover {
+  text-decoration: underline;
+}
+
+.loginSubmitBtn {
+  background-color: #0f172a;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+}
+
+.loginSubmitBtn:hover {
+  background-color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.signUpText {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 1.5rem;
+}
+
+.signUpLink {
+  color: #0f172a;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.signUpLink:hover {
+  text-decoration: underline;
+}
+
+/* STICKY MIDDLE COLUMN FOOTER */
+.footerNav {
+  margin-top: auto;
+  padding: 1.25rem 2rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+}
+
+.footerBackBtn {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.footerBackBtn:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.footerNextBtn {
+  background-color: #0f172a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.footerNextBtn:hover {
+  background-color: #1e293b;
+}
+
+/* RIGHT COLUMN */
+.summarySidebar {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+.summaryHeader {
+  padding: 1.5rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.summaryHeader h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.summaryBody {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.personTag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.selectedPass {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #0f172a;
+  margin-bottom: 1.25rem;
+}
+
+.summaryBox {
+  background-color: #f8fafc;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #64748b;
+  padding: 0.65rem 0;
+}
+
+.summaryRow:not(:last-child) {
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.summaryRow span:last-child {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.costBreakdown {
+  margin-top: auto;
+}
+
+.costTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  margin-bottom: 1rem;
+}
+
+.costRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #0f172a;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.totalBtn {
+  background-color: #0f172a;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1.1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.totalBtn span:last-child {
+  font-weight: 800;
+  font-size: 1.25rem;
+}
+
+.totalBtn:hover:not(:disabled) {
+  background-color: #1e293b;
+  transform: translateY(-2px);
+}
+
+.totalBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+

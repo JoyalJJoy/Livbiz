@@ -1,27 +1,27 @@
 import styles from './FeaturesGrid.module.css';
-import { Network, Coffee, Monitor, KeyRound } from 'lucide-react';
+import { BriefcaseBusiness, Coffee, Monitor, ShieldCheck } from 'lucide-react';
 
 export default function FeaturesGrid() {
   const features = [
     {
-      icon: <Network className={styles.icon} size={32} />,
-      title: 'Enterprise Connectivity',
-      description: 'Superfast, uninterrupted, secure Wi-Fi and hard-wired internet access for zero-lag virtual meetings.'
+      icon: <BriefcaseBusiness className={styles.icon} size={30} />,
+      title: 'Flexible Membership Plans',
+      description: 'Choose simple day passes, meeting room slots, or longer workspace arrangements as your routine grows.'
     },
     {
-      icon: <Coffee className={styles.icon} size={32} />,
-      title: 'Artisanal Brews',
-      description: 'Fuel your day with complimentary gourmet coffee, herbal teas, and healthy snacks available all day.'
+      icon: <Monitor className={styles.icon} size={30} />,
+      title: 'Professional Environment',
+      description: 'A quiet, well-managed workspace designed for focus, client calls, planning sessions, and deep work.'
     },
     {
-      icon: <Monitor className={styles.icon} size={32} />,
-      title: 'Ergonomic Design',
-      description: 'Work comfortably in thoughtfully designed spaces featuring Herman Miller chairs and sit-stand desks.'
+      icon: <Coffee className={styles.icon} size={30} />,
+      title: 'Supportive Community',
+      description: 'Work alongside founders, independent professionals, and teams without losing the calm of a dedicated office.'
     },
     {
-      icon: <KeyRound className={styles.icon} size={32} />,
-      title: 'Secure Access',
-      description: 'Enjoy 24/7 access with state-of-the-art keyless entry systems and comprehensive security.'
+      icon: <ShieldCheck className={styles.icon} size={30} />,
+      title: 'All-Inclusive Amenities',
+      description: 'Internet, power backup, meeting rooms, lounge areas, housekeeping, and the essentials that keep work moving.'
     }
   ];
 
@@ -29,11 +29,12 @@ export default function FeaturesGrid() {
     <section id="features" className={styles.section}>
       <div className={`container ${styles.container}`}>
         <div className={styles.header}>
+          <p className={styles.kicker}>2026</p>
           <h2>
-            The LivBiz Coworking & Conference Hub Edge
+            Designed for Focus. Built for Growth
           </h2>
           <p>
-            Elevate your work experience with meticulously designed environments, enterprise-grade amenities, and zero-compromise infrastructure.
+            Flexible workspaces, meeting rooms and premium amenities designed to help freelancers, startups, and teams do their best work.
           </p>
         </div>
 

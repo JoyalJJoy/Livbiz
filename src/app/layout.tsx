@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Serif_Display, Manrope } from "next/font/google";
+import { Manrope, Poppins } from "next/font/google";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -9,22 +9,22 @@ const manrope = Manrope({
   fallback: ["system-ui", "Arial", "sans-serif"],
 });
 
-const dmSerif = DM_Serif_Display({
-  weight: "400",
+const poppins = Poppins({
+  weight: ["400", "500", "600", "700", "800"],
   subsets: ["latin"],
-  variable: "--font-display",
+  variable: "--font-poppins",
   display: "swap",
-  fallback: ["Georgia", "Times New Roman", "serif"],
+  fallback: ["system-ui", "Arial", "sans-serif"],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://livbiz.com'), // Replace with actual domain
   title: {
-    default: "LivBiz Coworking & Conference Hub | Premium Workspaces in Bengaluru",
+    default: "LivBiz Coworking & Conference Hub | Flexible Workspace",
     template: "%s | LivBiz Coworking"
   },
-  description: "Experience India's largest premium coworking space. Enterprise-grade amenities, bespoke offices, and vibrant community networking at Lavelle Road, Museum Road, and Whitefield.",
-  keywords: ["Coworking", "Conference Hub", "Premium Workspace", "Bengaluru", "Shared Office", "Meeting Rooms", "LivBiz"],
+  description: "Flexible coworking, day passes, and meeting room bookings at LivBiz Coworking & Conference Hub.",
+  keywords: ["Coworking", "Conference Hub", "Workspace", "Day Pass", "Meeting Rooms", "LivBiz"],
   openGraph: {
     title: "LivBiz Coworking & Conference Hub",
     description: "Experience India's largest premium coworking space.",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'LivBiz Coworking & Conference Hub',
-    description: "Experience India's largest premium coworking space in Bengaluru.",
+    description: "Flexible coworking, day passes, and meeting room bookings.",
     images: ['/images/hero-bg.jpg'],
   },
   robots: {
@@ -60,15 +60,19 @@ export const metadata: Metadata = {
   },
 };
 
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${manrope.variable} ${dmSerif.variable}`} suppressHydrationWarning>
-      <body className="antialiased">
-        {children}
+    <html lang="en" className={`${manrope.variable} ${poppins.variable}`} suppressHydrationWarning>
+      <body className="antialiased" suppressHydrationWarning={true}>
+        <SessionProviderWrapper>
+          {children}
+        </SessionProviderWrapper>
       </body>
     </html>
   );

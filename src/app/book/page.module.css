@@ -1,0 +1,391 @@
+.main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Hero Banner ───────────────────────────────────────────── */
+.heroBanner {
+  position: relative;
+  padding-block: 140px 80px;
+  background-color: #101827;
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='460' height='360' viewBox='0 0 460 360' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.055' stroke-width='2.4'%3E%3Cpath d='M27 36c55-28 123-11 143 43 18 48-6 92-54 101-40 8-76-15-86-54-9-35 10-67 45-75 29-6 55 10 63 38 7 25-7 49-32 56-20 5-40-7-45-27-4-17 5-32 22-37 14-4 27 4 31 18'/%3E%3Cpath d='M270 42c60 9 102 55 95 105-6 45-45 73-90 65-38-7-64-39-58-75 5-30 32-50 62-45 26 4 43 27 39 52-3 21-23 35-44 31-17-3-29-19-26-36'/%3E%3Cpath d='M75 278c42-58 124-63 173-12 42 43 103 42 142-3'/%3E%3Cpath d='M331 290c-35-17-56-45-64-84M102 209c32 15 63 13 94-7M385 101c22-33 42-49 62-47'/%3E%3Ccircle cx='72' cy='226' r='42'/%3E%3Ccircle cx='388' cy='242' r='32'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg, #111a2b 0%, #0d1422 100%);
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.heroBanner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(13, 20, 34, 0.45) 0%, rgba(13, 20, 34, 0.08) 48%, rgba(13, 20, 34, 0.24) 100%),
+    radial-gradient(circle at 48% 42%, rgba(255, 186, 1, 0.08), transparent 28%);
+  pointer-events: none;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  max-width: 680px;
+  margin-inline: auto;
+}
+
+.heroEyebrow {
+  color: var(--color-brand-accent);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.85rem;
+}
+
+.heroContent h1 {
+  font-size: clamp(2.4rem, 4.6vw, 4.2rem);
+  line-height: 1.1;
+  letter-spacing: 0;
+  margin-bottom: 1rem;
+  text-shadow: 0 20px 52px rgba(0, 0, 0, 0.34);
+  color: #ffffff;
+}
+
+.heroSubtitle {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 1.08rem;
+  font-weight: 500;
+  line-height: 1.7;
+  max-width: 520px;
+  margin-inline: auto;
+}
+
+.wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  width: 100%;
+  height: clamp(42px, 6vw, 88px);
+  color: #f4f5f7;
+}
+
+.wave path {
+  fill: currentColor;
+}
+
+/* ── Main Content ──────────────────────────────────────────── */
+.contentSection {
+  flex-grow: 1;
+  background-color: #f4f5f7;
+  padding-block: var(--space-xl) var(--space-2xl);
+}
+
+.backLink {
+  margin-bottom: var(--space-lg);
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: color 0.2s;
+}
+
+.backBtn:hover {
+  color: var(--color-brand-primary);
+}
+
+/* ── Content Grid ──────────────────────────────────────────── */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+@media (min-width: 992px) {
+  .contentGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+}
+
+/* ── Cards Column ──────────────────────────────────────────── */
+.cardsCol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: clamp(1.5rem, 2.5vw, 2.25rem);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #e9eaed;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: var(--color-brand-accent);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.1);
+}
+
+/* ── Card Icon ─────────────────────────────────────────────── */
+.iconWrapper {
+  background-color: #f7f8fa;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #143f72;
+  transition: all 0.4s ease;
+  border: 1px solid #e9eaed;
+}
+
+.card:hover .iconWrapper {
+  background-color: #101827;
+  color: var(--color-brand-accent);
+  transform: scale(1.1);
+}
+
+/* ── Card Header ───────────────────────────────────────────── */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.cardTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.cardHeader h3 {
+  font-size: 1.35rem;
+  margin: 0;
+  color: #202124;
+  font-weight: 800;
+}
+
+.price {
+  font-weight: 700;
+  color: #202124;
+  font-size: 1rem;
+  background-color: rgba(255, 186, 1, 0.14);
+  color: #8c6100;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+}
+
+/* ── Card Description ──────────────────────────────────────── */
+.description {
+  color: #626873;
+  font-size: 0.95rem;
+  margin-bottom: var(--space-lg);
+  line-height: 1.65;
+}
+
+/* ── Card Footer ───────────────────────────────────────────── */
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  border-top: 1px solid #e4e6ea;
+  padding-top: var(--space-md);
+}
+
+.amenities {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.amenity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #f4f5f7;
+  border: 1px solid #e4e6ea;
+  color: #4e5662;
+  transition: all 0.3s ease;
+}
+
+.amenity:hover {
+  background-color: #101827;
+  color: white;
+  border-color: #101827;
+}
+
+/* ── Book Button ───────────────────────────────────────────── */
+.bookBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background-color: #101827;
+  color: #ffffff;
+  padding: 0.75rem 1.4rem;
+  border-radius: 6px;
+  font-weight: 800;
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.bookBtn:hover {
+  background-color: #1a2540;
+  transform: translateY(-2px);
+}
+
+/* ── Image / Illustration Column ───────────────────────────── */
+.imageCol {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.illustration {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 4/3;
+  border-radius: 8px;
+  overflow: hidden;
+  filter: drop-shadow(0 34px 40px rgba(0, 0, 0, 0.08));
+}
+
+.illustration img {
+  object-fit: cover;
+}
+
+.imageColText {
+  text-align: center;
+}
+
+.imageColText h2 {
+  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+  margin-bottom: 0.5rem;
+  color: #202124;
+  font-weight: 800;
+}
+
+.imageColText p {
+  color: #626873;
+  font-size: 0.95rem;
+  max-width: 400px;
+  margin-inline: auto;
+}
+
+/* ── Features Strip ────────────────────────────────────────── */
+.featuresStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+
+.featureItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: var(--space-md);
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e9eaed;
+  transition: all 0.3s ease;
+}
+
+.featureItem:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.featureIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f7f8fa;
+  color: #143f72;
+  border: 1px solid #e9eaed;
+}
+
+.featureItem span:last-child {
+  color: #626873;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .heroBanner {
+    padding-block: 120px 60px;
+  }
+
+  .featuresStrip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 540px) {
+  .heroBanner {
+    padding-block: 108px 50px;
+  }
+
+  .heroContent h1 {
+    font-size: 2.2rem;
+  }
+
+  .featuresStrip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .cardFooter {
+    flex-direction: column;
+    gap: var(--space-md);
+    align-items: stretch;
+  }
+
+  .bookBtn {
+    justify-content: center;
+    width: 100%;
+  }
+}

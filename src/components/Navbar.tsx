@@ -1,5 +1,6 @@
 import styles from './Navbar.module.css';
 import Link from 'next/link';
+import NavbarAccountButton from './NavbarAccountButton';
 
 export default function Navbar() {
   return (
@@ -8,16 +9,18 @@ export default function Navbar() {
         <div className={styles.logo}>
           <Link href="/">
             <span className={styles.logoText}>LivBiz</span>
-            <span className={styles.logoSubtext}>Coworking & Conference Hub</span>
+            <span className={styles.logoMark} aria-hidden="true"></span>
           </Link>
         </div>
         <nav className={styles.navLinks}>
-          <Link href="#campuses" className={styles.link}>Campuses</Link>
+          <Link href="/" className={styles.link}>Home</Link>
+          <Link href="#booking" className={styles.link}>Booking</Link>
+          <Link href="#workspace" className={styles.link}>Workspace</Link>
+          <Link href="#stories" className={styles.link}>Reviews</Link>
           <Link href="#features" className={styles.link}>Features</Link>
-          <Link href="#stories" className={styles.link}>Stories</Link>
         </nav>
         <div className={styles.action}>
-          <Link href="#enquire" className={styles.button}>Enquire</Link>
+          <NavbarAccountButton />
         </div>
       </div>
     </header>

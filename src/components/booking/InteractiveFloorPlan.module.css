@@ -1,0 +1,689 @@
+.floorPlanContainer {
+  width: 100%;
+  margin: 0.25rem 0;
+  display: flex;
+  flex-direction: column;
+  background: #5e5e5e; /* Mockup-exact dark-grey card background */
+  padding: 1rem;
+  border-radius: 12px;
+  box-sizing: border-box;
+  gap: 0.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+/* ── TOP LEGEND ROW ── */
+.legendHeader {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.legendBox {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1.5px solid transparent;
+  display: inline-block;
+}
+
+.availableBox {
+  background: #ffffff;
+  border-color: #22c55e;
+}
+
+.selectedBox {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
+.bookedBox {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.conferenceBox {
+  background: #e0e7ff;
+  border-color: #818cf8;
+}
+
+.legendLabel {
+  font-size: 0.75rem;
+  color: #e5e7eb;
+}
+
+/* ── RESPONSIVE VIEWPORT CONTAINER ── */
+.cadViewport {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.1rem 0;
+  overflow: visible; /* Render fully without scrollbars */
+}
+
+/* ── MAIN FLAT 2D BLUEPRINT CANVAS ── */
+.cadFloor {
+  position: relative;
+  width: 640px; /* Mockup-exact compact canvas width to prevent page overflow */
+  height: 480px; /* Perfectly proportioned height fitting middle column */
+  background-color: #ffffff; /* Pure white drafting sheet background */
+  border: 2px solid #8e8e8e; /* Clean solid grey outlines */
+  border-radius: 8px;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+/* ── TOP SECTION (CONFERENCE, WC, LOBBY CORE) ── */
+.topRow {
+  display: flex;
+  width: 100%;
+  height: 120px;
+  box-sizing: border-box;
+}
+
+/* Small Conference (Top-Left) */
+.smallConferenceTop {
+  width: 35%;
+  height: 100%;
+  border-right: 2px solid #8e8e8e;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.smallConfLabel {
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: #818cf8;
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+.smallConfTable {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.confTableBody {
+  width: 100px;
+  height: 36px;
+  border: 2px solid #818cf8;
+  border-radius: 8px;
+  background: #e0e7ff; /* Table fill */
+  z-index: 2;
+  margin: -2px 0;
+}
+
+.confSeatsTop {
+  display: flex;
+  gap: 30px;
+  z-index: 3;
+}
+
+.confSeatsBottom {
+  display: flex;
+  gap: 30px;
+  z-index: 3;
+}
+
+.confSeat {
+  width: 24px;
+  height: 16px;
+  border: 1.5px solid #818cf8;
+  border-radius: 3px;
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 0.55rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* WC Toilet (Top-Middle) */
+.wcTop {
+  width: 35%;
+  height: 100%;
+  border-right: 2px solid #8e8e8e;
+  background: #f0f9ff; /* Light-blue washroom fill */
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.wcTopLabel {
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: #38bdf8;
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+
+.wcTopsContainer {
+  display: flex;
+  gap: 15px;
+}
+
+.wcToiletDrawing {
+  position: relative;
+  width: 22px;
+  height: 30px;
+  border: 1.5px solid #38bdf8; /* Blue outlines */
+  border-radius: 0 0 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.toiletBack {
+  width: 16px;
+  height: 5px;
+  border: 1.5px solid #38bdf8;
+  border-radius: 1px;
+  margin-top: 1px;
+}
+
+.toiletBowl {
+  width: 12px;
+  height: 14px;
+  border: 1.5px solid #38bdf8;
+  border-radius: 50%;
+  margin-top: 2px;
+}
+
+/* Lobby Core (Top-Right) */
+.lobbyCore {
+  width: 30%;
+  height: 100%;
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  background: #fafafa;
+}
+
+.stairLabelUp {
+  font-size: 0.65rem;
+  color: #71717a;
+  font-weight: bold;
+  width: 100%;
+  text-align: left;
+  padding-left: 12px;
+  letter-spacing: 0.05em;
+}
+
+.stairLabelDn {
+  font-size: 0.65rem;
+  color: #71717a;
+  font-weight: bold;
+  width: 100%;
+  text-align: left;
+  padding-left: 12px;
+  letter-spacing: 0.05em;
+}
+
+.liftCore {
+  width: 60px;
+  height: 60px;
+  background: #e4e4e7;
+  border: 1.5px solid #8e8e8e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.liftText {
+  font-size: 0.75rem;
+  color: #3f3f46;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.liftSize {
+  font-size: 0.5rem;
+  color: #71717a;
+  font-weight: bold;
+  margin-top: 1px;
+}
+
+/* Horizontal Wall Divider */
+.horizontalWall {
+  height: 2px;
+  background: #8e8e8e;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── BOTTOM AREA ── */
+.bottomRow {
+  display: flex;
+  width: 100%;
+  height: 358px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Left Area: Workstations A, B, C, D (63% width) */
+.workstationsArea {
+  width: 63%;
+  height: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.workstationCluster {
+  position: absolute;
+  width: 180px;
+  height: 145px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.clusterTitle {
+  font-size: 0.6rem;
+  color: #a1a1aa;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.desksRow {
+  display: flex;
+  gap: 16px;
+}
+
+.deskItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.deskBody {
+  width: 66px;
+  height: 38px;
+  background: #e4e4e7;
+  border: 1.5px solid #a3a3a3;
+  border-radius: 4px;
+  z-index: 2;
+}
+
+/* Active Seat Pill styling */
+.seatPill {
+  width: 38px;
+  height: 22px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  outline: none;
+  border-width: 2px;
+  border-style: solid;
+  box-sizing: border-box;
+  z-index: 3;
+}
+
+.seatTop {
+  margin-bottom: -4px;
+}
+
+.seatBottom {
+  margin-top: -4px;
+}
+
+/* Seat color-coded overrides */
+.available {
+  background: #ffffff;
+  border-color: #22c55e;
+  color: #166534;
+}
+
+.available:hover {
+  background: #f0fdf4;
+  border-color: #15803d;
+  color: #14532d;
+  transform: translateY(-1px);
+}
+
+.selected {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e40af;
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+}
+
+.selected:hover {
+  background: #dbeafe;
+  border-color: #1d4ed8;
+  color: #1e3a8a;
+  transform: translateY(-1px);
+}
+
+.booked {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #991b1b;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* Dashed partition wall */
+.verticalDashedLine {
+  position: absolute;
+  left: 63%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  border-left: 2px dashed #a3a3a3;
+  z-index: 10;
+}
+
+/* Right Area: WC & Large Conference (37% width) */
+.conferenceArea {
+  width: 37%;
+  height: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Toilet Right (Top-Right WC) */
+.toiletRight {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  width: 65px;
+  height: 80px;
+  border: 1.5px solid #38bdf8;
+  border-radius: 6px;
+  background: #f0f9ff;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.toiletBasin {
+  width: 16px;
+  height: 10px;
+  border: 1.5px solid #38bdf8;
+  border-radius: 3px;
+  background: #e0f2fe;
+}
+
+.toiletRightDrawing {
+  position: relative;
+  width: 20px;
+  height: 26px;
+  border: 1.5px solid #38bdf8;
+  border-radius: 0 0 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.toiletBackRight {
+  width: 14px;
+  height: 5px;
+  border: 1.5px solid #38bdf8;
+  border-radius: 1px;
+  margin-top: 1px;
+}
+
+.toiletBowlRight {
+  width: 10px;
+  height: 12px;
+  border: 1.5px solid #38bdf8;
+  border-radius: 50%;
+  margin-top: 2px;
+}
+
+/* Large Conference */
+.largeConference {
+  position: absolute;
+  top: 100px;
+  left: 15px;
+  right: 15px;
+  height: 245px;
+  border: 2px solid #818cf8;
+  border-radius: 8px;
+  background: #ffffff;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.largeConfLabel {
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: #818cf8;
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+
+.largeConfTableContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.largeConfSeatsLeft,
+.largeConfSeatsRight {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 3;
+}
+
+.largeConfTableCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.largeConfTableBody {
+  width: 140px;
+  height: 100px;
+  border: 2px solid #818cf8;
+  border-radius: 12px;
+  background: #e0e7ff;
+  z-index: 2;
+  margin: -2px 0;
+}
+
+.largeConfSeatsTop {
+  display: flex;
+  gap: 6px;
+  z-index: 3;
+}
+
+.largeConfSeatsBottom {
+  display: flex;
+  gap: 6px;
+  z-index: 3;
+}
+
+/* ── MOCKUP FOOTER CONTROL BAR ── */
+.footerBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  background: #4b5563; /* Grey background matching mockup */
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.selectedSeatStatus {
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.footerActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.clearBtn {
+  background: transparent;
+  border: 1.5px solid #d1d5db;
+  color: #ffffff;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.clearBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #ffffff;
+}
+
+.clearBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.bookBtn {
+  background: #1f2937;
+  border: none;
+  color: #ffffff;
+  padding: 0.4rem 1.1rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bookBtn:hover:not(:disabled) {
+  background: #111827;
+  transform: translateY(-1px);
+}
+
+.bookBtn:disabled {
+  background: #4b5563;
+  border: 1.5px solid #6b7280;
+  color: #9ca3af;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── VIEWPORT ZOOM & PAN CONTROLS ── */
+.viewportWrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.cadViewport {
+  width: 100%;
+  height: 480px;
+  background: #e2e8f0; /* CAD grid board canvas backplate */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  touch-action: none;
+}
+
+.viewportControls {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  padding: 6px;
+  border-radius: 8px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.controlBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: #1e293b;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.controlBtn:hover {
+  background: #334155;
+  transform: translateY(-1px);
+}
+
+.panHelpText {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 100;
+  background: rgba(15, 23, 42, 0.7);
+  padding: 6px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.02em;
+  user-select: none;
+}

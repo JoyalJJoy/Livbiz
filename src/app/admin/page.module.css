@@ -1,0 +1,34 @@
+.wrapper { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
+.header { display: flex; flex-direction: column; gap: 0.25rem; }
+.title { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.02em; }
+.subtitle { font-size: 0.9rem; color: #64748b; margin: 0; }
+.loadingState { display: flex; gap: 1rem; min-height: 300px; align-items: center; justify-content: center; color: #475569; font-weight: 600; }
+
+.cardsGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.25rem; }
+.statCard { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; display: flex; align-items: center; gap: 1rem; transition: all 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+.statCard:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transform: translateY(-2px); }
+.statIconBox { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.statInfo { display: flex; flex-direction: column; gap: 0.15rem; }
+.statValue { font-size: 1.4rem; font-weight: 800; color: #0f172a; }
+.statLabel { font-size: 0.78rem; font-weight: 600; color: #64748b; }
+
+.tableSection { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; }
+.tableTitle { font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0 0 1rem 0; }
+.emptyText { color: #94a3b8; font-size: 0.9rem; }
+.tableWrap { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.table th { text-align: left; font-weight: 700; color: #64748b; padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.table td { padding: 0.85rem 1rem; border-bottom: 1px solid #f8fafc; color: #334155; }
+.table tr:hover td { background-color: #f8fafc; }
+.userCell { display: flex; flex-direction: column; gap: 0.1rem; }
+.userName { font-weight: 700; color: #0f172a; }
+.userEmail { font-size: 0.78rem; color: #94a3b8; }
+.typeBadge { font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; background: #f1f5f9; color: #475569; }
+.amountCell { font-weight: 700; color: #0f172a; }
+.dateCell { color: #64748b; font-size: 0.85rem; }
+
+.statusPill { font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.025em; }
+.statusPending { background: #fffbeb; color: #b45309; }
+.statusApproved { background: #ecfdf5; color: #065f46; }
+.statusRejected { background: #fef2f2; color: #991b1b; }
+.statusCancelled { background: #f1f5f9; color: #64748b; }

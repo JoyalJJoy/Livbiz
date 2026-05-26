@@ -1,13 +1,14 @@
 import styles from './LocationMap.module.css';
-import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 
 export default function LocationMap() {
   return (
     <section className={styles.section}>
       <div className={`container ${styles.container}`}>
         <div className={styles.header}>
-          <h2>Visit Our Premium Campus</h2>
-          <p>Located in the heart of Bengaluru&apos;s thriving business district.</p>
+          <p className={styles.kicker}>The directions to reach us</p>
+          <h2>How to Find LivBiz Coworking</h2>
+          <p>Campus address, work hours and direct contact information will sit here once finalized.</p>
         </div>
 
         <div className={styles.mapGrid}>
@@ -16,44 +17,30 @@ export default function LocationMap() {
             <div className={styles.infoList}>
               <div className={styles.infoItem}>
                 <MapPin className={styles.icon} />
-                <p>First Floor, Shakunthala Plaza-2, K.Narayanapura, P O, Kothanur, Bengaluru, Karnataka 560077</p>
+                <p>Campus address to be updated</p>
               </div>
               <div className={styles.infoItem}>
                 <Clock className={styles.icon} />
-                <p>Open 24/7 for members. Reception: Mon-Fri, 9am - 6pm</p>
+                <p>Work hours to be updated</p>
               </div>
               <div className={styles.infoItem}>
                 <Phone className={styles.icon} />
-                <p>+91 (800) 123-4567</p>
+                <p>Phone number to be updated</p>
               </div>
               <div className={styles.infoItem}>
                 <Mail className={styles.icon} />
-                <p>hello@livbiz.com</p>
+                <p>Email address to be updated</p>
               </div>
             </div>
             
-            <a 
-              href="https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className={styles.directionsBtn}
-            >
-              Get Directions
-            </a>
+            <a href="#booking" className={styles.directionsBtn}>Book Workspace</a>
           </div>
 
           <div className={`${styles.mapWrapper} animate-on-scroll`} style={{ animationDelay: '0.2s' }}>
-            <iframe 
-              title="LivBiz Coworking campus location map"
-              src="https://maps.google.com/maps?q=First+Floor,+LivBiz+Coworking+%26+Conference+Hub,+Shakunthala+Plaza-2,+K.Narayanapura,+P+O,+Kothanur,+Bengaluru,+Karnataka+560077&t=&z=15&ie=UTF8&iwloc=&output=embed"
-              width="100%" 
-              height="100%" 
-              style={{ border: 0 }} 
-              allowFullScreen={false} 
-              loading="lazy" 
-              referrerPolicy="no-referrer-when-downgrade"
-              className={styles.iframe}
-            ></iframe>
+            <div className={styles.mapPlaceholder}>
+              <span>LivBiz</span>
+              <strong>Campus map coming soon</strong>
+            </div>
           </div>
         </div>
       </div>

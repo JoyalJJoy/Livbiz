@@ -1,6 +1,6 @@
 .section {
-  padding-block: var(--space-2xl);
-  background-color: var(--color-bg);
+  padding-block: clamp(4rem, 8vw, 8rem);
+  background-color: #ffffff;
 }
 
 .container {
@@ -14,15 +14,13 @@
 }
 
 .header h2 {
-  font-size: 2.45rem;
+  font-size: clamp(2.15rem, 4.1vw, 4rem);
   margin-bottom: var(--space-xs);
-  color: var(--color-brand-primary);
+  color: #202124;
 }
 
-
-
 .header p {
-  color: var(--color-text-muted);
+  color: #5e626b;
   font-size: 1.1rem;
 }
 
@@ -39,8 +37,8 @@
 }
 
 .card {
-  background-color: var(--color-bg-alt);
-  border-radius: var(--radius-lg);
+  background-color: #f4f5f7;
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   display: flex;
@@ -66,7 +64,7 @@
 
 .quoteIcon {
   font-size: 3rem;
-  color: var(--color-brand-secondary);
+  color: var(--color-brand-accent);
   line-height: 0.5;
   margin-bottom: var(--space-sm);
   opacity: 0.5;
@@ -75,7 +73,7 @@
 .quote {
   font-size: 1.05rem;
   line-height: 1.6;
-  color: var(--color-text);
+  color: #202124;
   font-style: italic;
   margin-bottom: var(--space-lg);
   flex: 1;
@@ -95,8 +93,8 @@
 .featuredCard {
   display: flex;
   flex-direction: column;
-  background-color: var(--color-bg-alt);
-  border-radius: var(--radius-lg);
+  background-color: #101827;
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow-md);
   margin-top: var(--space-lg);
@@ -135,43 +133,38 @@
 
 .quoteIconLarge {
   font-size: 4rem;
-  color: var(--color-brand-secondary);
+  color: var(--color-brand-accent);
   line-height: 0.5;
   opacity: 0.5;
 }
 
 .featuredQuote {
   font-size: 2rem;
-  color: var(--color-brand-primary);
+  color: #ffffff;
   line-height: 1.2;
   margin-bottom: var(--space-md);
   font-family: var(--font-heading);
 }
 
-
-
 .featuredText {
   font-size: 1.1rem;
   line-height: 1.6;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.7);
   margin-bottom: var(--space-xl);
 }
 
 .featuredAuthor h4 {
   font-size: 1.2rem;
   margin-bottom: 0.2rem;
+  color: #ffffff;
 }
 
 .featuredAuthor p {
   font-size: 0.95rem;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.62);
 }
 
 @media (min-width: 768px) {
-  .header h2 {
-    font-size: 3.35rem;
-  }
-
   .featuredQuote {
     font-size: 2.5rem;
   }

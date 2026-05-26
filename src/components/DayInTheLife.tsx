@@ -4,23 +4,23 @@ import Image from 'next/image';
 const steps = [
   {
     id: 1,
-    time: 'Morning',
-    title: 'Morning Concept',
-    description: 'Start your day with focus. Enjoy freshly brewed artisanal coffee while knocking out your most important tasks in our quiet zones.',
+    time: 'Easy Booking',
+    title: 'Find a Time That Works for You',
+    description: 'Browse available day passes and meeting rooms, select your slot, and secure your workspace in a few clicks.',
     image: '/images/morning_concept.jpg'
   },
   {
     id: 2,
-    time: 'Afternoon',
-    title: 'Afternoon Synergy',
-    description: 'Transition into collaborative work. Book a state-of-the-art meeting room to brainstorm with your team or meet clients.',
+    time: 'Arrive Ready',
+    title: 'Walk Into a Focused Setup',
+    description: 'Use the space for client calls, planning, desk work or team discussions without spending the day arranging basics.',
     image: '/images/afternoon_synergy.jpg'
   },
   {
     id: 3,
-    time: 'Evening',
-    title: 'Evening Connections',
-    description: 'Wind down and network. Join exclusive community events, exchange ideas over a drink, and connect with fellow founders.',
+    time: 'Grow Steady',
+    title: 'Scale Your Work Rhythm',
+    description: 'Keep the flexibility of booking when needed, then move toward a more regular setup as your work expands.',
     image: '/images/evening_connections.jpg'
   }
 ];
@@ -30,10 +30,10 @@ export default function DayInTheLife() {
     <section id="experience" className={styles.section}>
       <div className={styles.header}>
         <h2>
-          A Day in the Life
+          Get Your Office Up and Running in Minutes
         </h2>
         <p>
-          Experience how our spaces are choreographed to support your rhythm, from morning inspiration to evening networking.
+          Fully furnished, simple to book, and built to keep your workday moving without unnecessary setup.
         </p>
       </div>
 

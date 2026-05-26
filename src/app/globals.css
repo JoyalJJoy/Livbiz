@@ -46,9 +46,9 @@
   :root {
     /* Brand Colors */
     --color-brand-primary: #07323d;
-    --color-brand-secondary: #0e7490;
-    --color-brand-accent: #f8f7f2;
-    --color-brand-gold: #b58a4a;
+    --color-brand-secondary: #1d4f86;
+    --color-brand-accent: #ffba01;
+    --color-brand-gold: #ffba01;
 
     /* Neutrals */
     --color-neutral-100: #ffffff;
@@ -57,7 +57,7 @@
     --color-neutral-500: #9b9a94;
     --color-neutral-700: #5a625f;
     --color-neutral-800: #263633;
-    --color-neutral-900: #16211f;
+    --color-neutral-900: #202124;
 
     /* Base Colors mapped */
     --color-bg: var(--color-neutral-100);
@@ -66,7 +66,7 @@
     --color-text-muted: var(--color-neutral-700);
 
     /* Typography */
-    --font-heading: var(--font-display), Georgia, serif;
+    --font-heading: var(--font-poppins), var(--font-manrope), system-ui, sans-serif;
     --font-body: var(--font-manrope), system-ui, sans-serif;
 
     /* Fluid sizes */
@@ -100,7 +100,7 @@
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
-    font-weight: 400;
+    font-weight: 800;
     line-height: 1.15;
     text-wrap: balance;
     letter-spacing: 0;
@@ -194,5 +194,15 @@
       opacity: 1 !important;
       transform: none !important;
     }
+  }
+
+  /* Spinner utility */
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
   }
 }

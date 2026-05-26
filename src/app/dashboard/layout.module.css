@@ -1,0 +1,244 @@
+.dashboardWrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  font-family: var(--font-manrope), sans-serif;
+}
+
+/* TOP NAVBAR */
+.topNavbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 0.75rem 2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  z-index: 100;
+}
+
+.logoArea {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.logoText {
+  font-family: var(--font-display), serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.logoDot {
+  color: #f59e0b;
+}
+
+.topRightActions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.createBookingBtn {
+  background-color: #0f172a;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.createBookingBtn:hover {
+  background-color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.userProfileDropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  background-color: #ffffff;
+  cursor: pointer;
+  user-select: none;
+}
+
+.userProfileDropdown:hover {
+  border-color: #94a3b8;
+  background-color: #f8fafc;
+}
+
+.userAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.userName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.dropdownArrow {
+  color: #64748b;
+  display: flex;
+  align-items: center;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 160px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 101;
+}
+
+.dropdownItem {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropdownItem:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+/* SIDEBAR & MAIN BODY GRID */
+.dashboardBody {
+  display: flex;
+  margin-top: 64px;
+  min-height: calc(100vh - 64px);
+}
+
+.sidebar {
+  width: 240px;
+  background-color: #ffffff;
+  border-right: 1px solid #cbd5e1;
+  padding: 2rem 0;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  bottom: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebarMenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.menuItem {
+  padding: 0 1.5rem;
+  position: relative;
+}
+
+.menuLink {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  color: #475569;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.menuLink:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.menuItemActive .menuLink {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+}
+
+.menuItemActive::before {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  top: 10%;
+  bottom: 10%;
+  width: 4px;
+  background-color: #4f46e5;
+  border-radius: 4px;
+}
+
+/* MAIN CONTENT CONTAINER */
+.mainContentArea {
+  flex-grow: 1;
+  margin-left: 240px;
+  padding: 2.5rem 3rem;
+  background-color: #f8fafc;
+  overflow-y: auto;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 70px;
+  }
+  .sidebar .userName, .sidebar .menuLink span {
+    display: none;
+  }
+  .mainContentArea {
+    margin-left: 70px;
+    padding: 2rem 1.5rem;
+  }
+  .menuLink {
+    justify-content: center;
+    padding: 0.75rem;
+  }
+  .menuItemActive::before {
+    left: 1.25rem;
+  }
+}

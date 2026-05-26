@@ -1,6 +1,6 @@
 .section {
-  padding-top: var(--space-2xl);
-  background-color: var(--color-bg);
+  padding-block: clamp(4rem, 8vw, 8rem);
+  background-color: #ffffff;
   position: relative;
 }
 
@@ -11,13 +11,13 @@
 }
 
 .header h2 {
-  font-size: 2.55rem;
+  font-size: clamp(2.15rem, 4.1vw, 4rem);
   margin-bottom: var(--space-sm);
-  color: var(--color-brand-primary);
+  color: #202124;
 }
 
 .header p {
-  color: var(--color-text-muted);
+  color: #5e626b;
   font-size: 1.1rem;
   max-width: 600px;
   margin-inline: auto;
@@ -61,7 +61,7 @@
   position: relative;
   min-height: 170px;
   aspect-ratio: 1;
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow-md);
 }
@@ -107,26 +107,20 @@
   font-family: var(--font-heading);
   font-size: 0.9rem;
   text-transform: uppercase;
-  letter-spacing: 3px;
-  color: var(--color-brand-secondary);
+  letter-spacing: 0.08em;
+  color: var(--color-brand-accent);
   margin-bottom: var(--space-sm);
   font-weight: 600;
 }
 
 .stepContent h3 {
-  font-size: 2.25rem;
+  font-size: clamp(1.85rem, 3vw, 2.85rem);
   margin-bottom: var(--space-md);
-  color: var(--color-brand-primary);
+  color: #202124;
 }
 
 .stepContent p {
   font-size: 1.15rem;
   line-height: 1.8;
-  color: var(--color-text-muted);
-}
-
-@media (min-width: 768px) {
-  .header h2 {
-    font-size: 3.2rem;
-  }
+  color: #5e626b;
 }

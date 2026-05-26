@@ -6,16 +6,16 @@ export default function Footer() {
       <div className={`container ${styles.container}`}>
         <div className={styles.brand}>
           <h3>LivBiz Coworking & Conference Hub</h3>
-          <p>Premium coworking spaces designed for the modern professional. Work, connect, and grow in our state-of-the-art facilities.</p>
+          <p>Flexible coworking, meeting rooms, and online workspace booking for professionals who want a focused place to work better.</p>
         </div>
         
         <div className={styles.linksGrid}>
           <div className={styles.linkGroup}>
-            <h4>Campuses</h4>
+            <h4>Workspace</h4>
             <ul>
-              <li><a href="#campuses">Lavelle Road</a></li>
-              <li><a href="#campuses">Museum Road</a></li>
-              <li><a href="#campuses">Whitefield</a></li>
+              <li><a href="#workspace">Single Campus</a></li>
+              <li><a href="#booking">Online Booking</a></li>
+              <li><a href="#features">Services</a></li>
             </ul>
           </div>
           

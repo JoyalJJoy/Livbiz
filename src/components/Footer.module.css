@@ -1,7 +1,8 @@
 .footer {
-  background-color: var(--color-bg-alt);
+  background-color: #101827;
   padding-top: var(--space-2xl);
-  border-top: 1px solid var(--color-neutral-300);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
 }
 
 
@@ -28,13 +29,13 @@
 .brand h3 {
   font-size: 1.5rem;
   margin-bottom: var(--space-sm);
-  color: var(--color-brand-primary);
+  color: #ffffff;
 }
 
 
 
 .brand p {
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.66);
   font-size: 0.95rem;
   line-height: 1.6;
 }
@@ -55,7 +56,7 @@
 .linkGroup h4 {
   font-size: 1.1rem;
   margin-bottom: var(--space-sm);
-  color: var(--color-text);
+  color: #ffffff;
 }
 
 .linkGroup ul {
@@ -65,25 +66,25 @@
 }
 
 .linkGroup a {
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.62);
   font-size: 0.95rem;
   transition: color 0.2s ease;
 }
 
 .linkGroup a:hover {
-  color: var(--color-brand-secondary);
+  color: var(--color-brand-accent);
 }
 
 .bottomBar {
-  background-color: var(--color-bg);
+  background-color: #0a101b;
   padding-block: var(--space-md);
   text-align: center;
-  border-top: 1px solid var(--color-neutral-300);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 
 
 .bottomBar p {
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.58);
   font-size: 0.85rem;
 }
