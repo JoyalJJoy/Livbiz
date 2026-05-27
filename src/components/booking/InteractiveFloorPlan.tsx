@@ -13,7 +13,6 @@ interface SeatPickerProps {
 }
 
 export default function InteractiveFloorPlan({
-  type,
   bookedSeats,
   selectedSeats,
   onToggleSeat,
@@ -187,7 +186,7 @@ export default function InteractiveFloorPlan({
                 <div className={styles.stairLabelUp}>UP ↗</div>
                 <div className={styles.liftCore}>
                   <div className={styles.liftText}>LIFT</div>
-                  <div className={styles.liftSize}>5'x5'</div>
+                  <div className={styles.liftSize}>5&apos;x5&apos;</div>
                 </div>
                 <div className={styles.stairLabelDn}>DN ↘</div>
               </div>

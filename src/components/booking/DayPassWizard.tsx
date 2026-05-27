@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Check, Clock, Mail, Lock, Eye, EyeOff, ChevronLeft, ChevronRight, Phone, Users, Calendar } from 'lucide-react';
+import { X, Mail, Lock, Eye, EyeOff, ChevronLeft, ChevronRight, Phone, Users } from 'lucide-react';
 import BookingLottie from './BookingLottie';
 import InteractiveFloorPlan from './InteractiveFloorPlan';
 import styles from './DayPassWizard.module.css';
@@ -188,7 +188,7 @@ export default function DayPassWizard() {
         if (endAmpm === 'AM' && endHours === 12) endHours = 0;
 
         const startTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), startHours, startMinutes);
-        let endTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), endHours, endMinutes);
+        const endTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), endHours, endMinutes);
 
         if (endTime <= startTime) {
           endTime.setDate(endTime.getDate() + 1);

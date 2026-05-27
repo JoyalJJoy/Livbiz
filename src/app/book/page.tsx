@@ -1,22 +1,22 @@
 import styles from './page.module.css';
 import Link from 'next/link';
-import { Monitor, Wifi, Coffee, Zap, Presentation, ChevronLeft, Clock, Shield, Users, Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import { Monitor, Presentation, ArrowRight, Wifi, Coffee, Shield, Clock, CheckCircle2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import WorkspaceLottie from '@/components/WorkspaceLottie';
 
 export default function BookPage() {
   return (
     <main className={styles.main}>
       <Navbar />
 
-      {/* ── Hero Banner ─────────────────────────────────── */}
-      <section className={styles.heroBanner}>
-        <div className={`container ${styles.heroContent}`}>
-          <p className={styles.heroEyebrow}>Online Booking</p>
-          <h1>Find Your Perfect Workspace</h1>
-          <p className={styles.heroSubtitle}>
-            Flexible day passes and fully equipped meeting rooms — book in seconds, show up ready to work.
+      {/* ── Choose Your Path Section ─────────────────────── */}
+      <section className={styles.chooseSection}>
+        <div className={styles.chooseSectionInner}>
+          <p className={styles.eyebrow}>Choose Your Space</p>
+          <h1 className={styles.heading}>How can we help you today?</h1>
+          <p className={styles.subheading}>
+            Select your workspace type to access personalized booking options and resources.
           </p>
         </div>
         <svg className={styles.wave} viewBox="0 0 1440 88" preserveAspectRatio="none" aria-hidden="true">
@@ -24,101 +24,118 @@ export default function BookPage() {
         </svg>
       </section>
 
-      {/* ── Content Section ─────────────────────────────── */}
-      <section className={styles.contentSection}>
-        <div className="container">
-          <div className={styles.backLink}>
-            <Link href="/" className={styles.backBtn}>
-              <ChevronLeft size={18} /> Back to Home
-            </Link>
-          </div>
+      {/* ── Two Cards Grid ───────────────────────────────── */}
+      <section className={styles.cardsSection}>
+        <div className={styles.cardsContainer}>
 
-          <div className={styles.contentGrid}>
-            <div className={styles.cardsCol}>
-              {/* Day Pass Card */}
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.cardTitleGroup}>
-                    <div className={styles.iconWrapper}>
-                      <Monitor size={22} />
-                    </div>
-                    <h3>Day Pass</h3>
-                  </div>
-                  <div className={styles.price}>₹200 Onwards</div>
-                </div>
-                <p className={styles.description}>
-                  Flexible workspace access, perfect for individuals and freelancers. Get a desk for the day with full access to all amenities.
-                </p>
-                <div className={styles.cardFooter}>
-                  <div className={styles.amenities}>
-                    <div className={styles.amenity} title="High-Speed WiFi"><Wifi size={15} /></div>
-                    <div className={styles.amenity} title="Air Conditioning"><Monitor size={15} /></div>
-                    <div className={styles.amenity} title="Power Backup"><Zap size={15} /></div>
-                    <div className={styles.amenity} title="Coffee & Tea"><Coffee size={15} /></div>
-                  </div>
-                  <Link href="/book/day-pass" className={styles.bookBtn}>
-                    Book a Desk
-                  </Link>
-                </div>
+          {/* Card 1: Book a Desk */}
+          <div className={styles.pathCard}>
+            <div className={styles.pathCardContent}>
+              <div className={styles.pathCardIcon}>
+                <Monitor size={22} />
               </div>
-
-              {/* Meeting Room Card */}
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.cardTitleGroup}>
-                    <div className={styles.iconWrapper}>
-                      <Presentation size={22} />
-                    </div>
-                    <h3>Meeting Rooms</h3>
-                  </div>
-                  <div className={styles.price}>₹250/hr Onwards</div>
-                </div>
-                <p className={styles.description}>
-                  Fully equipped rooms for pitches, team syncs, or client presentations. Available by the hour or full day.
-                </p>
-                <div className={styles.cardFooter}>
-                  <div className={styles.amenities}>
-                    <div className={styles.amenity} title="High-Speed WiFi"><Wifi size={15} /></div>
-                    <div className={styles.amenity} title="Air Conditioning"><Monitor size={15} /></div>
-                    <div className={styles.amenity} title="Power Backup"><Zap size={15} /></div>
-                    <div className={styles.amenity} title="Coffee & Tea"><Coffee size={15} /></div>
-                  </div>
-                  <Link href="/book/meeting-room" className={styles.bookBtn}>
-                    Book a Room
-                  </Link>
-                </div>
-              </div>
+              <p className={styles.pathLabel}>I need a</p>
+              <h2 className={styles.pathTitle}>Day Pass</h2>
+              <p className={styles.pathDescription}>
+                Find your ideal desk, book securely, and work productively with complete flexibility.
+              </p>
+              <ul className={styles.pathFeatures}>
+                <li>
+                  <CheckCircle2 size={16} className={styles.checkIcon} />
+                  <span>High-speed WiFi & power backup</span>
+                </li>
+                <li>
+                  <CheckCircle2 size={16} className={styles.checkIcon} />
+                  <span>Complimentary coffee & tea</span>
+                </li>
+                <li>
+                  <CheckCircle2 size={16} className={styles.checkIcon} />
+                  <span>Flexible hourly & daily booking</span>
+                </li>
+              </ul>
+              <Link href="/book/day-pass" className={styles.pathCta}>
+                <span>Book a Desk</span>
+                <ArrowRight size={18} />
+              </Link>
             </div>
-
-            <div className={styles.imageCol}>
-              <div className={styles.illustration}>
-                <WorkspaceLottie />
-              </div>
-              <div className={styles.imageColText}>
-                <h2>Workspace That Works for You</h2>
-                <p>Premium amenities, reliable connectivity, and a professional environment — all under one roof.</p>
-              </div>
+            <div className={styles.pathCardImage}>
+              <Image
+                src="/images/desk-booking.png"
+                alt="Professional working at a modern coworking desk"
+                width={360}
+                height={420}
+                className={styles.cardImg}
+                priority
+              />
             </div>
           </div>
 
-          {/* ── Features Strip ─────────────────────────── */}
-          <div className={styles.featuresStrip}>
-            <div className={styles.featureItem}>
-              <div className={styles.featureIcon}><Clock size={20} /></div>
-              <span>Instant Booking</span>
+          {/* Card 2: Book a Conference */}
+          <div className={styles.pathCard}>
+            <div className={styles.pathCardContent}>
+              <div className={styles.pathCardIcon}>
+                <Presentation size={22} />
+              </div>
+              <p className={styles.pathLabel}>I need a</p>
+              <h2 className={styles.pathTitle}>Conference Room</h2>
+              <p className={styles.pathDescription}>
+                Book fully equipped meeting rooms for pitches, team syncs, or client presentations.
+              </p>
+              <ul className={styles.pathFeatures}>
+                <li>
+                  <CheckCircle2 size={16} className={styles.checkIcon} />
+                  <span>Presentation screen & whiteboard</span>
+                </li>
+                <li>
+                  <CheckCircle2 size={16} className={styles.checkIcon} />
+                  <span>Seats 4–16 people comfortably</span>
+                </li>
+                <li>
+                  <CheckCircle2 size={16} className={styles.checkIcon} />
+                  <span>Hourly or full-day availability</span>
+                </li>
+              </ul>
+              <Link href="/book/meeting-room" className={styles.pathCta}>
+                <span>Book a Room</span>
+                <ArrowRight size={18} />
+              </Link>
             </div>
-            <div className={styles.featureItem}>
-              <div className={styles.featureIcon}><Shield size={20} /></div>
-              <span>Secure Payment</span>
+            <div className={styles.pathCardImage}>
+              <Image
+                src="/images/conference-booking.png"
+                alt="Modern conference room with presentation setup"
+                width={360}
+                height={420}
+                className={styles.cardImg}
+                priority
+              />
             </div>
-            <div className={styles.featureItem}>
-              <div className={styles.featureIcon}><Users size={20} /></div>
-              <span>Flexible Capacity</span>
-            </div>
-            <div className={styles.featureItem}>
-              <div className={styles.featureIcon}><Sparkles size={20} /></div>
-              <span>Premium Amenities</span>
-            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── Trust Strip ──────────────────────────────────── */}
+      <section className={styles.trustStrip}>
+        <div className={styles.trustInner}>
+          <div className={styles.trustItem}>
+            <Shield size={18} className={styles.trustIcon} />
+            <span>Secure & Verified Listings</span>
+          </div>
+          <div className={styles.trustDivider} />
+          <div className={styles.trustItem}>
+            <Clock size={18} className={styles.trustIcon} />
+            <span>Instant QR Booking Confirmation</span>
+          </div>
+          <div className={styles.trustDivider} />
+          <div className={styles.trustItem}>
+            <Wifi size={18} className={styles.trustIcon} />
+            <span>High-Speed WiFi at All Locations</span>
+          </div>
+          <div className={styles.trustDivider} />
+          <div className={styles.trustItem}>
+            <Coffee size={18} className={styles.trustIcon} />
+            <span>Premium Amenities Included</span>
           </div>
         </div>
       </section>

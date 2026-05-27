@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
-import { Search, Filter, Phone, IndianRupee } from 'lucide-react';
+import { Search, Phone, IndianRupee } from 'lucide-react';
 import styles from './page.module.css';
 
 interface User {
@@ -70,7 +70,7 @@ export default function AdminUsersPage() {
       if (!res.ok) throw new Error('Failed to update role');
       
       setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
-    } catch (err) {
+    } catch {
       alert('Failed to update role');
     }
   };

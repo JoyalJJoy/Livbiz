@@ -5,7 +5,7 @@ interface CreateAuditLogParams {
   userId: string; // Admin who performed the action
   targetId: string; // Booking ID, Ticket ID, or User ID
   targetType: 'BOOKING' | 'TICKET' | 'USER';
-  changes?: Record<string, any>; // What changed
+  changes?: Record<string, unknown>; // What changed
   ipAddress?: string; // Optional: IP address for security tracking
 }
 
@@ -27,7 +27,8 @@ export async function createAuditLog({
         userId,
         targetId,
         targetType,
-        changes: changes || undefined,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        changes: changes ? (changes as any) : undefined,
         ipAddress: ipAddress || null,
       },
     });

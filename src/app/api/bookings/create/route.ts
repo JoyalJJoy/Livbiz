@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
     const userId = (session.user as unknown as { id: string }).id;
     const body = await req.json();
-    const { slotId, startTime, endTime, totalPrice, seats, notes, attendees } = body;
+    const { slotId, startTime, endTime, totalPrice, seats, seatIds, notes, attendees } = body;
 
     // Validate required fields
     if (!slotId || !startTime || !endTime || totalPrice == null) {
@@ -86,7 +86,24 @@ export async function POST(req: Request) {
       }
     }
 
+    const requestedSeatIds = Array.isArray(seatIds) ? (seatIds as string[]) : [];
+
     if (slot.type === 'DAY_PASS') {
+      const conflictingBookings = await prisma.booking.findMany({
+        where: conflictWhere,
+        select: { seatIds: true },
+      });
+
+      const alreadyBookedSeats = conflictingBookings.flatMap(b => b.seatIds);
+      const duplicateSeats = requestedSeatIds.filter(seat => alreadyBookedSeats.includes(seat));
+
+      if (duplicateSeats.length > 0) {
+        return NextResponse.json(
+          { error: `The following seat(s) are already booked for this time: ${duplicateSeats.join(', ')}` },
+          { status: 409 }
+        );
+      }
+
       const bookedSeatAggregate = await prisma.booking.aggregate({
         where: conflictWhere,
         _sum: { seats: true },
@@ -122,6 +139,7 @@ export async function POST(req: Request) {
         endTime: parsedEnd,
         totalPrice: Number(totalPrice),
         seats: requestedSeats,
+        seatIds: requestedSeatIds,
         notes: notes || null,
         status: 'PENDING',
         tickets: {
