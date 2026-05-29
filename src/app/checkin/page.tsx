@@ -97,7 +97,7 @@ export default function CheckinPage() {
         <div className={styles.header}>
           <div className={styles.logoBadge}>
             <Sparkles size={16} className={styles.sparkleIcon} />
-            <span>LIVBIZ DESK</span>
+            <span>LIVBIZZ DESK</span>
           </div>
           <h1 className={styles.title}>Self Check-in</h1>
           <p className={styles.subtitle}>Welcome! Enter your 8-digit access pass code to unlock entry.</p>

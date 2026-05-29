@@ -98,7 +98,7 @@ export default async function TicketWalletPage({ params }: TicketPageProps) {
         {/* Pass Top Banner */}
         <div className={styles.topBar}>
           <Link href="/" className={styles.brand}>
-            <span>LIVBIZ</span>
+            <span>LIVBIZZ</span>
           </Link>
           <div className={`${styles.statusBadge} ${statusClass}`}>
             <span className={styles.pulseDot}></span>

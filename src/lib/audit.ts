@@ -2,7 +2,7 @@ import { prisma } from './prisma';
 
 interface CreateAuditLogParams {
   action: string; // 'BOOKING_APPROVED', 'BOOKING_REJECTED', 'TICKET_VERIFIED', etc.
-  userId: string; // Admin who performed the action
+  userId?: string | null; // Admin who performed the action (optional)
   targetId: string; // Booking ID, Ticket ID, or User ID
   targetType: 'BOOKING' | 'TICKET' | 'USER';
   changes?: Record<string, unknown>; // What changed
@@ -24,7 +24,7 @@ export async function createAuditLog({
     await prisma.auditLog.create({
       data: {
         action,
-        userId,
+        userId: userId || null,
         targetId,
         targetType,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

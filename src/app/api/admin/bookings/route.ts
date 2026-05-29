@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { invalidateCache } from '@/lib/cache';
 import QRCode from 'qrcode';
 import { sendEmail } from '@/lib/email';
+import { createAuditLog } from '@/lib/audit';
 
 export async function GET(req: Request) {
   try {
@@ -209,6 +210,16 @@ export async function PATCH(req: Request) {
 
       const [updatedBooking] = await prisma.$transaction(transactionOperations);
       
+      // Log administrative action
+      await createAuditLog({
+        action: 'BOOKING_APPROVED',
+        userId: adminId,
+        targetId: bookingId,
+        targetType: 'BOOKING',
+        changes: { status: 'APPROVED', adminNotes: adminNotes || null },
+        ipAddress: req.headers.get('x-forwarded-for') || undefined,
+      });
+      
       // Send Emails concurrently in the background (non-blocking)
       const emailPromises = updatedTickets
         .filter(t => t.email)
@@ -355,6 +366,16 @@ export async function PATCH(req: Request) {
         },
       });
 
+      // Log administrative action
+      await createAuditLog({
+        action: 'BOOKING_REJECTED',
+        userId: adminId,
+        targetId: bookingId,
+        targetType: 'BOOKING',
+        changes: { status: 'REJECTED', adminNotes: adminNotes || null },
+        ipAddress: req.headers.get('x-forwarded-for') || undefined,
+      });
+
       invalidateCache('admin:stats');
 
       return NextResponse.json({
@@ -386,6 +407,16 @@ export async function PATCH(req: Request) {
           data: { status: 'REVOKED' },
         }),
       ]);
+
+      // Log administrative action
+      await createAuditLog({
+        action: 'BOOKING_CANCELLED',
+        userId: adminId,
+        targetId: bookingId,
+        targetType: 'BOOKING',
+        changes: { status: 'CANCELLED', adminNotes: adminNotes || null },
+        ipAddress: req.headers.get('x-forwarded-for') || undefined,
+      });
 
       invalidateCache('admin:stats');
 
@@ -457,6 +488,17 @@ export async function PUT(req: Request) {
         slot: { include: { campus: { select: { name: true } } } },
         tickets: true,
       }
+    });
+
+    // Log administrative action
+    const adminId = (session.user as unknown as { id: string }).id;
+    await createAuditLog({
+      action: 'BOOKING_UPDATED',
+      userId: adminId,
+      targetId: bookingId,
+      targetType: 'BOOKING',
+      changes: updateData,
+      ipAddress: req.headers.get('x-forwarded-for') || undefined,
     });
 
     invalidateCache('admin:stats');

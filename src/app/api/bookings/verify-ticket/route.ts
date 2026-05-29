@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { createAuditLog } from '@/lib/audit';
 import { isRateLimited } from '@/lib/rate-limiter';
 
 export async function POST(req: Request) {
@@ -119,6 +120,16 @@ export async function POST(req: Request) {
         usedAt: now,
         scannedBy: 'CLIENT_SELF_DESK',
       },
+    });
+
+    // Log check-in action
+    await createAuditLog({
+      action: 'TICKET_VERIFIED_SELF',
+      userId: null,
+      targetId: ticket.id,
+      targetType: 'TICKET',
+      changes: { status: 'USED', scannedBy: 'CLIENT_SELF_DESK' },
+      ipAddress: ip,
     });
 
     return NextResponse.json({
