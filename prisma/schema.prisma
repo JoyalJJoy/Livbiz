@@ -165,8 +165,8 @@ model VerificationToken {
 model AuditLog {
   id         String   @id @default(cuid())
   action     String // 'BOOKING_APPROVED', 'BOOKING_REJECTED', 'TICKET_VERIFIED', etc.
-  userId     String // Admin who performed the action
-  user       User     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId     String? // Admin who performed the action
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   targetId   String // Booking ID, Ticket ID, or User ID
   targetType String // 'BOOKING', 'TICKET', 'USER'
   changes    Json? // What changed (status, ticketsCount, etc.)
