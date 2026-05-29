@@ -14,6 +14,7 @@ interface BookingState {
   selectedSeats: string[];
   planId: 'regular';
   selectedDates: Date[];
+  timeMode: 'full' | 'half' | 'custom';
   customStartTime: string;
   customEndTime: string;
 }
@@ -29,6 +30,26 @@ const BUSINESS_HOURS_END = [
   '05:30 PM', '06:00 PM', '06:30 PM', '07:00 PM', '07:30 PM', '08:00 PM'
 ];
 
+function parseTimeStringToMinutes(timeStr: string): number {
+  const parts = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!parts) return 0;
+  let hours = parseInt(parts[1]);
+  const minutes = parseInt(parts[2]);
+  const ampm = parts[3].toUpperCase();
+
+  if (ampm === 'PM' && hours !== 12) hours += 12;
+  if (ampm === 'AM' && hours === 12) hours = 0;
+
+  return hours * 60 + minutes;
+}
+
+function getDurationInHours(startTime: string, endTime: string): number {
+  const startMin = parseTimeStringToMinutes(startTime);
+  const endMin = parseTimeStringToMinutes(endTime);
+  if (endMin <= startMin) return 0;
+  return (endMin - startMin) / 60;
+}
+
 export default function DayPassWizard() {
   const router = useRouter();
   
@@ -38,6 +59,7 @@ export default function DayPassWizard() {
     selectedSeats: [],
     planId: 'regular',
     selectedDates: [new Date(2026, 4, 30)], // Default to May 30, 2026
+    timeMode: 'full',
     customStartTime: '09:00 AM',
     customEndTime: '06:00 PM',
   });
@@ -46,7 +68,7 @@ export default function DayPassWizard() {
   const [currentCalendarDate, setCurrentCalendarDate] = useState<Date>(new Date(2026, 4, 1));
 
   // Login & signup form state
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(true);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -226,18 +248,28 @@ export default function DayPassWizard() {
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) return;
+    if (!email) return;
+    if (!isSignUp && !password) return;
     if (isSignUp && !name) return;
     
     setIsLoggingIn(true);
     setLoginError(null);
     
+    let signupPassword = '';
+    if (isSignUp) {
+      signupPassword = 'Temp@1234' + Math.random().toString(36).slice(-8);
+    }
+    const finalPassword = isSignUp ? signupPassword : password;
+    
     try {
       if (isSignUp) {
+        const nameParts = name.trim().split(/\s+/);
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '.';
         const signupRes = await fetch('/api/auth/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password, phone }),
+          body: JSON.stringify({ firstName, lastName, email, password: finalPassword, phone, sendSetupLink: true }),
         });
         
         const signupData = await signupRes.json();
@@ -251,7 +283,7 @@ export default function DayPassWizard() {
       
       const res = await signIn('credentials', {
         email,
-        password,
+        password: finalPassword,
         redirect: false,
       });
       
@@ -274,7 +306,19 @@ export default function DayPassWizard() {
     return `${yyyy}-${mm}-${dd}`;
   };
 
-  const unitPrice = 200; // All Day Passes are casual, standard regular day pass pricing (₹200)
+  // Dynamic unit price calculation based on timeMode and custom duration
+  let unitPrice = 200; // default full day
+  if (state.timeMode === 'half') {
+    unitPrice = 100;
+  } else if (state.timeMode === 'custom') {
+    const duration = getDurationInHours(state.customStartTime, state.customEndTime);
+    if (duration < 5) {
+      unitPrice = 100;
+    } else {
+      unitPrice = 200;
+    }
+  }
+
   const totalPrice = unitPrice * state.usersCount * Math.max(1, state.selectedDates.length);
 
   // Dynamic Calendar Data calculation
@@ -318,15 +362,15 @@ export default function DayPassWizard() {
       </div>
 
       {/* 2. MIDDLE COLUMN */}
-      <div className={styles.mainContent}>
+      <div className={`${styles.mainContent} ${state.step < 5 ? styles.noBorderRight : ''}`}>
         
         <div className={styles.contentHeader}>
           <h2>
             {state.step === 1 && 'Number of Users'}
-            {state.step === 2 && 'Choose Desk Layout'}
-            {state.step === 3 && 'Choose Dates'}
-            {state.step === 4 && 'Business Hours'}
-            {state.step === 5 && (isSignUp ? 'Create Account' : 'Login or Create Account')}
+            {state.step === 2 && 'Choose Dates'}
+            {state.step === 3 && 'Business Hours'}
+            {state.step === 4 && 'Choose Desk Layout'}
+            {state.step === 5 && (isSignUp ? 'Sign Up' : 'Login')}
           </h2>
           <button className={styles.closeBtn} onClick={() => router.push('/book')}>
             <X size={16} />
@@ -374,8 +418,8 @@ export default function DayPassWizard() {
             </div>
           )}
 
-          {/* STEP 2: CHOOSE SEAT LAYOUT */}
-          {state.step === 2 && (
+          {/* STEP 4: CHOOSE SEAT LAYOUT */}
+          {state.step === 4 && (
             <div className={styles.seatsOuterContainer}>
               <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', textAlign: 'center', margin: 0 }}>
                 Choose Your Desks
@@ -395,8 +439,8 @@ export default function DayPassWizard() {
             </div>
           )}
 
-          {/* STEP 3: CHOOSE DATES (MULTI SELECT) */}
-          {state.step === 3 && (
+          {/* STEP 2: CHOOSE DATES (MULTI SELECT) */}
+          {state.step === 2 && (
             <>
               <p className={styles.subTitle}>Select one or more dates for your booking (click to toggle)</p>
               
@@ -470,40 +514,83 @@ export default function DayPassWizard() {
             </>
           )}
 
-          {/* STEP 4: CUSTOM START / END TIME */}
-          {state.step === 4 && (
+          {/* STEP 3: TIME SLOT SELECTION */}
+          {state.step === 3 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <p className={styles.subTitle}>Select custom business hours for your entry and exit</p>
+              <p className={styles.subTitle}>Select your day pass access duration</p>
               
-              <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column' }}>
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>ENTRY TIME</label>
-                  <select 
-                    className={styles.inputField} 
-                    style={{ paddingLeft: '1rem', cursor: 'pointer' }}
-                    value={state.customStartTime}
-                    onChange={(e) => setState(s => ({ ...s, customStartTime: e.target.value }))}
-                  >
-                    {BUSINESS_HOURS_START.map(t => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {/* Full Day Card */}
+                <div 
+                  onClick={() => setState(s => ({ ...s, timeMode: 'full', customStartTime: '09:00 AM', customEndTime: '06:00 PM' }))}
+                  style={{ cursor: 'pointer', padding: '1.25rem', border: '1px solid #e2e8f0', borderRadius: '12px', transition: 'all 0.2s', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: state.timeMode === 'full' ? '#f8fafc' : 'white', boxShadow: state.timeMode === 'full' ? '0 0 0 2px #0f172a' : 'none' }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem' }}>Full Day</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>09:00 AM - 06:00 PM (9 hours)</div>
+                  </div>
+                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.15rem' }}>₹200</div>
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>EXIT TIME</label>
-                  <select 
-                    className={styles.inputField} 
-                    style={{ paddingLeft: '1rem', cursor: 'pointer' }}
-                    value={state.customEndTime}
-                    onChange={(e) => setState(s => ({ ...s, customEndTime: e.target.value }))}
-                  >
-                    {BUSINESS_HOURS_END.map(t => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
+                {/* Half Day Card */}
+                <div 
+                  onClick={() => setState(s => ({ ...s, timeMode: 'half', customStartTime: '01:00 PM', customEndTime: '06:00 PM' }))}
+                  style={{ cursor: 'pointer', padding: '1.25rem', border: '1px solid #e2e8f0', borderRadius: '12px', transition: 'all 0.2s', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: state.timeMode === 'half' ? '#f8fafc' : 'white', boxShadow: state.timeMode === 'half' ? '0 0 0 2px #0f172a' : 'none' }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem' }}>Half Day</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>01:00 PM - 06:00 PM (5 hours)</div>
+                  </div>
+                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.15rem' }}>₹100</div>
+                </div>
+
+                {/* Custom Time Card */}
+                <div 
+                  onClick={() => setState(s => ({ ...s, timeMode: 'custom' }))}
+                  style={{ cursor: 'pointer', padding: '1.25rem', border: '1px solid #e2e8f0', borderRadius: '12px', transition: 'all 0.2s', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: state.timeMode === 'custom' ? '#f8fafc' : 'white', boxShadow: state.timeMode === 'custom' ? '0 0 0 2px #0f172a' : 'none' }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem' }}>Custom Time</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>Choose your own hours. Less than 5 hrs: ₹100 | 5+ hrs: ₹200</div>
+                  </div>
+                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.15rem' }}>
+                    {state.timeMode === 'custom' ? `₹${unitPrice}` : 'Flex'}
+                  </div>
                 </div>
               </div>
+
+              {/* Show dropdowns only when Custom Time is active */}
+              {state.timeMode === 'custom' && (
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                  <div className={styles.formGroup} style={{ flex: 1 }}>
+                    <label className={styles.formLabel}>ENTRY TIME</label>
+                    <select 
+                      className={styles.inputField} 
+                      style={{ paddingLeft: '1rem', cursor: 'pointer' }}
+                      value={state.customStartTime}
+                      onChange={(e) => setState(s => ({ ...s, customStartTime: e.target.value }))}
+                    >
+                      {BUSINESS_HOURS_START.map(t => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup} style={{ flex: 1 }}>
+                    <label className={styles.formLabel}>EXIT TIME</label>
+                    <select 
+                      className={styles.inputField} 
+                      style={{ paddingLeft: '1rem', cursor: 'pointer' }}
+                      value={state.customEndTime}
+                      onChange={(e) => setState(s => ({ ...s, customEndTime: e.target.value }))}
+                    >
+                      {BUSINESS_HOURS_END.map(t => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
 
               <div style={{ borderLeft: '3px solid #0f172a', paddingLeft: '1rem', color: '#64748b', fontSize: '0.85rem', lineHeight: 1.5 }}>
                 Workspace access is granted strictly between the selected hours. Front reception desk check-in buffer allows entering up to 15 minutes early.
@@ -541,13 +628,12 @@ export default function DayPassWizard() {
                     <span className={styles.inputIcon}>
                       <Phone size={16} />
                     </span>
-                    <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                    <div className={styles.inputField} style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                       <span style={{ padding: '0 0.5rem', color: '#64748b', borderRight: '1px solid #e2e8f0', marginRight: '0.5rem' }}>+91</span>
                       <input 
                         type="tel"
                         required
-                        className={styles.inputField}
-                        style={{ paddingLeft: '0' }}
+                        style={{ border: 'none', outline: 'none', width: '100%', padding: 0, background: 'transparent', fontSize: 'inherit', color: 'inherit' }}
                         placeholder="9876543210"
                         pattern="[6-9][0-9]{9}"
                         title="Please enter a valid 10-digit Indian mobile number"
@@ -578,29 +664,31 @@ export default function DayPassWizard() {
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Password</label>
-                <div className={styles.inputWrapper}>
-                  <span className={styles.inputIcon}>
-                    <Lock size={16} />
-                  </span>
-                  <input 
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    className={styles.inputField}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <button 
-                    type="button" 
-                    className={styles.inputToggleEye}
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
+              {!isSignUp && (
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Password</label>
+                  <div className={styles.inputWrapper}>
+                    <span className={styles.inputIcon}>
+                      <Lock size={16} />
+                    </span>
+                    <input 
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      className={styles.inputField}
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button 
+                      type="button" 
+                      className={styles.inputToggleEye}
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {loginError && (
                 <div style={{ color: '#ef4444', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1rem', textAlign: 'center' }}>
@@ -609,16 +697,16 @@ export default function DayPassWizard() {
               )}
 
               <button type="submit" className={styles.loginSubmitBtn} disabled={isLoggingIn}>
-                {isSignUp ? (isLoggingIn ? 'Creating account...' : 'Sign up & Book') : (isLoggingIn ? 'Signing in...' : 'Sign in & Book')}
+                {isSignUp ? (isLoggingIn ? 'Signing up...' : 'Sign up & Book') : (isLoggingIn ? 'Signing in...' : 'Sign in & Book')}
               </button>
 
               {isSignUp ? (
                 <div className={styles.signUpText}>
-                  Already have an account? <span className={styles.signUpLink} onClick={() => { setIsSignUp(false); setLoginError(null); }}>Sign in</span>
+                  Already registered? <span className={styles.signUpLink} onClick={() => { setIsSignUp(false); setLoginError(null); }}>Sign in</span>
                 </div>
               ) : (
                 <div className={styles.signUpText}>
-                  Don&apos;t have an account? <span className={styles.signUpLink} onClick={() => { setIsSignUp(true); setLoginError(null); }}>Sign up</span>
+                  New user? <span className={styles.signUpLink} onClick={() => { setIsSignUp(true); setLoginError(null); }}>Sign up</span>
                 </div>
               )}
 
@@ -628,100 +716,104 @@ export default function DayPassWizard() {
         </div>
 
         {/* STICKY footer navigation inside middle column */}
-        {state.step > 1 && (
-          <div className={styles.footerNav}>
+        <div className={styles.footerNav}>
+          {state.step > 1 ? (
             <button type="button" className={styles.footerBackBtn} onClick={goBack}>
               &lt; Back
             </button>
-            
-            {(state.step >= 2 && state.step <= 4) && (
-              <button 
-                type="button" 
-                className={styles.footerNextBtn} 
-                onClick={goNext} 
-                disabled={state.step === 2 && state.selectedSeats.length !== state.usersCount}
-              >
-                Next
-              </button>
-            )}
-          </div>
-        )}
+          ) : (
+            <div /> // Spacer to align Next to the right
+          )}
+          
+          {state.step < TOTAL_STEPS && (
+            <button 
+              type="button" 
+              className={styles.footerNextBtn} 
+              onClick={goNext} 
+              disabled={state.step === 4 && state.selectedSeats.length !== state.usersCount}
+            >
+              Next
+            </button>
+          )}
+        </div>
 
       </div>
 
       {/* 3. RIGHT COLUMN (SUMMARY) */}
-      <div className={styles.summarySidebar}>
-        
-        <div className={styles.summaryHeader}>
-          <h2>Summary</h2>
-        </div>
-        
-        <div className={styles.summaryBody}>
+      {state.step === 5 && (
+        <div className={styles.summarySidebar}>
           
-          <div className={styles.personTag}>
-            {state.usersCount} USER{state.usersCount > 1 ? 'S' : ''}
-          </div>
-          <div className={styles.selectedPass}>
-            Casual Day Pass
-          </div>
-
-          <div className={styles.summaryBox}>
-            <div className={styles.summaryRow}>
-              <span>Seats Picked</span>
-              <span>{state.selectedSeats.length > 0 ? state.selectedSeats.join(', ') : '-'}</span>
-            </div>
-            
-            <div className={styles.summaryRow}>
-              <span>Dates ({state.selectedDates.length})</span>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.2rem', fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>
-                {state.selectedDates.map(d => (
-                  <span key={d.getTime()}>{formatDateString(d)}</span>
-                ))}
-              </div>
-            </div>
-            
-            <div className={styles.summaryRow}>
-              <span>Time Slot</span>
-              <span>{state.customStartTime} &ndash; {state.customEndTime}</span>
-            </div>
-            
-            <div className={styles.summaryRow}>
-              <span>Payment</span>
-              <span>Pay at Desk</span>
-            </div>
-          </div>
-
-          <div className={styles.costBreakdown}>
-            <div className={styles.costTitle}>COST BREAKDOWN</div>
-            <div className={styles.costRow} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.25rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.85rem', color: '#64748b' }}>
-                <span>₹{unitPrice} × {state.usersCount} seat{state.usersCount > 1 ? 's' : ''}</span>
-                <span>₹{unitPrice * state.usersCount} / day</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.85rem', color: '#64748b' }}>
-                <span>Total Days</span>
-                <span>× {state.selectedDates.length}</span>
-              </div>
-            </div>
-
-            <button 
-              type="button"
-              className={styles.totalBtn}
-              onClick={() => {
-                if (state.step < TOTAL_STEPS) {
-                  goNext();
-                }
-              }}
-              disabled={state.step === 2 && state.selectedSeats.length !== state.usersCount}
-            >
-              <span>Total Price</span>
-              <span>₹{totalPrice}</span>
-            </button>
+          <div className={styles.summaryHeader}>
+            <h2>Summary</h2>
           </div>
           
+          <div className={styles.summaryBody}>
+            
+            <div className={styles.personTag}>
+              {state.usersCount} USER{state.usersCount > 1 ? 'S' : ''}
+            </div>
+            <div className={styles.selectedPass}>
+              Casual Day Pass
+            </div>
+
+            <div className={styles.summaryBox}>
+              <div className={styles.summaryRow}>
+                <span>Seats Picked</span>
+                <span>{state.selectedSeats.length > 0 ? state.selectedSeats.join(', ') : '-'}</span>
+              </div>
+              
+              <div className={styles.summaryRow}>
+                <span>Dates ({state.selectedDates.length})</span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.2rem', fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>
+                  {state.selectedDates.map(d => (
+                    <span key={d.getTime()}>{formatDateString(d)}</span>
+                  ))}
+                </div>
+              </div>
+              
+              <div className={styles.summaryRow}>
+                <span>Time Slot</span>
+                <span>{state.customStartTime} &ndash; {state.customEndTime}</span>
+              </div>
+              
+              <div className={styles.summaryRow}>
+                <span>Payment</span>
+                <span>Pay at Desk</span>
+              </div>
+            </div>
+
+            <div className={styles.costBreakdown}>
+              <div className={styles.costTitle}>COST BREAKDOWN</div>
+              <div className={styles.costRow} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.25rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.85rem', color: '#64748b' }}>
+                  <span>₹{unitPrice} × {state.usersCount} seat{state.usersCount > 1 ? 's' : ''}</span>
+                  <span>₹{unitPrice * state.usersCount} / day</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.85rem', color: '#64748b' }}>
+                  <span>Total Days</span>
+                  <span>× {state.selectedDates.length}</span>
+                </div>
+              </div>
+
+              <button 
+                type="button"
+                className={styles.totalBtn}
+                onClick={() => {
+                  if (state.step < TOTAL_STEPS) {
+                    goNext();
+                  }
+                }}
+                disabled={false}
+              >
+                <span>Total Price</span>
+                <span>₹{totalPrice}</span>
+              </button>
+            </div>
+            
+          </div>
+          
         </div>
-        
-      </div>
+      )}
 
     </div>
   );

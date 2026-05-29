@@ -26,7 +26,7 @@ async function main() {
     where: { slug: 'main-hub' },
     update: {},
     create: {
-      name: 'LivBiz Main Hub',
+      name: 'LivBizz Main Hub',
       slug: 'main-hub',
       address: '123 Tech Park, Block A',
       city: 'Bangalore',

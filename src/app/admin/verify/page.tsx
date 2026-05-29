@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ScanLine, CheckCircle2, XCircle, Loader2, User, Calendar, Clock, MapPin } from 'lucide-react';
+import Image from 'next/image';
 import styles from './verify.module.css';
 
 interface VerifyResult {
@@ -130,7 +131,7 @@ export default function VerifyPassPage() {
           
           <div className={styles.qrBox}>
             {deskQrUrl ? (
-              <img src={deskQrUrl} alt="Desk QR" width={170} height={170} />
+              <Image src={deskQrUrl} alt="Desk QR" width={170} height={170} unoptimized />
             ) : (
               <div style={{ width: 170, height: 170, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc', color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600 }}>
                 Generating QR...

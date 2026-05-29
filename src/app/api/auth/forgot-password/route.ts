@@ -10,6 +10,7 @@ import {
   getPasswordResetIdentifier,
   hashPasswordResetToken,
 } from '@/lib/password-reset';
+import { withRequestContext } from '@/lib/logger';
 
 const GENERIC_RESET_MESSAGE =
   'If a client account exists for that email, password recovery instructions have been sent.';
@@ -29,9 +30,9 @@ function buildPasswordResetEmail(name: string, resetUrl: string) {
 
   return `
     <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #0f172a; line-height: 1.6;">
-      <h1 style="font-size: 24px; margin-bottom: 12px;">Reset your LivBiz password</h1>
+      <h1 style="font-size: 24px; margin-bottom: 12px;">Reset your LivBizz password</h1>
       <p>Hi ${safeName},</p>
-      <p>We received a request to reset the password for your LivBiz client account.</p>
+      <p>We received a request to reset the password for your LivBizz client account.</p>
       <p>
         <a href="${safeUrl}" style="display: inline-block; background: #0f172a; color: #ffffff; text-decoration: none; padding: 12px 18px; border-radius: 8px; font-weight: 700;">
           Set a new password
@@ -44,6 +45,7 @@ function buildPasswordResetEmail(name: string, resetUrl: string) {
 }
 
 export async function POST(req: Request) {
+  const log = withRequestContext(req);
   try {
     const ip = getClientIp(req);
     const ipLimit = isRateLimited(`forgot-password:ip:${ip}`, 5);
@@ -102,8 +104,15 @@ export async function POST(req: Request) {
     const resetUrl = `${getRequestOrigin(req)}/reset-password?token=${encodeURIComponent(token)}`;
     const emailSent = await sendEmail({
       to: user.email,
-      subject: 'Reset your LivBiz password',
+      subject: 'Reset your LivBizz password',
       html: buildPasswordResetEmail(user.name, resetUrl),
+    });
+
+    log.info('Forgot password email sent', {
+      data: {
+        email: user.email,
+        emailSent,
+      },
     });
 
     const response: {
@@ -121,7 +130,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Forgot password error:', error);
+    log.error('Forgot password error', { error });
     return NextResponse.json({ error: 'Internal server error. Please try again.' }, { status: 500 });
   }
 }

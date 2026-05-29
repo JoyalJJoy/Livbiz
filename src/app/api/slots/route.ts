@@ -6,6 +6,16 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const type = searchParams.get('type');
+
+    // Validate type parameter against allowed values
+    const allowedTypes = ['DAY_PASS', 'MEETING_ROOM'];
+    if (type && !allowedTypes.includes(type)) {
+      return NextResponse.json(
+        { error: 'Invalid slot type. Must be DAY_PASS or MEETING_ROOM.' },
+        { status: 400 }
+      );
+    }
+
     const cacheKey = `slots:${type || 'all'}`;
 
     const formatted = await cached(

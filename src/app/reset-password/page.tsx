@@ -113,11 +113,11 @@ function ResetPasswordContent() {
           <KeyRound size={112} strokeWidth={1.3} color="#f59e0b" />
           <h2 className={styles.welcomeHeading}>Password recovery</h2>
           <p className={styles.welcomeText}>
-            Set a fresh password and return to your LivBiz dashboard.
+            Set a fresh password and return to your LivBizz dashboard.
           </p>
         </div>
 
-        <p className={styles.footerCopyright}>&copy; LivBiz Coworking</p>
+        <p className={styles.footerCopyright}>&copy; LivBizz Coworking</p>
       </div>
 
       <div className={styles.rightFormArea}>

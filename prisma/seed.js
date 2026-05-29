@@ -9,10 +9,10 @@ async function main() {
   // 1. Create Super Admin
   const passwordHash = await bcrypt.hash('password@123', 10);
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@livbiz.com' },
+    where: { email: 'admin@livbizz.com' },
     update: { passwordHash },
     create: {
-      email: 'admin@livbiz.com',
+      email: 'admin@livbizz.com',
       name: 'Super Admin',
       passwordHash,
       role: 'SUPER_ADMIN',
@@ -25,7 +25,7 @@ async function main() {
     where: { slug: 'main-hub' },
     update: {},
     create: {
-      name: 'LivBiz Main Hub',
+      name: 'LivBizz Main Hub',
       slug: 'main-hub',
       address: '123 Tech Park, Block A',
       city: 'Bangalore',

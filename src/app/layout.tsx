@@ -20,22 +20,22 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   metadataBase: new URL('https://livbiz.com'), // Replace with actual domain
   title: {
-    default: "LivBiz Coworking & Conference Hub | Flexible Workspace",
-    template: "%s | LivBiz Coworking"
+    default: "LivBizz Coworking & Conference Hub | Flexible Workspace",
+    template: "%s | LivBizz Coworking"
   },
-  description: "Flexible coworking, day passes, and meeting room bookings at LivBiz Coworking & Conference Hub.",
-  keywords: ["Coworking", "Conference Hub", "Workspace", "Day Pass", "Meeting Rooms", "LivBiz"],
+  description: "Flexible coworking, day passes, and meeting room bookings at LivBizz Coworking & Conference Hub.",
+  keywords: ["Coworking", "Conference Hub", "Workspace", "Day Pass", "Meeting Rooms", "LivBizz"],
   openGraph: {
-    title: "LivBiz Coworking & Conference Hub",
+    title: "LivBizz Coworking & Conference Hub",
     description: "Experience India's largest premium coworking space.",
     url: 'https://livbiz.com',
-    siteName: 'LivBiz',
+    siteName: 'LivBizz',
     images: [
       {
         url: '/images/hero-bg.jpg',
         width: 1200,
         height: 630,
-        alt: 'LivBiz Premium Coworking',
+        alt: 'LivBizz Premium Coworking',
       },
     ],
     locale: 'en_IN',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'LivBiz Coworking & Conference Hub',
+    title: 'LivBizz Coworking & Conference Hub',
     description: "Flexible coworking, day passes, and meeting room bookings.",
     images: ['/images/hero-bg.jpg'],
   },

@@ -2,15 +2,19 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
-import { Search, Phone, IndianRupee } from 'lucide-react';
+import { Search, Phone, IndianRupee, X } from 'lucide-react';
 import styles from './page.module.css';
 
 interface User {
   id: string;
   name: string;
+  firstName?: string | null;
+  lastName?: string | null;
   email: string;
   phone: string | null;
   role: string;
+  idType?: string | null;
+  idNumber?: string | null;
   createdAt: string;
   bookingsCount: number;
   totalSpent: number;
@@ -30,6 +34,67 @@ export default function AdminUsersPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
+
+  // Details & Edit Modal States
+  const [detailsModal, setDetailsModal] = useState<User | null>(null);
+  const [editMode, setEditMode] = useState(false);
+  const [editFirstName, setEditFirstName] = useState('');
+  const [editLastName, setEditLastName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editIdType, setEditIdType] = useState('');
+  const [editIdNumber, setEditIdNumber] = useState('');
+  const [saveLoading, setSaveLoading] = useState(false);
+
+  const openDetailsModal = (u: User) => {
+    setDetailsModal(u);
+    setEditMode(false);
+    
+    // Attempt to split name if firstName/lastName not populated
+    const first = u.firstName || u.name.split(' ')[0] || '';
+    const last = u.lastName || u.name.split(' ').slice(1).join(' ') || '';
+    setEditFirstName(first);
+    setEditLastName(last);
+    setEditEmail(u.email);
+    setEditPhone(u.phone || '');
+    setEditIdType(u.idType || '');
+    setEditIdNumber(u.idNumber || '');
+  };
+
+  const handleSaveEdit = async () => {
+    if (!detailsModal) return;
+    setSaveLoading(true);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: detailsModal.id,
+          firstName: editFirstName.trim(),
+          lastName: editLastName.trim(),
+          email: editEmail.trim(),
+          phone: editPhone.trim() || null,
+          idType: editIdType || null,
+          idNumber: editIdNumber.trim() || null,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('Client details updated successfully!');
+        setEditMode(false);
+        setDetailsModal(null);
+        fetchUsers();
+      } else {
+        alert(data.error || 'Failed to save changes');
+      }
+    } catch {
+      alert('Network error while saving changes');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -119,7 +184,7 @@ export default function AdminUsersPage() {
               <th>Total Spent</th>
               <th>Joined Date</th>
               <th>Role</th>
-              {isSuperAdmin && <th>Actions</th>}
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -164,20 +229,28 @@ export default function AdminUsersPage() {
                       {user.role.replace('_', ' ')}
                     </span>
                   </td>
-                  {isSuperAdmin && (
-                    <td>
-                      <select 
-                        className={styles.actionSelect}
-                        value={user.role}
-                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                        disabled={user.id === (session?.user as unknown as { id: string })?.id}
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <button 
+                        className={styles.detailsBtn} 
+                        onClick={() => openDetailsModal(user)}
                       >
-                        <option value="CLIENT">Make Client</option>
-                        <option value="ADMIN">Make Admin</option>
-                        <option value="SUPER_ADMIN">Make Super Admin</option>
-                      </select>
-                    </td>
-                  )}
+                        Details
+                      </button>
+                      {isSuperAdmin && (
+                        <select 
+                          className={styles.actionSelect}
+                          value={user.role}
+                          onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                          disabled={user.id === (session?.user as unknown as { id: string })?.id}
+                        >
+                          <option value="CLIENT">Make Client</option>
+                          <option value="ADMIN">Make Admin</option>
+                          <option value="SUPER_ADMIN">Make Super Admin</option>
+                        </select>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))
             )}
@@ -208,6 +281,156 @@ export default function AdminUsersPage() {
           </div>
         )}
       </div>
+
+      {/* Details & Edit Client Modal */}
+      {detailsModal && (
+        <div className={styles.modalOverlay} onClick={() => { if (!saveLoading) setDetailsModal(null); }}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <button className={styles.closeModalBtn} onClick={() => setDetailsModal(null)} disabled={saveLoading}>
+              <X size={20} />
+            </button>
+            <h3 className={styles.modalTitle}>{editMode ? 'Edit Client Profile' : 'Client Profile Details'}</h3>
+            <p className={styles.modalSubtitle}>ID: {detailsModal.id}</p>
+
+            <div className={styles.modalGrid}>
+              
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>First Name</label>
+                <input 
+                  type="text" 
+                  className={styles.formInput} 
+                  value={editFirstName}
+                  onChange={(e) => setEditFirstName(e.target.value)}
+                  disabled={!editMode || saveLoading} 
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Last Name</label>
+                <input 
+                  type="text" 
+                  className={styles.formInput} 
+                  value={editLastName}
+                  onChange={(e) => setEditLastName(e.target.value)}
+                  disabled={!editMode || saveLoading} 
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Email Address</label>
+                <input 
+                  type="email" 
+                  className={styles.formInput} 
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  disabled={!editMode || saveLoading} 
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Phone Number</label>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ color: '#64748b', marginRight: '0.25rem', fontSize: '0.9rem' }}>+91</span>
+                  <input 
+                    type="tel" 
+                    className={styles.formInput} 
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    disabled={!editMode || saveLoading} 
+                    placeholder="9876543210"
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Government ID Type</label>
+                <select
+                  className={styles.formSelect}
+                  value={editIdType}
+                  onChange={(e) => {
+                    setEditIdType(e.target.value);
+                    setEditIdNumber('');
+                  }}
+                  disabled={!editMode || saveLoading}
+                >
+                  <option value="">None</option>
+                  <option value="AADHAAR">Aadhaar Card</option>
+                  <option value="PAN">PAN Card</option>
+                </select>
+              </div>
+
+              {editIdType && (
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Government ID Number</label>
+                  <input 
+                    type="text" 
+                    className={styles.formInput} 
+                    value={editIdNumber}
+                    onChange={(e) => setEditIdNumber(e.target.value)}
+                    disabled={!editMode || saveLoading} 
+                    placeholder={editIdType === 'AADHAAR' ? '1234 5678 9012' : 'ABCDE1234F'}
+                  />
+                </div>
+              )}
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Total Bookings</label>
+                <input type="text" className={styles.formInput} value={detailsModal.bookingsCount} disabled />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Total Spent (₹)</label>
+                <input type="text" className={styles.formInput} value={`₹${detailsModal.totalSpent.toLocaleString()}`} disabled />
+              </div>
+
+            </div>
+
+            <div className={styles.modalActions}>
+              {editMode ? (
+                <>
+                  <button 
+                    type="button" 
+                    className={styles.cancelBtn} 
+                    onClick={() => setEditMode(false)}
+                    disabled={saveLoading}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="button" 
+                    className={styles.saveBtn} 
+                    onClick={handleSaveEdit}
+                    disabled={saveLoading}
+                  >
+                    {saveLoading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    type="button" 
+                    className={styles.cancelBtn} 
+                    onClick={() => setDetailsModal(null)}
+                  >
+                    Close
+                  </button>
+                  <button 
+                    type="button" 
+                    className={styles.saveBtn} 
+                    onClick={() => setEditMode(true)}
+                  >
+                    Edit Details
+                  </button>
+                </>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }

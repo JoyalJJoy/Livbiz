@@ -4,8 +4,10 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { invalidateCache } from '@/lib/cache';
 import { generateTicketCode } from '@/lib/tickets';
+import { withRequestContext } from '@/lib/logger';
 
 export async function POST(req: Request) {
+  const log = withRequestContext(req);
   try {
     const session = await getServerSession(authOptions);
 
@@ -16,6 +18,14 @@ export async function POST(req: Request) {
     const userId = (session.user as unknown as { id: string }).id;
     const body = await req.json();
     const { slotId, startTime, endTime, totalPrice, seats, seatIds, notes, attendees } = body;
+
+    // Validate notes length
+    if (notes && typeof notes === 'string' && notes.length > 500) {
+      return NextResponse.json(
+        { error: 'Notes must be 500 characters or less.' },
+        { status: 400 }
+      );
+    }
 
     // Validate required fields
     if (!slotId || !startTime || !endTime || totalPrice == null) {
@@ -167,6 +177,15 @@ export async function POST(req: Request) {
     invalidateCache('availability:*');
     invalidateCache('admin:stats');
 
+    log.info('Booking created successfully', {
+      data: {
+        bookingId: booking.id,
+        userId,
+        slotId,
+        seats: requestedSeats,
+      },
+    });
+
     return NextResponse.json({
       success: true,
       message: 'Booking created successfully! It is pending admin approval.',
@@ -182,7 +201,7 @@ export async function POST(req: Request) {
       },
     });
   } catch (error) {
-    console.error('Booking creation error:', error);
+    log.error('Booking creation error', { error });
     return NextResponse.json(
       { error: 'Internal server error. Please try again.' },
       { status: 500 }

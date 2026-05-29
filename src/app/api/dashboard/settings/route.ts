@@ -60,6 +60,15 @@ export async function PUT(req: Request) {
 
     if (action === 'update_profile') {
       const { firstName, lastName, email, phone, idType, idNumber } = body;
+
+      // Validate field lengths
+      if (typeof firstName === 'string' && firstName.length > 100) {
+        return NextResponse.json({ error: 'First name must be 100 characters or less.' }, { status: 400 });
+      }
+      if (typeof lastName === 'string' && lastName.length > 100) {
+        return NextResponse.json({ error: 'Last name must be 100 characters or less.' }, { status: 400 });
+      }
+
       const normalizedEmail = normalizeEmail(email);
       const normalizedPhone = normalizeIndianPhone(phone);
       const trimmedFirstName = typeof firstName === 'string' ? firstName.trim() : '';

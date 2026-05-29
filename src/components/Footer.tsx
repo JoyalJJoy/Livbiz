@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={`container ${styles.container}`}>
         <div className={styles.brand}>
-          <h3>LivBiz Coworking & Conference Hub</h3>
+          <h3>LivBizz Coworking & Conference Hub</h3>
           <p>Flexible coworking, meeting rooms, and online workspace booking for professionals who want a focused place to work better.</p>
         </div>
         
@@ -41,7 +41,7 @@ export default function Footer() {
       
       <div className={styles.bottomBar}>
         <div className="container">
-          <p>&copy; {new Date().getFullYear()} LivBiz Coworking & Conference Hub. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} LivBizz Coworking & Conference Hub. All rights reserved.</p>
         </div>
       </div>
     </footer>

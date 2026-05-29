@@ -7,7 +7,7 @@ export default function Testimonials() {
       <div className={`container ${styles.container}`}>
         <div className={styles.header}>
           <h2>Client Stories</h2>
-          <p>Hear from the visionary leaders, entrepreneurs, and teams thriving at LivBiz.</p>
+          <p>Hear from the visionary leaders, entrepreneurs, and teams thriving at LivBizz.</p>
         </div>
 
         <div className={styles.gridTop}>
@@ -24,7 +24,7 @@ export default function Testimonials() {
             <div className={styles.content}>
               <div className={styles.quoteIcon}>&ldquo;</div>
               <p className={styles.quote}>
-                &ldquo;LivBiz Coworking & Conference Hub provided the most sophisticated environment for growing our tech startup. The premium amenities and vibrant community allowed us to focus completely on our work while networking with like-minded individuals.&rdquo;
+                &ldquo;LivBizz Coworking & Conference Hub provided the most sophisticated environment for growing our tech startup. The premium amenities and vibrant community allowed us to focus completely on our work while networking with like-minded individuals.&rdquo;
               </p>
               <div className={styles.author}>
                 <h4>Sarah Jenkins</h4>
@@ -46,7 +46,7 @@ export default function Testimonials() {
             <div className={styles.content}>
               <div className={styles.quoteIcon}>&ldquo;</div>
               <p className={styles.quote}>
-                &ldquo;Moving to LivBiz was a strategic decision for us. We needed a space that reflects our brand&apos;s premium value, and the Lavelle Road campus exceeded our expectations. The staff is exceptional and the workspace is truly world-class.&rdquo;
+                &ldquo;Moving to LivBizz was a strategic decision for us. We needed a space that reflects our brand&apos;s premium value, and the Lavelle Road campus exceeded our expectations. The staff is exceptional and the workspace is truly world-class.&rdquo;
               </p>
               <div className={styles.author}>
                 <h4>David Chen</h4>
@@ -72,7 +72,7 @@ export default function Testimonials() {
               &ldquo;A space that reflects the standard of my work.&rdquo;
             </h3>
             <p className={styles.featuredText}>
-              &ldquo;LivBiz Coworking Hub isn&apos;t just about desks; it&apos;s about an atmosphere that promotes success. Every detail is perfect, making it a true environment for excellence.&rdquo;
+              &ldquo;LivBizz Coworking Hub isn&apos;t just about desks; it&apos;s about an atmosphere that promotes success. Every detail is perfect, making it a true environment for excellence.&rdquo;
             </p>
             <div className={styles.featuredAuthor}>
               <h4>Michael Sterling</h4>

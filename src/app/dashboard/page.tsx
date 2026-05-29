@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Calendar, Key, ArrowRight, Clock, MapPin, CreditCard, QrCode, CalendarDays } from 'lucide-react';
+import Image from 'next/image';
 import styles from './page.module.css';
 
 interface DashboardStats {
@@ -189,7 +190,7 @@ export default function DashboardPage() {
                   {booking.ticket && booking.ticket.status === 'VALID' && (
                     <div className={styles.ticketSection}>
                       <div className={styles.qrContainer}>
-                        <img src={booking.ticket.qrData} alt="Access QR Code" className={styles.qrImage} />
+                        <Image src={booking.ticket.qrData} alt="Access QR Code" className={styles.qrImage} width={180} height={180} unoptimized />
                       </div>
                       <div className={styles.ticketCode}>
                         <QrCode size={14} />

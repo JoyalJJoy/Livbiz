@@ -5,7 +5,7 @@ export default function CommunityBanner() {
     <section className={styles.section}>
       <div className={`container ${styles.container}`}>
         <div className={styles.header}>
-          <h2>The LivBiz Coworking & Conference Hub Community</h2>
+          <h2>The LivBizz Coworking & Conference Hub Community</h2>
           <p>Immerse yourself in a diverse global network of innovators, creators, and enterprise leaders shaping the future of work.</p>
         </div>
         

@@ -1,8 +1,20 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import QRCode from 'qrcode';
 
 export async function GET(req: Request) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const role = (session.user as unknown as { role: string }).role;
+    if (role !== 'SUPER_ADMIN' && role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const host = req.headers.get('host') || 'localhost:3000';
     const proto = req.headers.get('x-forwarded-proto') || 'http';
     const checkinUrl = `${proto}://${host}/checkin`;
@@ -19,3 +31,4 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+

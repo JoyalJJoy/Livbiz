@@ -37,7 +37,7 @@ export async function sendEmail({ to, subject, html }: SendEmailParams) {
 
   try {
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || `"LivBiz Booking" <${process.env.EMAIL_USER}>`,
+      from: process.env.EMAIL_FROM || `"LivBizz Booking" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,

@@ -8,6 +8,7 @@ import {
   hashPasswordResetToken,
 } from '@/lib/password-reset';
 import { validatePasswordStrength } from '@/lib/validation';
+import { withRequestContext } from '@/lib/logger';
 
 async function findPasswordResetToken(token: string) {
   if (!token || token.length < 32 || token.length > 256) {
@@ -55,6 +56,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const log = withRequestContext(req);
   try {
     const ip = getClientIp(req);
     const rateLimit = isRateLimited(`reset-password:ip:${ip}`, 10);
@@ -110,12 +112,19 @@ export async function POST(req: Request) {
       }),
     ]);
 
+    log.info('Password reset successful', {
+      data: {
+        email: resetToken.email,
+        userId: user.id,
+      },
+    });
+
     return NextResponse.json({
       success: true,
       message: 'Your password has been reset. You can sign in with the new password.',
     });
   } catch (error) {
-    console.error('Reset password error:', error);
+    log.error('Reset password error', { error });
     return NextResponse.json({ error: 'Internal server error. Please try again.' }, { status: 500 });
   }
 }

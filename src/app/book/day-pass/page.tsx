@@ -9,12 +9,12 @@ export default function DayPassBookingPage() {
       <main style={{ 
         flexGrow: 1, 
         backgroundColor: '#888f99', 
-        paddingTop: 'calc(var(--header-height) + var(--space-xl))',
-        paddingBottom: 'var(--space-xl)',
+        paddingTop: '160px',
+        paddingBottom: '2rem',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'center',
-        minHeight: 'calc(100vh - var(--header-height))'
+        minHeight: 'calc(100vh - 160px)'
       }}>
         <DayPassWizard />
       </main>

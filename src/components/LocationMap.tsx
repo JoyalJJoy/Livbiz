@@ -7,13 +7,13 @@ export default function LocationMap() {
       <div className={`container ${styles.container}`}>
         <div className={styles.header}>
           <p className={styles.kicker}>The directions to reach us</p>
-          <h2>How to Find LivBiz Coworking</h2>
+          <h2>How to Find LivBizz Coworking</h2>
           <p>Campus address, work hours and direct contact information will sit here once finalized.</p>
         </div>
 
         <div className={styles.mapGrid}>
           <div className={`${styles.infoCard} animate-on-scroll`}>
-            <h3>LivBiz Coworking & Conference Hub</h3>
+            <h3>LivBizz Coworking & Conference Hub</h3>
             <div className={styles.infoList}>
               <div className={styles.infoItem}>
                 <MapPin className={styles.icon} />
@@ -38,7 +38,7 @@ export default function LocationMap() {
 
           <div className={`${styles.mapWrapper} animate-on-scroll`} style={{ animationDelay: '0.2s' }}>
             <div className={styles.mapPlaceholder}>
-              <span>LivBiz</span>
+              <span>LivBizz</span>
               <strong>Campus map coming soon</strong>
             </div>
           </div>

@@ -125,6 +125,11 @@ export async function PATCH(req: Request) {
 
     const { bookingId, action, adminNotes } = await req.json();
 
+    // Validate adminNotes length
+    if (adminNotes !== undefined && typeof adminNotes === 'string' && adminNotes.length > 1000) {
+      return NextResponse.json({ error: 'Admin notes must be 1000 characters or less.' }, { status: 400 });
+    }
+
     if (!bookingId || !action) {
       return NextResponse.json({ error: 'bookingId and action are required' }, { status: 400 });
     }
@@ -212,14 +217,14 @@ export async function PATCH(req: Request) {
           const walletPassUrl = `${origin}/tickets/${t.code}`;
           
           const greetingText = isGuest
-            ? `Hi ${t.name || 'there'},<br/><br/>You have been registered by <strong>${booking.user.name}</strong> as an attendee for a conference room workspace booking at LivBiz.`
-            : `Hi ${t.name || 'there'},<br/><br/>Your workspace booking at LivBiz has been approved and confirmed!`;
+            ? `Hi ${t.name || 'there'},<br/><br/>You have been registered by <strong>${booking.user.name}</strong> as an attendee for a conference room workspace booking at LivBizz.`
+            : `Hi ${t.name || 'there'},<br/><br/>Your workspace booking at LivBizz has been approved and confirmed!`;
 
           const emailHtml = `
             <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0f19; color: #f8fafc; border-radius: 20px; overflow: hidden; border: 1px solid #1e293b;">
               <!-- Header -->
               <div style="background: linear-gradient(135deg, #1e1b4b 0%, #0b0f19 100%); padding: 2rem; text-align: center; border-bottom: 1px solid #1e293b;">
-                <h1 style="color: #ffffff; margin: 0; font-size: 1.5rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 900;">LIVBIZ PASS</h1>
+                <h1 style="color: #ffffff; margin: 0; font-size: 1.5rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 900;">LIVBIZZ PASS</h1>
                 <p style="color: #6366f1; margin: 0.5rem 0 0 0; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Workspace Confirmation</p>
               </div>
               
@@ -283,7 +288,7 @@ export async function PATCH(req: Request) {
 
               <!-- Footer -->
               <div style="background-color: #080c14; padding: 1.5rem; text-align: center; border-top: 1px solid #1e293b; font-size: 0.75rem; color: #475569;">
-                <p style="margin: 0 0 0.25rem 0;">LivBiz Coworking Workspaces</p>
+                <p style="margin: 0 0 0.25rem 0;">LivBizz Coworking Workspaces</p>
                 <p style="margin: 0;">This is an automated confirmation pass. Please do not reply to this email.</p>
               </div>
             </div>
@@ -292,8 +297,8 @@ export async function PATCH(req: Request) {
           return sendEmail({
             to: t.email!,
             subject: isGuest 
-              ? `Your LivBiz Workspace Access Pass from ${booking.user.name}` 
-              : 'Your LivBiz Booking is Confirmed!',
+              ? `Your LivBizz Workspace Access Pass from ${booking.user.name}` 
+              : 'Your LivBizz Booking is Confirmed!',
             html: emailHtml,
           }).then(success => {
             if (!success) {
@@ -408,6 +413,14 @@ export async function PUT(req: Request) {
 
     const body = await req.json();
     const { bookingId, startTime, endTime, totalPrice, seats, seatIds, notes, adminNotes } = body;
+
+    // Validate string field lengths
+    if (notes !== undefined && typeof notes === 'string' && notes.length > 1000) {
+      return NextResponse.json({ error: 'Notes must be 1000 characters or less.' }, { status: 400 });
+    }
+    if (adminNotes !== undefined && typeof adminNotes === 'string' && adminNotes.length > 1000) {
+      return NextResponse.json({ error: 'Admin notes must be 1000 characters or less.' }, { status: 400 });
+    }
 
     if (!bookingId) {
       return NextResponse.json({ error: 'bookingId is required' }, { status: 400 });

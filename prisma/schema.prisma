@@ -22,73 +22,73 @@ model User {
   emailVerified DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  
-  bookings      Booking[]
-  tickets       Ticket[]
-  sessions      Session[]
-  accounts      Account[]
-  auditLogs     AuditLog[]
-  
+
+  bookings  Booking[]
+  tickets   Ticket[]
+  sessions  Session[]
+  accounts  Account[]
+  auditLogs AuditLog[]
+
   @@index([email])
   @@index([role])
   @@index([role, createdAt])
 }
 
 model Campus {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  slug        String   @unique
-  address     String
-  city        String
-  mapUrl      String?
-  imageUrl    String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  
-  slots       Slot[]
-  
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  address   String
+  city      String
+  mapUrl    String?
+  imageUrl  String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  slots Slot[]
+
   @@index([slug])
 }
 
 model Slot {
-  id          String    @id @default(cuid())
-  campusId    String
-  campus      Campus    @relation(fields: [campusId], references: [id])
-  name        String    
-  type        String
-  capacity    Int       @default(1)
-  pricePerUnit Float     
-  currency    String    @default("INR")
-  unit        String    @default("HOUR")
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
-  bookings    Booking[]
-  
+  id           String   @id @default(cuid())
+  campusId     String
+  campus       Campus   @relation(fields: [campusId], references: [id])
+  name         String
+  type         String
+  capacity     Int      @default(1)
+  pricePerUnit Float
+  currency     String   @default("INR")
+  unit         String   @default("HOUR")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  bookings Booking[]
+
   @@index([campusId, type, isActive])
 }
 
 model Booking {
-  id          String        @id @default(cuid())
-  userId      String
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  slotId      String
-  slot        Slot          @relation(fields: [slotId], references: [id])
-  status      String        @default("PENDING")
-  startTime   DateTime
-  endTime     DateTime
-  totalPrice  Float         
-  seats       Int           @default(1)
-  seatIds     String[]
-  notes       String?       @db.Text
-  adminNotes  String?       @db.Text
-  reviewedBy  String?       
-  reviewedAt  DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  
-  tickets     Ticket[]
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slotId     String
+  slot       Slot      @relation(fields: [slotId], references: [id])
+  status     String    @default("PENDING")
+  startTime  DateTime
+  endTime    DateTime
+  totalPrice Float
+  seats      Int       @default(1)
+  seatIds    String[]
+  notes      String?   @db.Text
+  adminNotes String?   @db.Text
+  reviewedBy String?
+  reviewedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  tickets Ticket[]
 
   @@index([userId, status, startTime])
   @@index([slotId, startTime, endTime])
@@ -96,27 +96,27 @@ model Booking {
 }
 
 model Ticket {
-  id          String       @id @default(cuid())
-  bookingId   String
-  booking     Booking      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  userId      String
-  user        User         @relation(fields: [userId], references: [id])
-  code        String       @unique  
-  qrData      String       @db.Text
-  status      String       @default("VALID")
-  validFrom   DateTime
-  validUntil  DateTime
+  id         String   @id @default(cuid())
+  bookingId  String
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  code       String   @unique
+  qrData     String   @db.Text
+  status     String   @default("VALID")
+  validFrom  DateTime
+  validUntil DateTime
 
   // New fields for multi-seat meeting-room tickets
-  attendeeIndex Int?       // 1..N (e.g. seat/attendee number)
-  recipientName String?
+  attendeeIndex  Int? // 1..N (e.g. seat/attendee number)
+  recipientName  String?
   recipientEmail String?
-  sentAt      DateTime?
+  sentAt         DateTime?
 
-  usedAt      DateTime?
-  scannedBy   String?      
-  createdAt   DateTime     @default(now())
-  
+  usedAt    DateTime?
+  scannedBy String?
+  createdAt DateTime  @default(now())
+
   @@index([code])
   @@index([bookingId])
   @@index([userId, status])
@@ -126,18 +126,18 @@ model Ticket {
 
 // NextAuth.js required tables
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -158,22 +158,22 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@index([expires])
 }
 
 // Audit Log for compliance & tracking admin actions
 model AuditLog {
   id         String   @id @default(cuid())
-  action     String   // 'BOOKING_APPROVED', 'BOOKING_REJECTED', 'TICKET_VERIFIED', etc.
-  userId     String   // Admin who performed the action
+  action     String // 'BOOKING_APPROVED', 'BOOKING_REJECTED', 'TICKET_VERIFIED', etc.
+  userId     String // Admin who performed the action
   user       User     @relation(fields: [userId], references: [id], onDelete: SetNull)
-  targetId   String   // Booking ID, Ticket ID, or User ID
-  targetType String   // 'BOOKING', 'TICKET', 'USER'
-  changes    Json?    // What changed (status, ticketsCount, etc.)
-  ipAddress  String?  // For security tracking
+  targetId   String // Booking ID, Ticket ID, or User ID
+  targetType String // 'BOOKING', 'TICKET', 'USER'
+  changes    Json? // What changed (status, ticketsCount, etc.)
+  ipAddress  String? // For security tracking
   createdAt  DateTime @default(now())
 
   @@index([userId, createdAt])
   @@index([action, createdAt])
   @@index([targetId])
 }
-

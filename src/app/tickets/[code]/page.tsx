@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import QRCode from 'qrcode';
 import { MapPin, Calendar, Clock, User, QrCode, ArrowRight, ShieldCheck, HelpCircle } from 'lucide-react';
+import Image from 'next/image';
 import styles from './tickets.module.css';
 
 interface TicketPageProps {
@@ -134,7 +135,7 @@ export default async function TicketWalletPage({ params }: TicketPageProps) {
             <div className={styles.qrWrapper}>
               {qrDataUrl && ticket.status !== 'REVOKED' ? (
                 <div className={styles.qrBox}>
-                  <img src={qrDataUrl} alt="Access QR Code Pass" className={styles.qrImage} />
+                  <Image src={qrDataUrl} alt="Access QR Code Pass" className={styles.qrImage} width={180} height={180} unoptimized />
                   {ticket.status === 'USED' && (
                     <div className={styles.qrOverlay}>
                       <ShieldCheck size={36} className={styles.usedIcon} />

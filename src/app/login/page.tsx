@@ -227,7 +227,7 @@ function LoginPageContent() {
           </p>
         </div>
 
-        <p className={styles.footerCopyright}>&copy; LivBiz Coworking</p>
+        <p className={styles.footerCopyright}>&copy; LivBizz Coworking</p>
       </div>
 
       {/* 2. RIGHT WHITE CREDENTIALS FORM */}

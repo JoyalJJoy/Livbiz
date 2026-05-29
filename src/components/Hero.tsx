@@ -7,7 +7,7 @@ export default function Hero() {
     <section className={styles.hero}>
       <div className={`container ${styles.content}`}>
         <div className={styles.copy}>
-          <p className={styles.eyebrow}>LivBiz Coworking</p>
+          <p className={styles.eyebrow}>LivBizz Coworking</p>
           <h1>Where Professionals Work Better</h1>
           <p className={styles.serviceLine}>Private Office</p>
           <p className={styles.subtitle}>

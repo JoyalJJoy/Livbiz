@@ -48,9 +48,13 @@ export async function GET(req: Request) {
         select: {
           id: true,
           name: true,
+          firstName: true,
+          lastName: true,
           email: true,
           phone: true,
           role: true,
+          idType: true,
+          idNumber: true,
           createdAt: true,
           _count: {
             select: { bookings: true },
@@ -79,9 +83,13 @@ export async function GET(req: Request) {
     const formattedUsers = users.map(u => ({
       id: u.id,
       name: u.name,
+      firstName: u.firstName,
+      lastName: u.lastName,
       email: u.email,
       phone: u.phone,
       role: u.role,
+      idType: u.idType,
+      idNumber: u.idNumber,
       createdAt: u.createdAt.toISOString(),
       bookingsCount: u._count.bookings,
       totalSpent: spendingLookup.get(u.id) || 0,
@@ -138,6 +146,81 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ success: true, user: updatedUser });
   } catch (error) {
     console.error('Admin Users PATCH error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const currentRole = (session.user as unknown as { role?: string }).role;
+    if (currentRole !== 'SUPER_ADMIN' && currentRole !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const { userId, firstName, lastName, email, phone, idType, idNumber } = await req.json();
+
+    if (!userId) {
+      return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
+    }
+
+    if (!email || !firstName || !lastName) {
+      return NextResponse.json({ error: 'First name, last name, and email are required.' }, { status: 400 });
+    }
+
+    let normalizedPhone: string | null = null;
+    if (phone) {
+      const cleaned = phone.replace(/\D/g, '');
+      if (cleaned.length !== 10) {
+        return NextResponse.json({ error: 'Phone number must be exactly 10 digits.' }, { status: 400 });
+      }
+      normalizedPhone = cleaned;
+    }
+
+    if (idType && idNumber) {
+      if (idType === 'AADHAAR' && !/^\d{12}$/.test(idNumber.replace(/\s/g, ''))) {
+        return NextResponse.json({ error: 'Aadhaar must be exactly 12 digits.' }, { status: 400 });
+      }
+      if (idType === 'PAN' && !/^[A-Z]{5}\d{4}[A-Z]$/.test(idNumber.trim())) {
+        return NextResponse.json({ error: 'PAN must be in standard format (5 letters, 4 digits, 1 letter).' }, { status: 400 });
+      }
+    }
+
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        email: email.toLowerCase().trim(),
+        id: { not: userId }
+      }
+    });
+
+    if (existingUser) {
+      return NextResponse.json({ error: 'Email address is already in use by another account.' }, { status: 400 });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        name: `${firstName.trim()} ${lastName.trim()}`,
+        email: email.toLowerCase().trim(),
+        phone: normalizedPhone,
+        idType: idType || null,
+        idNumber: idNumber ? idNumber.trim() : null,
+      }
+    });
+
+    return NextResponse.json({ success: true, user: updatedUser });
+  } catch (error) {
+    console.error('Admin Users PUT error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

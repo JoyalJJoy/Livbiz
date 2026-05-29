@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { MapPin, Calendar, Clock, QrCode, X, AlertTriangle, Plus, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 import styles from './bookings.module.css';
 
 interface Ticket {
@@ -291,12 +292,13 @@ export default function BookingsPage() {
               {/* QR Code Image from Ticket */}
               <div className={styles.qrContainer}>
                 {activeTicket?.qrData ? (
-                  <img 
+                  <Image 
                     src={activeTicket.qrData} 
                     alt="Access Pass QR Code" 
                     width={180} 
                     height={180} 
                     style={{ borderRadius: '8px' }}
+                    unoptimized
                   />
                 ) : (
                   <div style={{ width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f1f5f9', borderRadius: '8px', color: '#64748b', fontWeight: 600, fontSize: '0.85rem' }}>

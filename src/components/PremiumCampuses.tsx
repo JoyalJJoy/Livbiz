@@ -10,14 +10,14 @@ export default function PremiumCampuses() {
         <div className={styles.header}>
           <p className={styles.kicker}>Single campus</p>
           <h2>One Workspace, Ready for the Way You Work</h2>
-          <p>One focused LivBiz location for day passes, meetings, client conversations and productive daily work.</p>
+          <p>One focused LivBizz location for day passes, meetings, client conversations and productive daily work.</p>
         </div>
 
         <div className={`${styles.card} animate-on-scroll`}>
           <div className={styles.imageCol}>
             <Image
               src="/images/hero-bg.jpg"
-              alt="LivBiz workspace interior"
+              alt="LivBizz workspace interior"
               fill
               sizes="(max-width: 899px) 100vw, 48vw"
               className={styles.image}
@@ -25,7 +25,7 @@ export default function PremiumCampuses() {
           </div>
           <div className={styles.contentCol}>
             <div className={styles.cardHeader}>
-              <h3>LivBiz Coworking & Conference Hub</h3>
+              <h3>LivBizz Coworking & Conference Hub</h3>
               <span className={styles.status}>Available</span>
             </div>
             <p className={styles.description}>
