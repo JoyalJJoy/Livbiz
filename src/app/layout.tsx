@@ -18,7 +18,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://livbiz.com'), // Replace with actual domain
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://livbizz.com'),
   title: {
     default: "LivBizz Coworking & Conference Hub | Flexible Workspace",
     template: "%s | LivBizz Coworking"
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "LivBizz Coworking & Conference Hub",
     description: "Experience India's largest premium coworking space.",
-    url: 'https://livbiz.com',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://livbizz.com',
     siteName: 'LivBizz',
     images: [
       {

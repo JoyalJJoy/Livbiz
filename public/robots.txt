@@ -1,0 +1,11 @@
+# LivBizz Coworking - robots.txt
+User-agent: *
+Allow: /
+
+# Block admin and API routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+
+# Sitemap
+Sitemap: https://livbizz.com/sitemap.xml

@@ -446,16 +446,6 @@ function LoginPageContent() {
                   : (isSubmitting ? 'Signing in...' : 'Sign in')}
             </button>
 
-            {/* OTP login (Sign In Only) */}
-            {!isSignUp && !isForgotPassword && (
-              <>
-                <button type="button" className={styles.otpBtn}>
-                  Sign in with OTP
-                </button>
-                <div className={styles.orSeparator}>or</div>
-              </>
-            )}
-
             {/* Toggle Footer text */}
             <div className={styles.toggleText}>
               {isForgotPassword ? (

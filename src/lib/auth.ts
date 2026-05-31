@@ -87,5 +87,5 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/login',
   },
-  secret: nextAuthSecret || 'livbiz-development-only-auth-secret',
+  secret: nextAuthSecret,
 };
