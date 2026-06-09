@@ -43,21 +43,22 @@ export async function GET(req: Request) {
         const slotIds = slots.map(s => s.id);
         const totalCapacity = slots.reduce((sum, s) => sum + s.capacity, 0);
 
-        // Get all active bookings (PENDING + APPROVED) for these slots in this month
-        const bookings = await prisma.booking.findMany({
-          where: {
-            slotId: { in: slotIds },
-            status: { in: ['PENDING', 'APPROVED'] },
-            startTime: { gte: startOfMonth, lte: endOfMonth },
-          },
-          select: { startTime: true, slotId: true },
-        });
+        // Get booking count aggregated by day directly from database using covering indexes
+        const bookings = await prisma.$queryRaw<Array<{ date: string; count: number }>>`
+          SELECT TO_CHAR("startTime", 'YYYY-MM-DD') as date, COUNT(*)::int as count
+          FROM "Booking"
+          WHERE "slotId" = ANY(${slotIds})
+            AND "status" IN ('PENDING', 'APPROVED')
+            AND "startTime" >= ${startOfMonth}
+            AND "startTime" <= ${endOfMonth}
+            AND "startTime" IS NOT NULL
+          GROUP BY TO_CHAR("startTime", 'YYYY-MM-DD')
+        `;
 
-        // Count bookings per date
+        // Map counts
         const dateCounts: Record<string, number> = {};
-        for (const booking of bookings) {
-          const dateKey = booking.startTime.toISOString().split('T')[0]; // YYYY-MM-DD
-          dateCounts[dateKey] = (dateCounts[dateKey] || 0) + 1;
+        for (const row of bookings) {
+          dateCounts[row.date] = row.count;
         }
 
         // Build response: for each date, indicate if it's fully booked

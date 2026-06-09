@@ -92,6 +92,7 @@ model Booking {
   @@index([userId, status, startTime])
   @@index([slotId, startTime, endTime])
   @@index([status, createdAt])
+  @@index([slotId, status, startTime])
 }
 
 model Ticket {
@@ -119,6 +120,7 @@ model Ticket {
   @@index([code])
   @@index([bookingId])
   @@index([userId, status])
+  @@index([userId, status, validUntil])
   @@index([recipientEmail])
   @@index([validFrom, validUntil, status])
 }
