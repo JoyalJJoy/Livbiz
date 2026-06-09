@@ -19,6 +19,10 @@ export async function GET() {
       'admin:stats',
       async () => {
         const now = new Date();
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const todayEnd = new Date();
+        todayEnd.setHours(23, 59, 59, 999);
 
         const [
           totalBookings,
@@ -27,6 +31,9 @@ export async function GET() {
           totalUsers,
           activeTickets,
           revenueResult,
+          dayPassCount,
+          meetingRoomCount,
+          checkinsToday,
         ] = await Promise.all([
           prisma.booking.count(),
           prisma.booking.count({ where: { status: 'PENDING' } }),
@@ -42,6 +49,17 @@ export async function GET() {
             _sum: { totalPrice: true },
             where: { status: 'APPROVED' },
           }),
+          prisma.booking.count({ where: { status: 'APPROVED', slot: { type: 'DAY_PASS' } } }),
+          prisma.booking.count({ where: { status: 'APPROVED', slot: { type: 'MEETING_ROOM' } } }),
+          prisma.ticket.count({
+            where: {
+              status: 'USED',
+              usedAt: {
+                gte: todayStart,
+                lte: todayEnd,
+              },
+            },
+          }),
         ]);
 
         return {
@@ -51,6 +69,9 @@ export async function GET() {
           totalRevenue: Number(revenueResult._sum.totalPrice || 0),
           totalUsers,
           activeTickets,
+          dayPassCount,
+          meetingRoomCount,
+          checkinsToday,
         };
       },
       5_000 // Cache for 5 seconds — stats are expensive but need to be fresh

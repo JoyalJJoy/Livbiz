@@ -12,6 +12,215 @@
 .statValue { font-size: 1.4rem; font-weight: 800; color: #0f172a; }
 .statLabel { font-size: 0.78rem; font-weight: 600; color: #64748b; }
 
+/* Visual Analytics & CSS Charts Section */
+.analyticsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .analyticsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.analyticsCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+}
+
+.analyticsCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.cardHeaderIcon {
+  color: #6366f1;
+}
+
+.analyticsCardTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.analyticsCardDesc {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0 0 1.25rem;
+}
+
+/* Booking breakdown chart styles */
+.chartContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.chartRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.chartLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.progressBarWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  background-color: #f1f5f9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.6s ease;
+}
+
+.progressBarValue {
+  position: absolute;
+  right: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #334155;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 0.05rem 0.35rem;
+  border-radius: 4px;
+}
+
+/* Occupancy gauge styles */
+.occupancyContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  justify-content: center;
+  flex: 1;
+}
+
+.occupancyDisplay {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.25rem;
+  font-family: monospace;
+}
+
+.occupancyBigNum {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.occupancyDivider {
+  font-size: 1.5rem;
+  color: #cbd5e1;
+}
+
+.occupancySubNum {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.occupancyMeter {
+  height: 10px;
+  background-color: #f1f5f9;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.occupancyFill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #059669);
+  border-radius: 9999px;
+  transition: width 0.6s ease;
+}
+
+/* Live Activity feed styles */
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.emptyActivity {
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-style: italic;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.activityItem {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.activityDot {
+  width: 8px;
+  height: 8px;
+  background-color: #6366f1;
+  border-radius: 50%;
+  margin-top: 0.4rem;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.activityDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.activityText {
+  font-size: 0.8rem;
+  color: #334155;
+  line-height: 1.4;
+}
+
+.activityTime {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.viewAllLogsLink {
+  margin-top: 1.25rem;
+  align-self: flex-start;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #6366f1;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.viewAllLogsLink:hover {
+  color: #4f46e5;
+}
+
+/* Table Sections */
 .tableSection { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; }
 .tableTitle { font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0 0 1rem 0; }
 .emptyText { color: #94a3b8; font-size: 0.9rem; }

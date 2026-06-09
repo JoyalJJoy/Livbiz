@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
 import Link from 'next/link';
-import { LayoutDashboard, ClipboardList, ScanLine, ChevronDown, LogOut, Users } from 'lucide-react';
+import { LayoutDashboard, ClipboardList, ScanLine, ChevronDown, LogOut, Users, History } from 'lucide-react';
 import styles from './layout.module.css';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -46,6 +46,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Bookings', path: '/admin/bookings', icon: ClipboardList },
     { name: 'Users', path: '/admin/users', icon: Users },
     { name: 'Verify Pass', path: '/admin/verify', icon: ScanLine },
+    { name: 'Audit Logs', path: '/admin/audit-logs', icon: History },
   ];
 
   return (

@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { createSupabaseAdminClient } from '@/lib/supabase/server';
 import type { Prisma } from '@prisma/client';
+import { createAuditLog } from '@/lib/audit';
 
 export async function GET(req: Request) {
   try {
@@ -143,6 +144,17 @@ export async function PATCH(req: Request) {
       select: { id: true, name: true, role: true },
     });
 
+    // Log administrative action
+    const adminId = (session.user as unknown as { id: string }).id;
+    await createAuditLog({
+      action: 'USER_ROLE_CHANGED',
+      userId: adminId,
+      targetId: userId,
+      targetType: 'USER',
+      changes: { role },
+      ipAddress: req.headers.get('x-forwarded-for') || undefined,
+    });
+
     return NextResponse.json({ success: true, user: updatedUser });
   } catch (error) {
     console.error('Admin Users PATCH error:', error);
@@ -238,6 +250,24 @@ export async function PUT(req: Request) {
         idType: idType || null,
         idNumber: idNumber ? idNumber.trim() : null,
       }
+    });
+
+    // Log administrative action
+    const adminId = (session.user as unknown as { id: string }).id;
+    await createAuditLog({
+      action: 'USER_PROFILE_UPDATED',
+      userId: adminId,
+      targetId: userId,
+      targetType: 'USER',
+      changes: {
+        firstName: trimmedFirstName,
+        lastName: trimmedLastName,
+        email: normalizedEmail,
+        phone: normalizedPhone,
+        idType,
+        idNumber: idNumber ? '***' : null,
+      },
+      ipAddress: req.headers.get('x-forwarded-for') || undefined,
     });
 
     return NextResponse.json({ success: true, user: updatedUser });
