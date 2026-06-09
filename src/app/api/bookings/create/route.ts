@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { invalidateCache } from '@/lib/cache';
 import { generateTicketCode } from '@/lib/tickets';
@@ -9,7 +8,7 @@ import { withRequestContext } from '@/lib/logger';
 export async function POST(req: Request) {
   const log = withRequestContext(req);
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
 
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });

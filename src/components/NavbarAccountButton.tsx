@@ -1,16 +1,16 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
 import Link from 'next/link';
 import styles from './Navbar.module.css';
 
 export default function NavbarAccountButton() {
-  const { data: session, status } = useSession();
-  const role = (session?.user as { role?: string } | undefined)?.role;
+  const { user, session, isLoading } = useSupabaseAuth();
+  const role = user?.role;
   const dashboardLink = (role === 'SUPER_ADMIN' || role === 'ADMIN') ? '/admin' : '/dashboard';
 
   // While loading, still show the button pointing to login (avoids layout shift)
-  if (status === 'loading') {
+  if (isLoading) {
     return (
       <Link href="/login" className={styles.accountButton}>
         My Account

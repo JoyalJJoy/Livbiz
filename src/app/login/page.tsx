@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, Suspense, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { signIn, useSession } from 'next-auth/react';
+import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
+import { createBrowserClient } from '@/lib/supabase/client';
 import { Mail, Lock, Eye, EyeOff, User, ArrowLeft, Phone, CreditCard } from 'lucide-react';
 import styles from './page.module.css';
 
@@ -17,25 +18,25 @@ export default function LoginPage() {
 function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: session, status } = useSession();
+  const { user, session, isLoading } = useSupabaseAuth();
 
   // URL redirect parameter
   const redirectParam = searchParams.get('redirect');
 
   // Determine correct redirect based on role
-  const getRedirectUrl = useCallback((userSession: typeof session) => {
+  const getRedirectUrl = useCallback(() => {
     if (redirectParam) return redirectParam;
-    const role = (userSession?.user as unknown as { role?: string })?.role;
+    const role = user?.role;
     if (role === 'SUPER_ADMIN' || role === 'ADMIN') return '/admin';
     return '/dashboard';
-  }, [redirectParam]);
+  }, [redirectParam, user]);
 
   // Session redirect check
   useEffect(() => {
-    if (status === 'authenticated' && session) {
-      router.push(getRedirectUrl(session));
+    if (!isLoading && session) {
+      router.push(getRedirectUrl());
     }
-  }, [status, session, router, getRedirectUrl]);
+  }, [isLoading, session, router, getRedirectUrl]);
 
   // Form toggling & inputs state
   const [isSignUp, setIsSignUp] = useState(false);
@@ -132,24 +133,24 @@ function LoginPageContent() {
         }
       }
 
-      // Authorize credentials session via NextAuth
-      const res = await signIn('credentials', {
+      // Authorize credentials session via Supabase Auth
+      const supabase = createBrowserClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
-        redirect: false,
       });
 
-      if (res?.error) {
+      if (signInError) {
         setFormError(
           isSignUp
             ? 'Account registered successfully, but log in failed. Please sign in manually.'
             : 'Invalid email or password.'
         );
       } else {
-        // Fetch the freshly-created session because useSession may still hold the previous render.
-        const sessionRes = await fetch('/api/auth/session', { cache: 'no-store' });
-        const freshSession = sessionRes.ok ? await sessionRes.json() : null;
-        const role = (freshSession?.user as { role?: string } | undefined)?.role;
+        // Fetch the user profile to determine role
+        const profileRes = await fetch('/api/auth/me', { cache: 'no-store' });
+        const profileData = profileRes.ok ? await profileRes.json() : null;
+        const role = profileData?.user?.role;
 
         if (role === 'SUPER_ADMIN' || role === 'ADMIN') {
           router.push(redirectParam || '/admin');
@@ -164,7 +165,7 @@ function LoginPageContent() {
     }
   };
 
-  if (status === 'loading') {
+  if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc' }}>
         <div style={{ color: '#0f172a', fontWeight: 700, fontSize: '1.25rem' }}>Verifying session...</div>

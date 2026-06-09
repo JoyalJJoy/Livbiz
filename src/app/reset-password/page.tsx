@@ -1,43 +1,25 @@
 'use client';
 
-import React, { Suspense, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, Eye, EyeOff, KeyRound, Lock } from 'lucide-react';
 import styles from '../login/page.module.css';
 
 export default function ResetPasswordPage() {
-  return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc' }}><div style={{ color: '#0f172a', fontWeight: 700, fontSize: '1.25rem' }}>Loading...</div></div>}>
-      <ResetPasswordContent />
-    </Suspense>
-  );
-}
-
-function ResetPasswordContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get('token')?.trim() || '';
 
-  const [tokenStatus, setTokenStatus] = useState<'checking' | 'valid' | 'invalid'>(
-    token ? 'checking' : 'invalid'
-  );
+  const [tokenStatus, setTokenStatus] = useState<'checking' | 'valid' | 'invalid'>('checking');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formError, setFormError] = useState<string | null>(
-    token ? null : 'This password recovery link is missing its token.'
-  );
+  const [formError, setFormError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!token) {
-      return;
-    }
-
     const controller = new AbortController();
 
-    fetch(`/api/auth/reset-password?token=${encodeURIComponent(token)}`, {
+    fetch('/api/auth/reset-password', {
       cache: 'no-store',
       signal: controller.signal,
     })
@@ -59,7 +41,7 @@ function ResetPasswordContent() {
       });
 
     return () => controller.abort();
-  }, [token]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +64,7 @@ function ResetPasswordContent() {
       const res = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify({ password }),
       });
       const data = await res.json();
 

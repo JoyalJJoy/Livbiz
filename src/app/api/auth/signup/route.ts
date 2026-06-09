@@ -1,41 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import {
   isValidEmail,
   normalizeEmail,
-  normalizeIndianPhone,
 } from '@/lib/validation';
 import { withRequestContext } from '@/lib/logger';
-import crypto from 'crypto';
-import { sendEmail } from '@/lib/email';
-import { getRequestOrigin } from '@/lib/request';
-import {
-  PASSWORD_RESET_TOKEN_TTL_MS,
-  createPasswordResetToken,
-  getPasswordResetIdentifier,
-  hashPasswordResetToken,
-} from '@/lib/password-reset';
-
-function buildPasswordSetupEmail(name: string, resetUrl: string) {
-  const safeName = name || 'there';
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #0f172a; line-height: 1.6;">
-      <h1 style="font-size: 24px; margin-bottom: 12px;">Set a password for your new LivBizz account</h1>
-      <p>Hi ${safeName},</p>
-      <p>Welcome to LivBizz! Your client account has been created successfully.</p>
-      <p>Please click the link below to set a secure password for your account so you can log in later:</p>
-      <p>
-        <a href="${resetUrl}" style="display: inline-block; background: #0f172a; color: #ffffff; text-decoration: none; padding: 12px 18px; border-radius: 8px; font-weight: 700;">
-          Set password
-        </a>
-      </p>
-      <p>This link expires in 1 hour.</p>
-      <p style="font-size: 12px; color: #64748b;">${resetUrl}</p>
-    </div>
-  `;
-}
+import { createSupabaseAdminClient } from '@/lib/supabase/server';
 
 // Zod schema for signup validation
 const signupSchema = z.object({
@@ -71,7 +42,6 @@ export async function POST(req: Request) {
     const { firstName, lastName, email, password, phone, idType, idNumber } = validation.data;
     const normalizedName = `${firstName.trim()} ${lastName.trim()}`;
     const normalizedEmail = normalizeEmail(email);
-    const normalizedPhone = normalizeIndianPhone(phone || '');
 
     // Validate idType and idNumber if provided
     if (idType && idNumber) {
@@ -96,7 +66,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if user already exists
+    // Check if user already exists in our profile table
     const existingUser = await prisma.user.findUnique({
       where: { email: normalizedEmail },
       select: { id: true },
@@ -109,47 +79,45 @@ export async function POST(req: Request) {
       );
     }
 
-    // Hash password (generate random secure password if password not provided)
-    const rawPassword = password || crypto.randomBytes(16).toString('hex');
-    const passwordHash = await bcrypt.hash(rawPassword, 10);
+    // Create user in Supabase Auth
+    const supabaseAdmin = await createSupabaseAdminClient();
 
-    // Save user inside PostgreSQL
+    // Generate a random password if none provided
+    const userPassword = password || (crypto.randomUUID() + 'Aa1!');
+
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email: normalizedEmail,
+      password: userPassword,
+      email_confirm: true, // Auto-confirm since we handle email verification ourselves
+      user_metadata: {
+        name: normalizedName,
+        firstName,
+        lastName,
+      },
+    });
+
+    if (authError || !authData.user) {
+      log.error('Supabase auth user creation failed', { error: authError });
+      return NextResponse.json(
+        { error: authError?.message || 'Failed to create account.' },
+        { status: 400 }
+      );
+    }
+
+    // Create profile row in our database, using the Supabase Auth user ID
     const user = await prisma.user.create({
       data: {
+        id: authData.user.id, // Use the Supabase auth UUID
         name: normalizedName,
         firstName,
         lastName,
         email: normalizedEmail,
-        phone: normalizedPhone || null,
+        phone: phone || null,
         idType: idType || null,
         idNumber: idNumber || null,
-        passwordHash,
         role: 'CLIENT',
       },
     });
-
-    // If passwordless registration or sendSetupLink is true, automatically trigger a password reset/set setup link
-    if (!password || body.sendSetupLink) {
-      const token = createPasswordResetToken();
-      const tokenHash = hashPasswordResetToken(token);
-      const identifier = getPasswordResetIdentifier(normalizedEmail);
-      const expires = new Date(Date.now() + PASSWORD_RESET_TOKEN_TTL_MS);
-
-      await prisma.verificationToken.create({
-        data: {
-          identifier,
-          token: tokenHash,
-          expires,
-        },
-      });
-
-      const resetUrl = `${getRequestOrigin(req)}/reset-password?token=${encodeURIComponent(token)}`;
-      await sendEmail({
-        to: normalizedEmail,
-        subject: 'Set a password for your new LivBizz account',
-        html: buildPasswordSetupEmail(normalizedName, resetUrl),
-      });
-    }
 
     log.info('User signed up successfully', {
       data: {

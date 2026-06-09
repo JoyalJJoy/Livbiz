@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Mail, Lock, Eye, EyeOff, ChevronLeft, ChevronRight, Phone, Users } from 'lucide-react';
+import { X, Mail, Lock, Eye, EyeOff, ChevronLeft, ChevronRight, Phone, Users, LogIn, CheckCircle } from 'lucide-react';
 import BookingLottie from './BookingLottie';
 import InteractiveFloorPlan from './InteractiveFloorPlan';
 import styles from './DayPassWizard.module.css';
-import { signIn } from 'next-auth/react';
+import { createBrowserClient } from '@/lib/supabase/client';
+import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
 
 interface BookingState {
   step: number;
@@ -52,6 +53,8 @@ function getDurationInHours(startTime: string, endTime: string): number {
 
 export default function DayPassWizard() {
   const router = useRouter();
+  const { user: authUser, session, isLoading: authLoading } = useSupabaseAuth();
+  const isLoggedIn = !authLoading && !!session;
   
   const [state, setState] = useState<BookingState>({
     step: 1,
@@ -281,13 +284,13 @@ export default function DayPassWizard() {
         }
       }
       
-      const res = await signIn('credentials', {
+      const supabase = createBrowserClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password: finalPassword,
-        redirect: false,
       });
       
-      if (res?.error) {
+      if (signInError) {
         setLoginError(isSignUp ? 'Account created but login failed. Please sign in manually.' : 'Invalid email or password.');
       } else {
         await createBookingAfterLogin();
@@ -370,12 +373,20 @@ export default function DayPassWizard() {
             {state.step === 2 && 'Choose Dates'}
             {state.step === 3 && 'Business Hours'}
             {state.step === 4 && 'Choose Desk Layout'}
-            {state.step === 5 && (isSignUp ? 'Sign Up' : 'Login')}
+            {state.step === 5 && (isLoggedIn ? 'Confirm Booking' : (isSignUp ? 'Sign Up' : 'Login'))}
           </h2>
           <button className={styles.closeBtn} onClick={() => router.push('/book')}>
             <X size={16} />
           </button>
         </div>
+
+        {/* Auth hint banner for unauthenticated users */}
+        {!isLoggedIn && !authLoading && state.step < 5 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1rem', margin: '0 1.5rem', marginBottom: '0.5rem', background: 'linear-gradient(135deg, #eff6ff, #f0f9ff)', border: '1px solid #bfdbfe', borderRadius: '8px', fontSize: '0.8rem', color: '#1e40af' }}>
+            <LogIn size={14} />
+            <span>You&apos;ll need to sign in or create an account to confirm your booking</span>
+          </div>
+        )}
         
         <div className={styles.contentBody}>
           
@@ -598,119 +609,152 @@ export default function DayPassWizard() {
             </div>
           )}
 
-          {/* STEP 5: INLINE LOGIN / SIGNUP */}
+          {/* STEP 5: CONFIRM BOOKING (logged in) or LOGIN / SIGNUP (not logged in) */}
           {state.step === 5 && (
-            <form className={styles.loginFormContainer} onSubmit={handleLoginSubmit}>
-              
-              {isSignUp && (
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Full Name</label>
-                  <div className={styles.inputWrapper}>
-                    <span className={styles.inputIcon}>
-                      <Users size={16} />
-                    </span>
-                    <input 
-                      type="text"
-                      required
-                      className={styles.inputField}
-                      placeholder="Enter your full name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  </div>
+            isLoggedIn ? (
+              <div className={styles.loginFormContainer} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', padding: '2rem' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <CheckCircle size={32} color="white" />
                 </div>
-              )}
-
-              {isSignUp && (
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Phone Number</label>
-                  <div className={styles.inputWrapper}>
-                    <span className={styles.inputIcon}>
-                      <Phone size={16} />
-                    </span>
-                    <div className={styles.inputField} style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                      <span style={{ padding: '0 0.5rem', color: '#64748b', borderRight: '1px solid #e2e8f0', marginRight: '0.5rem' }}>+91</span>
+                <div style={{ textAlign: 'center' }}>
+                  <p style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', margin: '0 0 0.5rem' }}>Ready to book!</p>
+                  <p style={{ fontSize: '0.9rem', color: '#64748b', margin: 0 }}>Signed in as <strong>{authUser?.email}</strong></p>
+                </div>
+                {loginError && (
+                  <div style={{ color: '#ef4444', fontSize: '0.85rem', fontWeight: 600, textAlign: 'center', width: '100%' }}>{loginError}</div>
+                )}
+                <button
+                  type="button"
+                  className={styles.loginSubmitBtn}
+                  disabled={isLoggingIn}
+                  onClick={async () => {
+                    setIsLoggingIn(true);
+                    setLoginError(null);
+                    try {
+                      await createBookingAfterLogin();
+                    } catch (err) {
+                      setLoginError(err instanceof Error ? err.message : 'Failed to create booking.');
+                    } finally {
+                      setIsLoggingIn(false);
+                    }
+                  }}
+                >
+                  {isLoggingIn ? 'Confirming...' : 'Confirm Booking'}
+                </button>
+              </div>
+            ) : (
+              <form className={styles.loginFormContainer} onSubmit={handleLoginSubmit}>
+                
+                {isSignUp && (
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Full Name</label>
+                    <div className={styles.inputWrapper}>
+                      <span className={styles.inputIcon}>
+                        <Users size={16} />
+                      </span>
                       <input 
-                        type="tel"
+                        type="text"
                         required
-                        style={{ border: 'none', outline: 'none', width: '100%', padding: 0, background: 'transparent', fontSize: 'inherit', color: 'inherit' }}
-                        placeholder="9876543210"
-                        pattern="[6-9][0-9]{9}"
-                        title="Please enter a valid 10-digit Indian mobile number"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        className={styles.inputField}
+                        placeholder="Enter your full name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                       />
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>
-                  {isSignUp ? 'Email Address' : 'Email or Mobile Number'}
-                </label>
-                <div className={styles.inputWrapper}>
-                  <span className={styles.inputIcon}>
-                    <Mail size={16} />
-                  </span>
-                  <input 
-                    type={isSignUp ? 'email' : 'text'}
-                    required
-                    className={styles.inputField}
-                    placeholder={isSignUp ? 'Enter your email' : 'Enter email or 10-digit mobile number'}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-              </div>
+                {isSignUp && (
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Phone Number</label>
+                    <div className={styles.inputWrapper}>
+                      <span className={styles.inputIcon}>
+                        <Phone size={16} />
+                      </span>
+                      <div className={styles.inputField} style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                        <span style={{ padding: '0 0.5rem', color: '#64748b', borderRight: '1px solid #e2e8f0', marginRight: '0.5rem' }}>+91</span>
+                        <input 
+                          type="tel"
+                          required
+                          style={{ border: 'none', outline: 'none', width: '100%', padding: 0, background: 'transparent', fontSize: 'inherit', color: 'inherit' }}
+                          placeholder="9876543210"
+                          pattern="[6-9][0-9]{9}"
+                          title="Please enter a valid 10-digit Indian mobile number"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-              {!isSignUp && (
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Password</label>
+                  <label className={styles.formLabel}>
+                    {isSignUp ? 'Email Address' : 'Email or Mobile Number'}
+                  </label>
                   <div className={styles.inputWrapper}>
                     <span className={styles.inputIcon}>
-                      <Lock size={16} />
+                      <Mail size={16} />
                     </span>
                     <input 
-                      type={showPassword ? 'text' : 'password'}
+                      type={isSignUp ? 'email' : 'text'}
                       required
                       className={styles.inputField}
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder={isSignUp ? 'Enter your email' : 'Enter email or 10-digit mobile number'}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
-                    <button 
-                      type="button" 
-                      className={styles.inputToggleEye}
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
                   </div>
                 </div>
-              )}
 
-              {loginError && (
-                <div style={{ color: '#ef4444', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1rem', textAlign: 'center' }}>
-                  {loginError}
-                </div>
-              )}
+                {!isSignUp && (
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Password</label>
+                    <div className={styles.inputWrapper}>
+                      <span className={styles.inputIcon}>
+                        <Lock size={16} />
+                      </span>
+                      <input 
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        className={styles.inputField}
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      <button 
+                        type="button" 
+                        className={styles.inputToggleEye}
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-              <button type="submit" className={styles.loginSubmitBtn} disabled={isLoggingIn}>
-                {isSignUp ? (isLoggingIn ? 'Signing up...' : 'Sign up & Book') : (isLoggingIn ? 'Signing in...' : 'Sign in & Book')}
-              </button>
+                {loginError && (
+                  <div style={{ color: '#ef4444', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1rem', textAlign: 'center' }}>
+                    {loginError}
+                  </div>
+                )}
 
-              {isSignUp ? (
-                <div className={styles.signUpText}>
-                  Already registered? <span className={styles.signUpLink} onClick={() => { setIsSignUp(false); setLoginError(null); }}>Sign in</span>
-                </div>
-              ) : (
-                <div className={styles.signUpText}>
-                  New user? <span className={styles.signUpLink} onClick={() => { setIsSignUp(true); setLoginError(null); }}>Sign up</span>
-                </div>
-              )}
+                <button type="submit" className={styles.loginSubmitBtn} disabled={isLoggingIn}>
+                  {isSignUp ? (isLoggingIn ? 'Signing up...' : 'Sign up & Book') : (isLoggingIn ? 'Signing in...' : 'Sign in & Book')}
+                </button>
 
-            </form>
+                {isSignUp ? (
+                  <div className={styles.signUpText}>
+                    Already registered? <span className={styles.signUpLink} onClick={() => { setIsSignUp(false); setLoginError(null); }}>Sign in</span>
+                  </div>
+                ) : (
+                  <div className={styles.signUpText}>
+                    New user? <span className={styles.signUpLink} onClick={() => { setIsSignUp(true); setLoginError(null); }}>Sign up</span>
+                  </div>
+                )}
+
+              </form>
+            )
           )}
 
         </div>

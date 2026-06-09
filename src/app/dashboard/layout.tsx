@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
 import Link from 'next/link';
 import { Home, Calendar, Settings, Plus, ChevronDown, LogOut, User, Shield } from 'lucide-react';
 import styles from './layout.module.css';
@@ -10,19 +10,19 @@ import styles from './layout.module.css';
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { data: session, status } = useSession();
+  const { user, session, isLoading, signOut } = useSupabaseAuth();
 
   // Avatar Dropdown state
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Protected route session checker
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (!session && !isLoading) {
       router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
     }
-  }, [status, router, pathname]);
+  }, [session, isLoading, router, pathname]);
 
-  if (status === 'loading') {
+  if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc' }}>
         <div style={{ color: '#0f172a', fontWeight: 700, fontSize: '1.25rem' }}>Authenticating...</div>
@@ -30,12 +30,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     );
   }
 
-  if (status === 'unauthenticated') {
+  if (!session && !isLoading) {
     return null; // Prevents flash of protected layout while routing
   }
 
   // Get user name and avatar initials
-  const userName = session?.user?.name || 'Client';
+  const userName = user?.name || 'Client';
   const userInitials = userName
     .split(' ')
     .map((n) => n[0])
@@ -50,7 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: 'Settings', path: '/dashboard/settings', icon: Settings },
   ];
 
-  const role = (session?.user as unknown as { role?: string })?.role;
+  const role = user?.role;
   if (role === 'SUPER_ADMIN' || role === 'ADMIN') {
     menuItems.push({ name: 'Admin Panel', path: '/admin', icon: Shield });
   }
@@ -97,7 +97,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </div>
                 </button>
                 
-                <button className={styles.dropdownItem} onClick={() => signOut({ callbackUrl: '/' })}>
+                <button className={styles.dropdownItem} onClick={() => signOut().then(() => { window.location.href = '/'; })}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444' }}>
                     <LogOut size={14} />
                     <span>Sign out</span>

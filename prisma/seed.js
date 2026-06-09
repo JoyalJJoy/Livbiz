@@ -1,24 +1,51 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('Start seeding...');
 
-  // 1. Create Super Admin
-  const passwordHash = await bcrypt.hash('password@123', 10);
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@livbizz.com' },
-    update: { passwordHash },
-    create: {
-      email: 'admin@livbizz.com',
-      name: 'Super Admin',
-      passwordHash,
-      role: 'SUPER_ADMIN',
-    },
-  });
-  console.log(`Admin user: ${admin.id} (${admin.email})`);
+  // 1. Optionally create the Super Admin profile.
+  // Create the matching auth user in Supabase first, then pass its UUID here.
+  if (process.env.SUPABASE_SEED_ADMIN_ID) {
+    const existingAdmin = await prisma.user.findUnique({
+      where: { email: 'admin@livbizz.com' },
+      select: { id: true },
+    });
+
+    if (existingAdmin) {
+      if (existingAdmin.id !== process.env.SUPABASE_SEED_ADMIN_ID) {
+        console.warn(
+          `Admin profile already exists with id ${existingAdmin.id}; expected ${process.env.SUPABASE_SEED_ADMIN_ID}.`,
+        );
+      }
+
+      const admin = await prisma.user.update({
+        where: { email: 'admin@livbizz.com' },
+        data: {
+          name: 'Super Admin',
+          firstName: 'Super',
+          lastName: 'Admin',
+          role: 'SUPER_ADMIN',
+        },
+      });
+      console.log(`Admin profile: ${admin.id} (${admin.email})`);
+    } else {
+      const admin = await prisma.user.create({
+        data: {
+          id: process.env.SUPABASE_SEED_ADMIN_ID,
+          email: 'admin@livbizz.com',
+          name: 'Super Admin',
+          firstName: 'Super',
+          lastName: 'Admin',
+          role: 'SUPER_ADMIN',
+        },
+      });
+      console.log(`Admin profile: ${admin.id} (${admin.email})`);
+    }
+  } else {
+    console.log('Skipped admin profile: set SUPABASE_SEED_ADMIN_ID to a Supabase Auth user UUID.');
+  }
 
   // 2. Create Main Campus
   const mainCampus = await prisma.campus.upsert({

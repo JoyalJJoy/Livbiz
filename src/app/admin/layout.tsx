@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
 import Link from 'next/link';
 import { LayoutDashboard, ClipboardList, ScanLine, ChevronDown, LogOut, Users } from 'lucide-react';
 import styles from './layout.module.css';
@@ -10,22 +10,22 @@ import styles from './layout.module.css';
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { data: session, status } = useSession();
+  const { user, session, isLoading, signOut } = useSupabaseAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (!session && !isLoading) {
       router.push('/login?redirect=/admin');
     }
-    if (status === 'authenticated') {
-      const role = (session?.user as unknown as { role?: string })?.role;
+    if (!!session && !isLoading) {
+      const role = user?.role;
       if (role !== 'SUPER_ADMIN' && role !== 'ADMIN') {
         router.push('/dashboard');
       }
     }
-  }, [status, session, router]);
+  }, [session, isLoading, user, router]);
 
-  if (status === 'loading') {
+  if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
         <div style={{ color: '#0f172a', fontWeight: 700, fontSize: '1.25rem' }}>Loading Admin Panel...</div>
@@ -33,12 +33,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  const role = (session?.user as unknown as { role?: string })?.role;
-  if (status === 'unauthenticated' || (role !== 'SUPER_ADMIN' && role !== 'ADMIN')) {
+  const role = user?.role;
+  if ((!session && !isLoading) || (role !== 'SUPER_ADMIN' && role !== 'ADMIN')) {
     return null;
   }
 
-  const userName = session?.user?.name || 'Admin';
+  const userName = user?.name || 'Admin';
   const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   const menuItems = [
@@ -64,7 +64,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             {dropdownOpen && (
               <div className={styles.dropdownMenu} onMouseLeave={() => setDropdownOpen(false)}>
-                <button className={styles.dropdownItem} onClick={() => signOut({ callbackUrl: '/' })}>
+                <button className={styles.dropdownItem} onClick={() => signOut().then(() => { window.location.href = '/'; })}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444' }}>
                     <LogOut size={14} />
                     <span>Sign out</span>

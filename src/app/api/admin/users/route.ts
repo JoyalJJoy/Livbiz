@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { createSupabaseAdminClient } from '@/lib/supabase/server';
 import type { Prisma } from '@prisma/client';
 
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
 
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -116,7 +116,7 @@ export async function GET(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
 
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -155,7 +155,7 @@ export async function PATCH(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
 
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -205,13 +205,35 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: 'Email address is already in use by another account.' }, { status: 400 });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+    const trimmedFirstName = firstName.trim();
+    const trimmedLastName = lastName.trim();
+    const normalizedName = `${trimmedFirstName} ${trimmedLastName}`;
+
+    const supabaseAdmin = await createSupabaseAdminClient();
+    const { error: authUpdateError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+      email: normalizedEmail,
+      user_metadata: {
+        name: normalizedName,
+        firstName: trimmedFirstName,
+        lastName: trimmedLastName,
+      },
+    });
+
+    if (authUpdateError) {
+      return NextResponse.json(
+        { error: authUpdateError.message || 'Could not update authentication profile.' },
+        { status: 400 }
+      );
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        name: `${firstName.trim()} ${lastName.trim()}`,
-        email: email.toLowerCase().trim(),
+        firstName: trimmedFirstName,
+        lastName: trimmedLastName,
+        name: normalizedName,
+        email: normalizedEmail,
         phone: normalizedPhone,
         idType: idType || null,
         idNumber: idNumber ? idNumber.trim() : null,

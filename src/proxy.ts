@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { LRUCache } from 'lru-cache';
+import { updateSupabaseSession } from '@/lib/supabase/proxy';
 
 // ---------------------------------------------------------------------------
 // Rate-limit configuration (requests per minute per IP)
@@ -71,8 +72,16 @@ function checkRateLimit(
 // Proxy Function (Next.js 16 named proxy export)
 // ---------------------------------------------------------------------------
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // 1. Always refresh the Supabase auth session (for all routes)
+  const supabaseResponse = await updateSupabaseSession(request);
+
+  // 2. Only apply rate-limiting to API routes
+  if (!pathname.startsWith('/api/')) {
+    return supabaseResponse;
+  }
 
   // Resolve client IP — respect proxied header, fall back to 'anonymous'
   const forwarded = request.headers.get('x-forwarded-for');
@@ -95,18 +104,26 @@ export function proxy(request: NextRequest) {
     );
   }
 
-  // Forward the request and attach rate-limit headers to the response
-  const response = NextResponse.next();
-  response.headers.set('X-RateLimit-Limit', String(limit));
-  response.headers.set('X-RateLimit-Remaining', String(remaining));
+  // Attach rate-limit headers to the Supabase-refreshed response
+  supabaseResponse.headers.set('X-RateLimit-Limit', String(limit));
+  supabaseResponse.headers.set('X-RateLimit-Remaining', String(remaining));
 
-  return response;
+  return supabaseResponse;
 }
 
 // ---------------------------------------------------------------------------
-// Only run this proxy for API routes
+// Run proxy on all routes except static files
 // ---------------------------------------------------------------------------
 
 export const config = {
-  matcher: '/api/:path*',
+  matcher: [
+    /*
+     * Match all request paths except for:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - images in public folder
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 };

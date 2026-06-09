@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
 import { User, Mail, Phone, Lock, Eye, EyeOff, CheckCircle2, AlertTriangle, Loader2, CreditCard } from 'lucide-react';
 import styles from './settings.module.css';
 
 export default function SettingsPage() {
-  const { data: session, update: updateSession } = useSession();
+  const { user, session } = useSupabaseAuth();
 
   // Profile Form State
   const [firstName, setFirstName] = useState('');
@@ -56,10 +56,10 @@ export default function SettingsPage() {
       }
     }
 
-    if (session?.user) {
+    if (user) {
       loadUserData();
     }
-  }, [session]);
+  }, [session, user]);
 
   // Submit profile detail updates
   const handleProfileSubmit = async (e: React.FormEvent) => {
@@ -89,16 +89,6 @@ export default function SettingsPage() {
         setProfileError(data.error || 'Failed to update profile.');
       } else {
         setProfileSuccess('Profile updated successfully!');
-        
-        // Update local client session context
-        await updateSession({
-          ...session,
-          user: {
-            ...session?.user,
-            name: `${firstName.trim()} ${lastName.trim()}`,
-            email,
-          },
-        });
       }
     } catch {
       setProfileError('Something went wrong. Please check your connection.');

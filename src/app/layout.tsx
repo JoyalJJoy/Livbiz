@@ -60,7 +60,7 @@ export const metadata: Metadata = {
   },
 };
 
-import SessionProviderWrapper from "@/components/SessionProviderWrapper";
+import SupabaseAuthProvider from "@/components/SupabaseAuthProvider";
 
 export default function RootLayout({
   children,
@@ -70,9 +70,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${manrope.variable} ${poppins.variable}`} suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning={true}>
-        <SessionProviderWrapper>
+        <SupabaseAuthProvider>
           {children}
-        </SessionProviderWrapper>
+        </SupabaseAuthProvider>
       </body>
     </html>
   );

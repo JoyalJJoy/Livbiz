@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
 import { Search, Phone, IndianRupee, X } from 'lucide-react';
 import styles from './page.module.css';
 
@@ -21,8 +21,8 @@ interface User {
 }
 
 export default function AdminUsersPage() {
-  const { data: session } = useSession();
-  const currentRole = (session?.user as unknown as { role?: string })?.role;
+  const { user } = useSupabaseAuth();
+  const currentRole = user?.role;
   const isSuperAdmin = currentRole === 'SUPER_ADMIN';
 
   const [users, setUsers] = useState<User[]>([]);
@@ -195,54 +195,54 @@ export default function AdminUsersPage() {
             ) : users.length === 0 ? (
               <tr><td colSpan={7} className={styles.empty}>No users found.</td></tr>
             ) : (
-              users.map(user => (
-                <tr key={user.id}>
+              users.map(listedUser => (
+                <tr key={listedUser.id}>
                   <td>
                     <div className={styles.userCell}>
-                      <div className={styles.avatar}>{getInitials(user.name)}</div>
+                      <div className={styles.avatar}>{getInitials(listedUser.name)}</div>
                       <div className={styles.userInfo}>
-                        <span className={styles.userName}>{user.name}</span>
-                        <span className={styles.userEmail}>{user.email}</span>
+                        <span className={styles.userName}>{listedUser.name}</span>
+                        <span className={styles.userEmail}>{listedUser.email}</span>
                       </div>
                     </div>
                   </td>
                   <td>
-                    {user.phone ? (
+                    {listedUser.phone ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#475569' }}>
-                        <Phone size={14} /> +91 {user.phone}
+                        <Phone size={14} /> +91 {listedUser.phone}
                       </div>
                     ) : (
                       <span style={{ color: '#94a3b8' }}>Not provided</span>
                     )}
                   </td>
                   <td>
-                    <span style={{ fontWeight: 600, color: '#0f172a' }}>{user.bookingsCount}</span>
+                    <span style={{ fontWeight: 600, color: '#0f172a' }}>{listedUser.bookingsCount}</span>
                   </td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#16a34a', fontWeight: 600 }}>
-                      <IndianRupee size={14} /> {user.totalSpent}
+                      <IndianRupee size={14} /> {listedUser.totalSpent}
                     </div>
                   </td>
-                  <td>{new Date(user.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                  <td>{new Date(listedUser.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
                   <td>
-                    <span className={`${styles.roleBadge} ${styles[user.role.toLowerCase()] || ''}`}>
-                      {user.role.replace('_', ' ')}
+                    <span className={`${styles.roleBadge} ${styles[listedUser.role.toLowerCase()] || ''}`}>
+                      {listedUser.role.replace('_', ' ')}
                     </span>
                   </td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <button 
                         className={styles.detailsBtn} 
-                        onClick={() => openDetailsModal(user)}
+                        onClick={() => openDetailsModal(listedUser)}
                       >
                         Details
                       </button>
                       {isSuperAdmin && (
                         <select 
                           className={styles.actionSelect}
-                          value={user.role}
-                          onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                          disabled={user.id === (session?.user as unknown as { id: string })?.id}
+                          value={listedUser.role}
+                          onChange={(e) => handleRoleChange(listedUser.id, e.target.value)}
+                          disabled={listedUser.id === user?.id}
                         >
                           <option value="CLIENT">Make Client</option>
                           <option value="ADMIN">Make Admin</option>

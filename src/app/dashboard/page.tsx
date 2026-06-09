@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
 import { useRouter } from 'next/navigation';
 import { Calendar, Key, ArrowRight, Clock, MapPin, CreditCard, QrCode, CalendarDays } from 'lucide-react';
 import Image from 'next/image';
@@ -33,14 +33,14 @@ interface BookingItem {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { user, session } = useSupabaseAuth();
   const [stats, setStats] = useState<DashboardStats>({
     bookingsCount: 0,
     ticketsCount: 0,
     activePassesCount: 0,
   });
   const [bookings, setBookings] = useState<BookingItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -62,16 +62,16 @@ export default function DashboardPage() {
       } catch (err) {
         console.error('Failed to fetch dashboard data', err);
       } finally {
-        setIsLoading(false);
+        setIsDataLoading(false);
       }
     }
 
-    if (session?.user) {
+    if (user) {
       fetchData();
     }
-  }, [session]);
+  }, [session, user]);
 
-  const userName = session?.user?.name || 'Client';
+  const userName = user?.name || 'Client';
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-IN', {
@@ -126,7 +126,7 @@ export default function DashboardPage() {
           </div>
           <div className={styles.statInfo}>
             <span className={styles.statLabel}>Total Bookings</span>
-            <span className={styles.statValue}>{isLoading ? '...' : stats.bookingsCount}</span>
+            <span className={styles.statValue}>{isDataLoading ? '...' : stats.bookingsCount}</span>
           </div>
         </div>
 
@@ -136,13 +136,13 @@ export default function DashboardPage() {
           </div>
           <div className={styles.statInfo}>
             <span className={styles.statLabel}>Active Passes</span>
-            <span className={styles.statValue}>{isLoading ? '...' : stats.activePassesCount}</span>
+            <span className={styles.statValue}>{isDataLoading ? '...' : stats.activePassesCount}</span>
           </div>
         </div>
       </section>
 
       {/* 3. UPCOMING BOOKINGS */}
-      {!isLoading && upcomingBookings.length > 0 && (
+      {!isDataLoading && upcomingBookings.length > 0 && (
         <section className={styles.bookingsSection}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Upcoming Bookings</h2>
@@ -212,7 +212,7 @@ export default function DashboardPage() {
       )}
 
       {/* 4. RECENT/PAST BOOKINGS */}
-      {!isLoading && recentBookings.length > 0 && (
+      {!isDataLoading && recentBookings.length > 0 && (
         <section className={styles.bookingsSection}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Recent History</h2>
@@ -243,7 +243,7 @@ export default function DashboardPage() {
       )}
 
       {/* 5. EMPTY STATE */}
-      {!isLoading && bookings.length === 0 && (
+      {!isDataLoading && bookings.length === 0 && (
         <section className={styles.emptyStateCard}>
           <div className={styles.illustrationContainer}>
             <div className={styles.glowRing} />

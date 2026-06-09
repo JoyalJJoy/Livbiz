@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
 import { MapPin, Calendar, Clock, QrCode, X, AlertTriangle, Plus, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import styles from './bookings.module.css';
@@ -34,7 +34,7 @@ interface Booking {
 
 export default function BookingsPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { user, session } = useSupabaseAuth();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,12 +67,12 @@ export default function BookingsPage() {
   };
 
   useEffect(() => {
-    if (session?.user) {
+    if (user) {
       Promise.resolve().then(() => {
         fetchBookings();
       });
     }
-  }, [session]);
+  }, [session, user]);
 
   // Cancel Booking
   const handleCancelBooking = async (bookingId: string) => {
@@ -327,7 +327,7 @@ export default function BookingsPage() {
                 <div className={styles.modalDetailItem}>
                   <span className={styles.modalDetailLabel}>Attendee</span>
                   <span className={styles.modalDetailValue}>
-                    {activeTicket?.recipientName || session?.user?.name || 'Coworker'}
+                    {activeTicket?.recipientName || user?.name || 'Coworker'}
                   </span>
                 </div>
                 {activeTicket?.recipientEmail && (

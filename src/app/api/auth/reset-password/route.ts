@@ -1,52 +1,19 @@
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
 import { isRateLimited } from '@/lib/rate-limiter';
 import { getClientIp } from '@/lib/request';
-import {
-  getEmailFromPasswordResetIdentifier,
-  hashPasswordResetToken,
-} from '@/lib/password-reset';
 import { validatePasswordStrength } from '@/lib/validation';
 import { withRequestContext } from '@/lib/logger';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 
-async function findPasswordResetToken(token: string) {
-  if (!token || token.length < 32 || token.length > 256) {
-    return null;
-  }
-
-  const tokenHash = hashPasswordResetToken(token);
-  const record = await prisma.verificationToken.findUnique({
-    where: { token: tokenHash },
-  });
-
-  if (!record) {
-    return null;
-  }
-
-  const email = getEmailFromPasswordResetIdentifier(record.identifier);
-  if (!email) {
-    return null;
-  }
-
-  if (record.expires <= new Date()) {
-    await prisma.verificationToken.deleteMany({
-      where: { token: tokenHash },
-    });
-    return null;
-  }
-
-  return { record, email };
-}
-
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(req.url);
-    const token = searchParams.get('token')?.trim() || '';
-    const resetToken = await findPasswordResetToken(token);
+    // Supabase validates the recovery link in /api/auth/callback, which
+    // exchanges the code for a short-lived authenticated recovery session.
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
     return NextResponse.json(
-      { valid: Boolean(resetToken) },
+      { valid: Boolean(user) },
       { headers: { 'Cache-Control': 'no-store' } }
     );
   } catch (error) {
@@ -69,7 +36,6 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json().catch(() => null);
-    const token = typeof body?.token === 'string' ? body.token.trim() : '';
     const password = body?.password;
     const passwordError = validatePasswordStrength(password);
 
@@ -77,45 +43,33 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: passwordError }, { status: 400 });
     }
 
-    const resetToken = await findPasswordResetToken(token);
-    if (!resetToken) {
+    // Update the user's password via Supabase Auth
+    const supabase = await createSupabaseServerClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
       return NextResponse.json(
         { error: 'This password recovery link is invalid or has expired.' },
         { status: 400 }
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: resetToken.email },
-      select: { id: true },
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: password as string,
     });
 
-    if (!user) {
-      await prisma.verificationToken.deleteMany({
-        where: { identifier: resetToken.record.identifier },
-      });
+    if (updateError) {
+      log.error('Password update failed', { error: updateError });
       return NextResponse.json(
-        { error: 'This password recovery link is invalid or has expired.' },
+        { error: updateError.message || 'Failed to update password.' },
         { status: 400 }
       );
     }
-
-    const passwordHash = await bcrypt.hash(password as string, 10);
-
-    await prisma.$transaction([
-      prisma.user.update({
-        where: { id: user.id },
-        data: { passwordHash },
-      }),
-      prisma.verificationToken.deleteMany({
-        where: { identifier: resetToken.record.identifier },
-      }),
-    ]);
 
     log.info('Password reset successful', {
       data: {
-        email: resetToken.email,
         userId: user.id,
+        email: user.email,
       },
     });
 

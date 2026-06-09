@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
+import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/supabase/server';
 import {
   isValidEmail,
   normalizeEmail,
@@ -13,7 +12,7 @@ import {
 // GET User profile details
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
 
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -48,7 +47,7 @@ export async function GET() {
 // PUT Update user profile or password
 export async function PUT(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
 
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -124,10 +123,25 @@ export async function PUT(req: Request) {
         return NextResponse.json({ error: 'Email address is already in use.' }, { status: 400 });
       }
 
-      // Compute full name for backward compatibility
       const normalizedName = `${trimmedFirstName} ${trimmedLastName}`;
 
-      // Perform update
+      const supabaseAdmin = await createSupabaseAdminClient();
+      const { error: authUpdateError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+        email: normalizedEmail,
+        user_metadata: {
+          name: normalizedName,
+          firstName: trimmedFirstName,
+          lastName: trimmedLastName,
+        },
+      });
+
+      if (authUpdateError) {
+        return NextResponse.json(
+          { error: authUpdateError.message || 'Could not update authentication profile.' },
+          { status: 400 }
+        );
+      }
+
       const updatedUser = await prisma.user.update({
         where: { id: userId },
         data: {
@@ -178,28 +192,34 @@ export async function PUT(req: Request) {
 
       const user = await prisma.user.findUnique({
         where: { id: userId },
-        select: { passwordHash: true },
+        select: { email: true },
       });
 
-      if (!user || !user.passwordHash) {
+      if (!user) {
         return NextResponse.json({ error: 'User not found.' }, { status: 404 });
       }
 
-      // Verify current password
-      const isPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
+      const supabase = await createSupabaseServerClient();
+      const { data: verifiedSession, error: verifyError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: currentPassword,
+      });
 
-      if (!isPasswordValid) {
+      if (verifyError || verifiedSession.user?.id !== userId) {
         return NextResponse.json({ error: 'Current password is incorrect.' }, { status: 400 });
       }
 
-      // Hash new password
-      const newPasswordHash = await bcrypt.hash(newPassword, 10);
-
-      // Perform save
-      await prisma.user.update({
-        where: { id: userId },
-        data: { passwordHash: newPasswordHash },
+      const supabaseAdmin = await createSupabaseAdminClient();
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+        password: newPassword,
       });
+
+      if (updateError) {
+        return NextResponse.json(
+          { error: updateError.message || 'Failed to update password.' },
+          { status: 400 }
+        );
+      }
 
       return NextResponse.json({ message: 'Password updated successfully' });
     }

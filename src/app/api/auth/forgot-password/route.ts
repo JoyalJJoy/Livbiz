@@ -2,15 +2,10 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendEmail } from '@/lib/email';
 import { isRateLimited } from '@/lib/rate-limiter';
-import { getClientIp, getRequestOrigin } from '@/lib/request';
+import { getClientIp } from '@/lib/request';
 import { isValidEmail, normalizeEmail } from '@/lib/validation';
-import {
-  PASSWORD_RESET_TOKEN_TTL_MS,
-  createPasswordResetToken,
-  getPasswordResetIdentifier,
-  hashPasswordResetToken,
-} from '@/lib/password-reset';
 import { withRequestContext } from '@/lib/logger';
+import { createSupabaseAdminClient } from '@/lib/supabase/server';
 
 const GENERIC_RESET_MESSAGE =
   'If a client account exists for that email, password recovery instructions have been sent.';
@@ -72,36 +67,38 @@ export async function POST(req: Request) {
       );
     }
 
+    // Check if user exists in our profile table
     const user = await prisma.user.findUnique({
       where: { email },
-      select: { email: true, name: true, passwordHash: true },
+      select: { email: true, name: true },
     });
 
-    if (!user?.passwordHash) {
+    if (!user) {
+      // Return generic message to prevent email enumeration
       return NextResponse.json({ success: true, message: GENERIC_RESET_MESSAGE });
     }
 
-    const token = createPasswordResetToken();
-    const tokenHash = hashPasswordResetToken(token);
-    const identifier = getPasswordResetIdentifier(user.email);
-    const expires = new Date(Date.now() + PASSWORD_RESET_TOKEN_TTL_MS);
+    const { origin } = new URL(req.url);
+    const callbackUrl = `${origin}/api/auth/callback?next=/reset-password`;
 
-    await prisma.$transaction([
-      prisma.verificationToken.deleteMany({
-        where: {
-          OR: [{ identifier }, { expires: { lt: new Date() } }],
-        },
-      }),
-      prisma.verificationToken.create({
-        data: {
-          identifier,
-          token: tokenHash,
-          expires,
-        },
-      }),
-    ]);
+    // Generate Supabase's signed recovery URL, then send it with our template.
+    const supabaseAdmin = await createSupabaseAdminClient();
+    const { data: resetData, error: resetError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'recovery',
+      email: user.email,
+      options: {
+        redirectTo: callbackUrl,
+      },
+    });
 
-    const resetUrl = `${getRequestOrigin(req)}/reset-password?token=${encodeURIComponent(token)}`;
+    const resetUrl = resetData.properties?.action_link;
+
+    if (resetError || !resetUrl) {
+      log.error('Supabase password reset generation failed', { error: resetError });
+      // Still return generic message
+      return NextResponse.json({ success: true, message: GENERIC_RESET_MESSAGE });
+    }
+
     const emailSent = await sendEmail({
       to: user.email,
       subject: 'Reset your LivBizz password',
