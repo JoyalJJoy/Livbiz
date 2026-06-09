@@ -81,10 +81,12 @@ export default function MeetingRoomWizard() {
   const { user: authUser, session, isLoading: authLoading } = useSupabaseAuth();
   const isLoggedIn = !authLoading && !!session;
 
+  const today = new Date();
+
   const [state, setState] = useState<BookingState>({
     step: 1,
     roomId: null,
-    date: null,
+    date: today, // Default to today
     timeMode: 'full',
     customStartTime: '09:00 AM',
     customEndTime: '06:00 PM',
@@ -274,8 +276,48 @@ export default function MeetingRoomWizard() {
   const startEmptyCells = new Date(calendarYear, calendarMonth, 1).getDay();
   const emptyCells = Array.from({ length: startEmptyCells });
   const dayCells = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  const today = new Date();
   const isPrevMonthDisabled = new Date(calendarYear, calendarMonth - 1, 1) < new Date(today.getFullYear(), today.getMonth(), 1);
+
+  const handlePrevMonth = () => {
+    if (isPrevMonthDisabled) return;
+    const nextCalDate = new Date(calendarYear, calendarMonth - 1, 1);
+    setCurrentCalendarDate(nextCalDate);
+    
+    const todayVal = new Date();
+    let targetDay = todayVal.getDate();
+    const maxDays = new Date(nextCalDate.getFullYear(), nextCalDate.getMonth() + 1, 0).getDate();
+    targetDay = Math.min(targetDay, maxDays);
+    
+    const newSelectedDate = new Date(nextCalDate.getFullYear(), nextCalDate.getMonth(), targetDay);
+    const todayCheck = new Date();
+    todayCheck.setHours(0, 0, 0, 0);
+    
+    if (newSelectedDate >= todayCheck) {
+      setState(s => ({ ...s, date: newSelectedDate }));
+    } else {
+      setState(s => ({ ...s, date: new Date(todayCheck) }));
+    }
+  };
+
+  const handleNextMonth = () => {
+    const nextCalDate = new Date(calendarYear, calendarMonth + 1, 1);
+    setCurrentCalendarDate(nextCalDate);
+    
+    const todayVal = new Date();
+    let targetDay = todayVal.getDate();
+    const maxDays = new Date(nextCalDate.getFullYear(), nextCalDate.getMonth() + 1, 0).getDate();
+    targetDay = Math.min(targetDay, maxDays);
+    
+    const newSelectedDate = new Date(nextCalDate.getFullYear(), nextCalDate.getMonth(), targetDay);
+    const todayCheck = new Date();
+    todayCheck.setHours(0, 0, 0, 0);
+    
+    if (newSelectedDate >= todayCheck) {
+      setState(s => ({ ...s, date: newSelectedDate }));
+    } else {
+      setState(s => ({ ...s, date: new Date(todayCheck) }));
+    }
+  };
 
   const formatDateString = (date: Date | null) => {
     if (!date) return '-';
@@ -357,11 +399,11 @@ export default function MeetingRoomWizard() {
               <p className={styles.subTitle}>Pick a date for your meeting</p>
               <div className={styles.calendarWrapper}>
                 <div className={styles.calendarNav}>
-                  <button type="button" className={`${styles.calendarNavBtn} ${isPrevMonthDisabled ? styles.disabled : ''}`} onClick={() => !isPrevMonthDisabled && setCurrentCalendarDate(new Date(calendarYear, calendarMonth - 1, 1))} disabled={isPrevMonthDisabled}>
+                  <button type="button" className={`${styles.calendarNavBtn} ${isPrevMonthDisabled ? styles.disabled : ''}`} onClick={handlePrevMonth} disabled={isPrevMonthDisabled}>
                     <ChevronLeft size={16} />
                   </button>
                   <div className={styles.calendarMonthTitle}>{monthName}</div>
-                  <button type="button" className={styles.calendarNavBtn} onClick={() => setCurrentCalendarDate(new Date(calendarYear, calendarMonth + 1, 1))}>
+                  <button type="button" className={styles.calendarNavBtn} onClick={handleNextMonth}>
                     <ChevronRight size={16} />
                   </button>
                 </div>

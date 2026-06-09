@@ -56,19 +56,21 @@ export default function DayPassWizard() {
   const { user: authUser, session, isLoading: authLoading } = useSupabaseAuth();
   const isLoggedIn = !authLoading && !!session;
   
+  const today = new Date();
+
   const [state, setState] = useState<BookingState>({
     step: 1,
     usersCount: 1,
     selectedSeats: [],
     planId: 'regular',
-    selectedDates: [new Date(2026, 4, 30)], // Default to May 30, 2026
+    selectedDates: [today], // Default to today
     timeMode: 'full',
     customStartTime: '09:00 AM',
     customEndTime: '06:00 PM',
   });
 
   // Local state for calendar navigation
-  const [currentCalendarDate, setCurrentCalendarDate] = useState<Date>(new Date(2026, 4, 1));
+  const [currentCalendarDate, setCurrentCalendarDate] = useState<Date>(today);
 
   // Login & signup form state
   const [isSignUp, setIsSignUp] = useState(true);
@@ -335,16 +337,49 @@ export default function DayPassWizard() {
   const emptyCells = Array.from({ length: startEmptyCells });
   const dayCells = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
-  const today = new Date();
   const isPrevMonthDisabled = new Date(calendarYear, calendarMonth - 1, 1) < new Date(today.getFullYear(), today.getMonth(), 1);
 
   const handlePrevMonth = () => {
     if (isPrevMonthDisabled) return;
-    setCurrentCalendarDate(new Date(calendarYear, calendarMonth - 1, 1));
+    const nextCalDate = new Date(calendarYear, calendarMonth - 1, 1);
+    setCurrentCalendarDate(nextCalDate);
+    
+    const todayVal = new Date();
+    let targetDay = todayVal.getDate();
+    const maxDays = new Date(nextCalDate.getFullYear(), nextCalDate.getMonth() + 1, 0).getDate();
+    targetDay = Math.min(targetDay, maxDays);
+    
+    const newSelectedDate = new Date(nextCalDate.getFullYear(), nextCalDate.getMonth(), targetDay);
+    const todayCheck = new Date();
+    todayCheck.setHours(0, 0, 0, 0);
+    
+    if (newSelectedDate >= todayCheck) {
+      setState(s => ({ ...s, selectedDates: [newSelectedDate] }));
+    } else {
+      const fallbackDate = new Date(todayCheck);
+      setState(s => ({ ...s, selectedDates: [fallbackDate] }));
+    }
   };
 
   const handleNextMonth = () => {
-    setCurrentCalendarDate(new Date(calendarYear, calendarMonth + 1, 1));
+    const nextCalDate = new Date(calendarYear, calendarMonth + 1, 1);
+    setCurrentCalendarDate(nextCalDate);
+    
+    const todayVal = new Date();
+    let targetDay = todayVal.getDate();
+    const maxDays = new Date(nextCalDate.getFullYear(), nextCalDate.getMonth() + 1, 0).getDate();
+    targetDay = Math.min(targetDay, maxDays);
+    
+    const newSelectedDate = new Date(nextCalDate.getFullYear(), nextCalDate.getMonth(), targetDay);
+    const todayCheck = new Date();
+    todayCheck.setHours(0, 0, 0, 0);
+    
+    if (newSelectedDate >= todayCheck) {
+      setState(s => ({ ...s, selectedDates: [newSelectedDate] }));
+    } else {
+      const fallbackDate = new Date(todayCheck);
+      setState(s => ({ ...s, selectedDates: [fallbackDate] }));
+    }
   };
 
   return (
