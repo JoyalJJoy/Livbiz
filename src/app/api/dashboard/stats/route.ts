@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { cached } from '@/lib/cache';
 
 export async function GET() {
   try {
@@ -11,33 +12,37 @@ export async function GET() {
     }
 
     const userId = (session.user as unknown as { id: string }).id;
+    const cacheKey = `dashboard:stats:${userId}`;
 
-    const now = new Date();
+    const stats = await cached(
+      cacheKey,
+      async () => {
+        const now = new Date();
+        const [bookingsCount, activePassesCount] = await Promise.all([
+          prisma.booking.count({
+            where: { userId },
+          }),
+          prisma.ticket.count({
+            where: {
+              userId,
+              status: 'VALID',
+              validUntil: {
+                gt: now,
+              },
+            },
+          }),
+        ]);
 
-    const [bookingsCount, activePassesCount] = await Promise.all([
-      prisma.booking.count({
-        where: { userId },
-      }),
-      prisma.ticket.count({
-        where: {
-          userId,
-          status: 'VALID',
-          validUntil: {
-            gt: now,
-          },
-        },
-      }),
-    ]);
+        return {
+          bookingsCount,
+          activePassesCount,
+          ticketsCount: 0,
+        };
+      },
+      10_000 // Cache for 10 seconds
+    );
 
-    // 3. For support tickets count, load from simulated storage or return 0 initially
-    // (Tickets will be saved in client localStorage for interactive persistence)
-    const ticketsCount = 0; 
-
-    return NextResponse.json({
-      bookingsCount,
-      activePassesCount,
-      ticketsCount,
-    });
+    return NextResponse.json(stats);
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

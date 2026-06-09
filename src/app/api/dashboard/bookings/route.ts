@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { cached, invalidateCache } from '@/lib/cache';
 
 // GET Bookings list for logged-in user
 export async function GET() {
@@ -12,68 +13,80 @@ export async function GET() {
     }
 
     const userId = (session.user as unknown as { id: string }).id;
+    const cacheKey = `dashboard:bookings:${userId}`;
 
-    // Fetch user bookings, including their slot information, campus details, and access ticket QR details
-    const dbBookings = await prisma.booking.findMany({
-      where: { userId },
-      include: {
-        slot: {
+    const result = await cached(
+      cacheKey,
+      async () => {
+        // Fetch user bookings, including their slot information, campus details, and access ticket QR details
+        const dbBookings = await prisma.booking.findMany({
+          where: { userId },
           include: {
-            campus: true,
+            slot: {
+              include: {
+                campus: true,
+              },
+            },
+            tickets: true,
           },
-        },
-        tickets: true,
-      },
-      orderBy: {
-        startTime: 'desc',
-      },
-    });
+          orderBy: {
+            startTime: 'desc',
+          },
+        });
 
-    // Format list objects neatly for client dashboard consumes
-    const formattedBookings = dbBookings.map((b) => {
-      const rawTickets: unknown = (b as unknown as { tickets?: unknown }).tickets;
-      const tickets = Array.isArray(rawTickets) ? rawTickets : [];
+        // Format list objects neatly for client dashboard consumes
+        const formattedBookings = dbBookings.map((b) => {
+          const rawTickets: unknown = (b as unknown as { tickets?: unknown }).tickets;
+          const tickets = Array.isArray(rawTickets) ? rawTickets : [];
 
-      return {
-        id: b.id,
-        slotName: b.slot.name,
-        slotType: b.slot.type,
-        campusName: b.slot.campus.name,
-        startTime: b.startTime.toISOString(),
-        endTime: b.endTime.toISOString(),
-        totalPrice: Number(b.totalPrice),
-        status: b.status,
-        tickets: tickets.map((tUnknown) => {
-          const t = tUnknown as {
-            id: string;
-            code: string;
-            qrData: string;
-            status: string;
-            validFrom: Date;
-            validUntil: Date;
-            attendeeIndex?: number | null;
-            recipientName?: string | null;
-            recipientEmail?: string | null;
-            sentAt?: Date | null;
-          };
+          const formattedTickets = tickets.map((tUnknown) => {
+            const t = tUnknown as {
+              id: string;
+              code: string;
+              qrData: string;
+              status: string;
+              validFrom: Date;
+              validUntil: Date;
+              attendeeIndex?: number | null;
+              recipientName?: string | null;
+              recipientEmail?: string | null;
+              sentAt?: Date | null;
+            };
+
+            return {
+              id: t.id,
+              code: t.code,
+              qrData: t.qrData,
+              status: t.status,
+              validFrom: t.validFrom.toISOString(),
+              validUntil: t.validUntil.toISOString(),
+              attendeeIndex: t.attendeeIndex ?? null,
+              recipientName: t.recipientName ?? null,
+              recipientEmail: t.recipientEmail ?? null,
+              sentAt: t.sentAt?.toISOString() || null,
+            };
+          });
 
           return {
-            id: t.id,
-            code: t.code,
-            qrData: t.qrData,
-            status: t.status,
-            validFrom: t.validFrom.toISOString(),
-            validUntil: t.validUntil.toISOString(),
-            attendeeIndex: t.attendeeIndex ?? null,
-            recipientName: t.recipientName ?? null,
-            recipientEmail: t.recipientEmail ?? null,
-            sentAt: t.sentAt?.toISOString() || null,
+            id: b.id,
+            slotName: b.slot.name,
+            slotType: b.slot.type,
+            campusName: b.slot.campus.name,
+            startTime: b.startTime.toISOString(),
+            endTime: b.endTime.toISOString(),
+            totalPrice: Number(b.totalPrice),
+            status: b.status,
+            ticket: formattedTickets[0] || null, // Map first ticket to singular 'ticket' property for dashboard home card compatibility
+            tickets: formattedTickets,
           };
-        }),
-      };
-    });
+        });
 
-    return NextResponse.json({ bookings: formattedBookings });
+        return { bookings: formattedBookings };
+      },
+      10_000 // Cache for 10 seconds
+    );
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Bookings GET Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
@@ -124,6 +137,10 @@ export async function PUT(req: Request) {
       where: { bookingId, status: 'VALID' },
       data: { status: 'REVOKED' },
     });
+
+    // Invalidate client dashboard cache immediately to keep it fresh
+    invalidateCache(`dashboard:bookings:${userId}`);
+    invalidateCache(`dashboard:stats:${userId}`);
 
     return NextResponse.json({
       message: 'Booking cancelled successfully.',

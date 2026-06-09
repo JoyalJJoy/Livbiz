@@ -334,6 +334,8 @@ export async function PATCH(req: Request) {
       });
 
       invalidateCache('admin:stats');
+      invalidateCache(`dashboard:bookings:${booking.userId}`);
+      invalidateCache(`dashboard:stats:${booking.userId}`);
 
       return NextResponse.json({
         message: 'Booking approved and tickets generated.',
@@ -376,6 +378,8 @@ export async function PATCH(req: Request) {
       });
 
       invalidateCache('admin:stats');
+      invalidateCache(`dashboard:bookings:${booking.userId}`);
+      invalidateCache(`dashboard:stats:${booking.userId}`);
 
       return NextResponse.json({
         message: 'Booking rejected.',
@@ -418,6 +422,8 @@ export async function PATCH(req: Request) {
       });
 
       invalidateCache('admin:stats');
+      invalidateCache(`dashboard:bookings:${booking.userId}`);
+      invalidateCache(`dashboard:stats:${booking.userId}`);
 
       return NextResponse.json({ message: 'Booking cancelled.', status: 'CANCELLED' });
     }
@@ -501,6 +507,8 @@ export async function PUT(req: Request) {
     });
 
     invalidateCache('admin:stats');
+    invalidateCache(`dashboard:bookings:${updatedBooking.userId}`);
+    invalidateCache(`dashboard:stats:${updatedBooking.userId}`);
 
     return NextResponse.json({
       message: 'Booking details updated successfully.',
