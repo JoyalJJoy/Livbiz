@@ -7,7 +7,7 @@
 
 /* ── Choose Your Path Header ──────────────────────────────── */
 .chooseSection {
-  padding-block: 160px 100px;
+  padding-block: 130px 45px;
   position: relative;
   overflow: hidden;
   background-color: #101827;
@@ -48,35 +48,6 @@
   padding-inline: 1.5rem;
   position: relative;
   z-index: 2;
-}
-
-.eyebrow {
-  color: var(--color-brand-accent);
-  font-size: 0.85rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 0.85rem;
-}
-
-.heading {
-  font-size: clamp(2.4rem, 4.6vw, 4.2rem);
-  font-weight: 800;
-  color: #ffffff;
-  line-height: 1.1;
-  margin: 0 0 1rem 0;
-  letter-spacing: 0;
-  text-shadow: 0 20px 52px rgba(0, 0, 0, 0.34);
-}
-
-.subheading {
-  font-size: 1.08rem;
-  color: rgba(255, 255, 255, 0.68);
-  font-weight: 500;
-  line-height: 1.7;
-  max-width: 520px;
-  margin-inline: auto;
-  margin-bottom: 0;
 }
 
 /* ── Cards Section ────────────────────────────────────────── */
@@ -281,15 +252,7 @@
 
 @media (max-width: 640px) {
   .chooseSection {
-    padding-block: 120px 30px;
-  }
-
-  .heading {
-    font-size: 1.75rem;
-  }
-
-  .subheading {
-    font-size: 0.95rem;
+    padding-block: 100px 15px;
   }
 
   .pathCard {

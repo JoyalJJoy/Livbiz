@@ -13,11 +13,7 @@ export default function BookPage() {
       {/* ── Choose Your Path Section ─────────────────────── */}
       <section className={styles.chooseSection}>
         <div className={styles.chooseSectionInner}>
-          <p className={styles.eyebrow}>Choose Your Space</p>
-          <h1 className={styles.heading}>How can we help you today?</h1>
-          <p className={styles.subheading}>
-            Select your workspace type to access personalized booking options and resources.
-          </p>
+          {/* Clean banner layout with no text or animation as requested */}
         </div>
         <svg className={styles.wave} viewBox="0 0 1440 88" preserveAspectRatio="none" aria-hidden="true">
           <path d="M0 50C276 78 511 78 814 54C1047 36 1203 19 1440 4V88H0V50Z" />
