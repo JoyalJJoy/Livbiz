@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, Check, Users, ChevronLeft, ChevronRight, Mail, Lock, Eye, EyeOff, Presentation, CreditCard, Phone, LogIn, CheckCircle } from 'lucide-react';
 import BookingLottie from './BookingLottie';
+import InteractiveFloorPlan from './InteractiveFloorPlan';
 import styles from './MeetingRoomWizard.module.css';
 import { createBrowserClient } from '@/lib/supabase/client';
 import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
@@ -366,31 +367,41 @@ export default function MeetingRoomWizard() {
         <div className={styles.contentBody}>
           {/* STEP 1: ROOM SELECTION */}
           {state.step === 1 && (
-            <>
-              <p className={styles.subTitle}>Choose a conference room that suits your needs</p>
-              {ROOMS.map(room => (
-                <div
-                  key={room.id}
-                  className={`${styles.passCard} ${state.roomId === room.id ? styles.selected : ''}`}
-                  onClick={() => handleRoomSelect(room.id)}
-                >
-                  <div className={styles.cardHeader}>
-                    <div className={styles.iconWrapper}><Presentation size={20} /></div>
-                    <div>
-                      <div className={styles.cardTitle}>{room.name}</div>
-                      <div className={styles.cardPrice}><span>₹{room.price}</span>/hr</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <p className={styles.subTitle}>Select a room below or click it directly on the floor plan map</p>
+              
+              <InteractiveFloorPlan
+                type={state.roomId || '4-seat'}
+                selectedSeats={state.roomId ? [state.roomId] : []}
+                onToggleSeat={(roomId) => handleRoomSelect(roomId as RoomId)}
+                mode="room"
+              />
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {ROOMS.map(room => (
+                  <div
+                    key={room.id}
+                    className={`${styles.passCard} ${state.roomId === room.id ? styles.selected : ''}`}
+                    onClick={() => handleRoomSelect(room.id)}
+                  >
+                    <div className={styles.cardHeader}>
+                      <div className={styles.iconWrapper}><Presentation size={20} /></div>
+                      <div>
+                        <div className={styles.cardTitle}>{room.name}</div>
+                        <div className={styles.cardPrice}><span>₹{room.price}</span>/hr</div>
+                      </div>
                     </div>
+                    <ul className={styles.featureList}>
+                      {room.features.map(f => (
+                        <li key={f} className={styles.featureItem}>
+                          <Check size={14} className={styles.featureIcon} /> {f}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <ul className={styles.featureList}>
-                    {room.features.map(f => (
-                      <li key={f} className={styles.featureItem}>
-                        <Check size={14} className={styles.featureIcon} /> {f}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* STEP 2: DATE */}

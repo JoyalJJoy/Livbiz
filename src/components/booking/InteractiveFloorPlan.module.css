@@ -78,8 +78,10 @@
 .cadFloor {
   position: relative;
   width: 640px; /* Mockup-exact compact canvas width to prevent page overflow */
-  height: 480px; /* Perfectly proportioned height fitting middle column */
-  background-color: #ffffff; /* Pure white drafting sheet background */
+  height: 764px; /* Matches the portrait aspect ratio of floorplan.jpg */
+  background-image: url('/images/floorplan.jpg');
+  background-size: 100% 100%;
+  background-position: center;
   border: 2px solid #8e8e8e; /* Clean solid grey outlines */
   border-radius: 8px;
   overflow: hidden;
@@ -624,7 +626,7 @@
 
 .cadViewport {
   width: 100%;
-  height: 480px;
+  height: 780px; /* Accommodates the taller portrait canvas */
   background: #e2e8f0; /* CAD grid board canvas backplate */
   overflow: hidden;
   display: flex;
@@ -686,4 +688,56 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   letter-spacing: 0.02em;
   user-select: none;
+}
+
+/* ── CONFERENCE ROOM SELECTION MAP OVERLAYS ── */
+.roomZone {
+  background: rgba(30, 41, 59, 0.2); /* Dark semi-transparent backplate */
+  border: 3px dashed #3b82f6; /* Dashed blue outline */
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(1px);
+}
+
+.roomZone:hover {
+  background: rgba(59, 130, 246, 0.25); /* Vibrant blue hover */
+  border: 3px solid #2563eb;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+  transform: translate(-50%, -50%) scale(1.02);
+}
+
+.roomSelected {
+  background: rgba(34, 197, 94, 0.25) !important; /* Green active background */
+  border: 3px solid #22c55e !important; /* Solid green border */
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.5) !important;
+}
+
+.roomZoneLabel {
+  background: rgba(15, 23, 42, 0.85); /* Premium dark label pill */
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+  pointer-events: none;
+}
+
+.roomZone:hover .roomZoneLabel {
+  background: #3b82f6;
+  border-color: #60a5fa;
+  transform: scale(1.05);
+}
+
+.roomSelected .roomZoneLabel {
+  background: #22c55e !important;
+  border-color: #4ade80 !important;
 }
