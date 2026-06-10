@@ -279,3 +279,128 @@ export async function PUT(req: Request) {
     );
   }
 }
+
+export async function POST(req: Request) {
+  try {
+    const session = await getSession();
+
+    if (!session || !session.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const currentRole = (session.user as unknown as { role?: string }).role;
+    if (currentRole !== 'SUPER_ADMIN' && currentRole !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const { firstName, lastName, email, password, phone, role, idType, idNumber } = body;
+
+    if (!email || !firstName || !lastName) {
+      return NextResponse.json({ error: 'First name, last name, and email are required.' }, { status: 400 });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const trimmedFirstName = firstName.trim();
+    const trimmedLastName = lastName.trim();
+    const normalizedName = `${trimmedFirstName} ${trimmedLastName}`;
+
+    // Role check: Only SUPER_ADMIN can create ADMIN or SUPER_ADMIN users
+    const targetRole = role || 'CLIENT';
+    if (targetRole !== 'CLIENT' && currentRole !== 'SUPER_ADMIN') {
+      return NextResponse.json({ error: 'Forbidden: Only SUPER_ADMIN can create administrative users.' }, { status: 403 });
+    }
+
+    if (!['CLIENT', 'ADMIN', 'SUPER_ADMIN'].includes(targetRole)) {
+      return NextResponse.json({ error: 'Invalid role.' }, { status: 400 });
+    }
+
+    let normalizedPhone: string | null = null;
+    if (phone) {
+      const cleaned = phone.replace(/\D/g, '');
+      if (cleaned.length !== 10) {
+        return NextResponse.json({ error: 'Phone number must be exactly 10 digits.' }, { status: 400 });
+      }
+      normalizedPhone = cleaned;
+    }
+
+    if (idType && idNumber) {
+      if (idType === 'AADHAAR' && !/^\d{12}$/.test(idNumber.replace(/\s/g, ''))) {
+        return NextResponse.json({ error: 'Aadhaar must be exactly 12 digits.' }, { status: 400 });
+      }
+      if (idType === 'PAN' && !/^[A-Z]{5}\d{4}[A-Z]$/.test(idNumber.trim())) {
+        return NextResponse.json({ error: 'PAN must be in standard format (5 letters, 4 digits, 1 letter).' }, { status: 400 });
+      }
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+      select: { id: true },
+    });
+
+    if (existingUser) {
+      return NextResponse.json({ error: 'A user with this email address already exists.' }, { status: 400 });
+    }
+
+    // Generate a secure password if not provided
+    const userPassword = password || ('Temp@' + Math.random().toString(36).slice(-8) + '!' + Math.floor(Math.random() * 100));
+
+    const supabaseAdmin = await createSupabaseAdminClient();
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email: normalizedEmail,
+      password: userPassword,
+      email_confirm: true, // Auto-confirm email
+      user_metadata: {
+        name: normalizedName,
+        firstName: trimmedFirstName,
+        lastName: trimmedLastName,
+      },
+    });
+
+    if (authError || !authData.user) {
+      return NextResponse.json(
+        { error: authError?.message || 'Failed to create Supabase auth user.' },
+        { status: 400 }
+      );
+    }
+
+    const createdUser = await prisma.user.create({
+      data: {
+        id: authData.user.id,
+        name: normalizedName,
+        firstName: trimmedFirstName,
+        lastName: trimmedLastName,
+        email: normalizedEmail,
+        phone: normalizedPhone,
+        idType: idType || null,
+        idNumber: idNumber ? idNumber.trim() : null,
+        role: targetRole,
+      },
+    });
+
+    // Log administrative action
+    const adminId = (session.user as unknown as { id: string }).id;
+    await createAuditLog({
+      action: 'USER_CREATED',
+      userId: adminId,
+      targetId: createdUser.id,
+      targetType: 'USER',
+      changes: {
+        name: normalizedName,
+        email: normalizedEmail,
+        phone: normalizedPhone,
+        role: targetRole,
+        idType,
+      },
+      ipAddress: req.headers.get('x-forwarded-for') || undefined,
+    });
+
+    return NextResponse.json({ success: true, user: createdUser });
+  } catch (error) {
+    console.error('Admin Users POST error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

@@ -46,6 +46,67 @@ export default function AdminUsersPage() {
   const [editIdNumber, setEditIdNumber] = useState('');
   const [saveLoading, setSaveLoading] = useState(false);
 
+  // Add User Modal States
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [addFirstName, setAddFirstName] = useState('');
+  const [addLastName, setAddLastName] = useState('');
+  const [addEmail, setAddEmail] = useState('');
+  const [addPhone, setAddPhone] = useState('');
+  const [addPassword, setAddPassword] = useState('');
+  const [addRole, setAddRole] = useState('CLIENT');
+  const [addIdType, setAddIdType] = useState('');
+  const [addIdNumber, setAddIdNumber] = useState('');
+  const [addLoading, setAddLoading] = useState(false);
+
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!addFirstName.trim() || !addLastName.trim() || !addEmail.trim()) {
+      alert('First name, last name, and email are required.');
+      return;
+    }
+
+    setAddLoading(true);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: addFirstName.trim(),
+          lastName: addLastName.trim(),
+          email: addEmail.trim(),
+          password: addPassword || null,
+          phone: addPhone.trim() || null,
+          role: addRole,
+          idType: addIdType || null,
+          idNumber: addIdNumber.trim() || null,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('User created successfully!');
+        setAddModalOpen(false);
+        // Reset states
+        setAddFirstName('');
+        setAddLastName('');
+        setAddEmail('');
+        setAddPhone('');
+        setAddPassword('');
+        setAddRole('CLIENT');
+        setAddIdType('');
+        setAddIdNumber('');
+        fetchUsers();
+      } else {
+        alert(data.error || 'Failed to create user.');
+      }
+    } catch {
+      alert('Network error while creating user.');
+    } finally {
+      setAddLoading(false);
+    }
+  };
+
   const openDetailsModal = (u: User) => {
     setDetailsModal(u);
     setEditMode(false);
@@ -149,6 +210,9 @@ export default function AdminUsersPage() {
           <h1 className={styles.title}>User Management</h1>
           <p className={styles.subtitle}>Manage all {totalUsers} registered users in the system</p>
         </div>
+        <button className={styles.saveBtn} onClick={() => setAddModalOpen(true)} style={{ boxShadow: 'none', marginTop: 0 }}>
+          + Add New User
+        </button>
       </div>
 
       <div className={styles.controls}>
@@ -429,6 +493,158 @@ export default function AdminUsersPage() {
             </div>
 
           </div>
+        </div>
+      )}
+
+      {/* Add New User Modal */}
+      {addModalOpen && (
+        <div className={styles.modalOverlay} onClick={() => { if (!addLoading) setAddModalOpen(false); }}>
+          <form className={styles.modalContent} onClick={(e) => e.stopPropagation()} onSubmit={handleCreateUser}>
+            <button type="button" className={styles.closeModalBtn} onClick={() => setAddModalOpen(false)} disabled={addLoading}>
+              <X size={20} />
+            </button>
+            <h3 className={styles.modalTitle}>Add New User</h3>
+            <p className={styles.modalSubtitle}>Create a new authentication account and profile</p>
+
+            <div className={styles.modalGrid}>
+              
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>First Name *</label>
+                <input 
+                  type="text" 
+                  className={styles.formInput} 
+                  value={addFirstName}
+                  onChange={(e) => setAddFirstName(e.target.value)}
+                  disabled={addLoading} 
+                  required
+                  placeholder="John"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Last Name *</label>
+                <input 
+                  type="text" 
+                  className={styles.formInput} 
+                  value={addLastName}
+                  onChange={(e) => setAddLastName(e.target.value)}
+                  disabled={addLoading} 
+                  required
+                  placeholder="Doe"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Email Address *</label>
+                <input 
+                  type="email" 
+                  className={styles.formInput} 
+                  value={addEmail}
+                  onChange={(e) => setAddEmail(e.target.value)}
+                  disabled={addLoading} 
+                  required
+                  placeholder="john.doe@example.com"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Temporary Password (Optional)</label>
+                <input 
+                  type="text" 
+                  className={styles.formInput} 
+                  value={addPassword}
+                  onChange={(e) => setAddPassword(e.target.value)}
+                  disabled={addLoading} 
+                  placeholder="Leave blank to auto-generate"
+                  minLength={8}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Phone Number</label>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ color: '#64748b', marginRight: '0.25rem', fontSize: '0.9rem' }}>+91</span>
+                  <input 
+                    type="tel" 
+                    className={styles.formInput} 
+                    value={addPhone}
+                    onChange={(e) => setAddPhone(e.target.value)}
+                    disabled={addLoading} 
+                    placeholder="9876543210"
+                    pattern="[6-9][0-9]{9}"
+                    title="Please enter a valid 10-digit Indian mobile number"
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>User Role</label>
+                <select
+                  className={styles.formSelect}
+                  value={addRole}
+                  onChange={(e) => setAddRole(e.target.value)}
+                  disabled={addLoading || !isSuperAdmin}
+                >
+                  <option value="CLIENT">Client</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="SUPER_ADMIN">Super Admin</option>
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Government ID Type</label>
+                <select
+                  className={styles.formSelect}
+                  value={addIdType}
+                  onChange={(e) => {
+                    setAddIdType(e.target.value);
+                    setAddIdNumber('');
+                  }}
+                  disabled={addLoading}
+                >
+                  <option value="">None</option>
+                  <option value="AADHAAR">Aadhaar Card</option>
+                  <option value="PAN">PAN Card</option>
+                </select>
+              </div>
+
+              {addIdType && (
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Government ID Number</label>
+                  <input 
+                    type="text" 
+                    className={styles.formInput} 
+                    value={addIdNumber}
+                    onChange={(e) => setAddIdNumber(e.target.value)}
+                    disabled={addLoading} 
+                    required
+                    placeholder={addIdType === 'AADHAAR' ? '123456789012' : 'ABCDE1234F'}
+                    pattern={addIdType === 'AADHAAR' ? '\\d{12}' : '[A-Z]{5}\\d{4}[A-Z]'}
+                    title={addIdType === 'AADHAAR' ? 'Aadhaar must be exactly 12 digits' : 'PAN must be standard format (e.g. ABCDE1234F)'}
+                  />
+                </div>
+              )}
+
+            </div>
+
+            <div className={styles.modalActions}>
+              <button 
+                type="button" 
+                className={styles.cancelBtn} 
+                onClick={() => setAddModalOpen(false)}
+                disabled={addLoading}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                className={styles.saveBtn} 
+                disabled={addLoading}
+              >
+                {addLoading ? 'Creating...' : 'Create User'}
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>
