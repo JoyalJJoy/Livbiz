@@ -53,6 +53,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className={styles.adminWrapper}>
       <header className={styles.topNavbar}>
         <div className={styles.logoArea} onClick={() => router.push('/admin')}>
+          <div className={styles.logoContainer}>
+            <img 
+              src="/images/logo.png" 
+              alt="LivBizz emblem" 
+              className={styles.logoImage}
+            />
+          </div>
           <span className={styles.logoText}>livbiz<span className={styles.logoDot}>.</span></span>
           <span className={styles.adminBadge}>Admin</span>
         </div>
