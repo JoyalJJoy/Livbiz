@@ -17,6 +17,10 @@ interface BookingItem {
   endTime: string;
   totalPrice: number;
   status: string;
+  paymentStatus: string;
+  paymentMethod: string | null;
+  paymentReference: string | null;
+  paymentDate: string | null;
   notes: string | null;
   adminNotes: string | null;
   seats?: number;
@@ -47,6 +51,13 @@ export default function AdminBookingsPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [qrModal, setQrModal] = useState<BookingItem | null>(null);
   
+  // Payment Confirm Modal States
+  const [paymentConfirmModal, setPaymentConfirmModal] = useState<BookingItem | null>(null);
+  const [paymentDone, setPaymentDone] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'UPI'>('UPI');
+  const [paymentReference, setPaymentReference] = useState('');
+  const [paymentDate, setPaymentDate] = useState('');
+
   // Details & Edit Modal States
   const [detailsModal, setDetailsModal] = useState<BookingItem | null>(null);
   const [editMode, setEditMode] = useState(false);
@@ -57,6 +68,10 @@ export default function AdminBookingsPage() {
   const [editTotalPrice, setEditTotalPrice] = useState(0);
   const [editNotes, setEditNotes] = useState('');
   const [editAdminNotes, setEditAdminNotes] = useState('');
+  const [editPaymentStatus, setEditPaymentStatus] = useState('PENDING');
+  const [editPaymentMethod, setEditPaymentMethod] = useState('UPI');
+  const [editPaymentReference, setEditPaymentReference] = useState('');
+  const [editPaymentDate, setEditPaymentDate] = useState('');
   const [saveLoading, setSaveLoading] = useState(false);
 
   const fetchBookings = useCallback(async () => {
@@ -83,9 +98,19 @@ export default function AdminBookingsPage() {
   }, [fetchBookings]);
 
   const handleAction = async (bookingId: string, action: 'approve' | 'reject' | 'cancel') => {
-    const confirmMsg = action === 'approve'
-      ? 'Approve this booking? A QR access pass will be generated.'
-      : action === 'reject'
+    if (action === 'approve') {
+      const b = bookings.find((item) => item.id === bookingId);
+      if (b) {
+        setPaymentConfirmModal(b);
+        setPaymentDone(false);
+        setPaymentMethod('UPI');
+        setPaymentReference('');
+        setPaymentDate(new Date().toISOString().split('T')[0]);
+      }
+      return;
+    }
+
+    const confirmMsg = action === 'reject'
       ? 'Reject this booking? The user will be notified.'
       : 'Cancel this booking?';
 
@@ -97,6 +122,47 @@ export default function AdminBookingsPage() {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ bookingId, action }),
+      });
+
+      if (res.ok) {
+        fetchBookings();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Action failed');
+      }
+    } catch {
+      alert('Network error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleApproveWithPayment = async () => {
+    if (!paymentConfirmModal) return;
+    const bookingId = paymentConfirmModal.id;
+    setActionLoading(bookingId);
+    
+    const body: Record<string, any> = {
+      bookingId,
+      action: 'approve'
+    };
+    
+    if (paymentDone) {
+      body.paymentStatus = 'PAID';
+      body.paymentMethod = paymentMethod;
+      body.paymentReference = paymentReference;
+      body.paymentDate = new Date(paymentDate).toISOString();
+    } else {
+      body.paymentStatus = 'PENDING';
+    }
+    
+    setPaymentConfirmModal(null);
+    
+    try {
+      const res = await fetch('/api/admin/bookings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
       });
 
       if (res.ok) {
@@ -132,6 +198,10 @@ export default function AdminBookingsPage() {
     setEditTotalPrice(b.totalPrice);
     setEditNotes(b.notes || '');
     setEditAdminNotes(b.adminNotes || '');
+    setEditPaymentStatus(b.paymentStatus || 'PENDING');
+    setEditPaymentMethod((b.paymentMethod as 'CASH' | 'UPI') || 'UPI');
+    setEditPaymentReference(b.paymentReference || '');
+    setEditPaymentDate(b.paymentDate ? b.paymentDate.split('T')[0] : new Date().toISOString().split('T')[0]);
   };
 
   const handleSaveEdit = async () => {
@@ -150,6 +220,10 @@ export default function AdminBookingsPage() {
           seatIds: editSeatIds,
           notes: editNotes || null,
           adminNotes: editAdminNotes || null,
+          paymentStatus: editPaymentStatus,
+          paymentMethod: editPaymentStatus === 'PAID' ? editPaymentMethod : null,
+          paymentReference: editPaymentStatus === 'PAID' ? editPaymentReference : null,
+          paymentDate: editPaymentStatus === 'PAID' ? new Date(editPaymentDate).toISOString() : null,
         }),
       });
 
@@ -220,6 +294,7 @@ export default function AdminBookingsPage() {
                   <th>Time</th>
                   <th>Amount</th>
                   <th>Status</th>
+                  <th>Payment</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -243,6 +318,11 @@ export default function AdminBookingsPage() {
                     <td>
                       <span className={`${styles.statusPill} ${getStatusClass(b.status)}`}>
                         {b.status.toLowerCase()}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`${styles.statusPill} ${b.paymentStatus === 'PAID' ? styles.statusPaid : b.paymentStatus === 'PENDING' ? styles.statusPendingPayment : styles.statusUnpaid}`}>
+                        {b.paymentStatus.toLowerCase()}
                       </span>
                     </td>
                     <td>
@@ -429,6 +509,94 @@ export default function AdminBookingsPage() {
                 <input type="text" className={styles.formInput} value={detailsModal.status} disabled />
               </div>
 
+              {editMode ? (
+                <>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Payment Status</label>
+                    <select
+                      className={styles.formInput}
+                      value={editPaymentStatus}
+                      onChange={(e) => setEditPaymentStatus(e.target.value)}
+                      disabled={saveLoading}
+                    >
+                      <option value="PENDING">PENDING</option>
+                      <option value="PAID">PAID</option>
+                      <option value="UNPAID">UNPAID</option>
+                    </select>
+                  </div>
+
+                  {editPaymentStatus === 'PAID' && (
+                    <>
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Payment Method</label>
+                        <select
+                          className={styles.formInput}
+                          value={editPaymentMethod}
+                          onChange={(e) => setEditPaymentMethod(e.target.value)}
+                          disabled={saveLoading}
+                        >
+                          <option value="UPI">UPI</option>
+                          <option value="CASH">CASH</option>
+                        </select>
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Payment Reference</label>
+                        <input
+                          type="text"
+                          className={styles.formInput}
+                          value={editPaymentReference}
+                          onChange={(e) => setEditPaymentReference(e.target.value)}
+                          disabled={saveLoading}
+                          placeholder="UPI Transaction ID or Receipt No."
+                        />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Payment Date</label>
+                        <input
+                          type="date"
+                          className={styles.formInput}
+                          value={editPaymentDate}
+                          onChange={(e) => setEditPaymentDate(e.target.value)}
+                          disabled={saveLoading}
+                        />
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Payment Status</label>
+                    <div style={{ display: 'flex', alignItems: 'center', height: '100%', minHeight: '38px', paddingLeft: '0.2rem' }}>
+                      <span className={`${styles.statusPill} ${detailsModal.paymentStatus === 'PAID' ? styles.statusPaid : detailsModal.paymentStatus === 'PENDING' ? styles.statusPendingPayment : styles.statusUnpaid}`}>
+                        {detailsModal.paymentStatus}
+                      </span>
+                    </div>
+                  </div>
+
+                  {detailsModal.paymentStatus === 'PAID' && (
+                    <>
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Payment Method</label>
+                        <input type="text" className={styles.formInput} value={detailsModal.paymentMethod || 'N/A'} disabled />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Payment Reference</label>
+                        <input type="text" className={styles.formInput} value={detailsModal.paymentReference || 'N/A'} disabled />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Payment Date</label>
+                        <input type="text" className={styles.formInput} value={detailsModal.paymentDate ? formatDate(detailsModal.paymentDate) : 'N/A'} disabled />
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+
               <div className={styles.formGroup} style={{ gridColumn: 'span 2' }}>
                 <label className={styles.formLabel}>User Custom Notes</label>
                 <textarea 
@@ -493,6 +661,126 @@ export default function AdminBookingsPage() {
               )}
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Payment Confirmation Modal */}
+      {paymentConfirmModal && (
+        <div className={styles.modalOverlay} onClick={() => setPaymentConfirmModal(null)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()} style={{ maxWidth: '450px' }}>
+            <button className={styles.closeModalBtn} onClick={() => setPaymentConfirmModal(null)}>
+              <X size={20} />
+            </button>
+            <h3 className={styles.modalTitle} style={{ marginBottom: '0.5rem' }}>Confirm Booking Access</h3>
+            <p className={styles.modalSubtitle} style={{ marginBottom: '1.25rem' }}>
+              Confirm slot allocation for <strong>{paymentConfirmModal.userName}</strong>.
+            </p>
+
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'left', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <span className={styles.formLabel}>Has the payment been completed?</span>
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
+                  <button
+                    type="button"
+                    style={{
+                      flex: 1,
+                      padding: '0.6rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: '1.5px solid',
+                      borderColor: paymentDone ? '#10b981' : '#e2e8f0',
+                      backgroundColor: paymentDone ? '#ecfdf5' : '#fff',
+                      color: paymentDone ? '#065f46' : '#64748b',
+                      transition: 'all 0.15s'
+                    }}
+                    onClick={() => setPaymentDone(true)}
+                  >
+                    Yes, Paid Done
+                  </button>
+                  <button
+                    type="button"
+                    style={{
+                      flex: 1,
+                      padding: '0.6rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: '1.5px solid',
+                      borderColor: !paymentDone ? '#ef4444' : '#e2e8f0',
+                      backgroundColor: !paymentDone ? '#fef2f2' : '#fff',
+                      color: !paymentDone ? '#991b1b' : '#64748b',
+                      transition: 'all 0.15s'
+                    }}
+                    onClick={() => setPaymentDone(false)}
+                  >
+                    No, Pay Later
+                  </button>
+                </div>
+              </div>
+
+              {paymentDone && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', animation: 'fadeIn 0.2s' }}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Payment Method</label>
+                    <select
+                      className={styles.formInput}
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value as 'CASH' | 'UPI')}
+                    >
+                      <option value="UPI">UPI Payment</option>
+                      <option value="CASH">Cash Payment</option>
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Transaction Reference ID</label>
+                    <input
+                      type="text"
+                      className={styles.formInput}
+                      placeholder="e.g. UPI Ref Number or Receipt ID"
+                      value={paymentReference}
+                      onChange={(e) => setPaymentReference(e.target.value)}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Payment Date</label>
+                    <input
+                      type="date"
+                      className={styles.formInput}
+                      value={paymentDate}
+                      onChange={(e) => setPaymentDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.75rem', width: '100%', borderTop: '1px solid #f1f5f9', paddingTop: '1rem', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                className={styles.editBtn}
+                style={{ padding: '0.5rem 1.25rem' }}
+                onClick={() => setPaymentConfirmModal(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className={styles.saveBtn}
+                style={{
+                  padding: '0.5rem 1.25rem',
+                  backgroundColor: paymentDone ? '#10b981' : '#6366f1'
+                }}
+                onClick={handleApproveWithPayment}
+              >
+                Confirm & Approve
+              </button>
+            </div>
           </div>
         </div>
       )}

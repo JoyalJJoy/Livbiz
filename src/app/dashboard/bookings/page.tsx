@@ -29,6 +29,10 @@ interface Booking {
   endTime: string;
   totalPrice: number;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED';
+  paymentStatus: string;
+  paymentMethod: string | null;
+  paymentReference: string | null;
+  paymentDate: string | null;
   tickets?: Ticket[];
 }
 
@@ -224,9 +228,14 @@ export default function BookingsPage() {
                   &#8377;{Number(booking.totalPrice).toFixed(2)}
                 </span>
                 
-                <span className={`${styles.statusPill} ${styles[`status${booking.status}`] || ''}`}>
-                  {booking.status.toLowerCase()}
-                </span>
+                <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <span className={`${styles.statusPill} ${styles[`status${booking.status}`] || ''}`}>
+                    {booking.status.toLowerCase()}
+                  </span>
+                  <span className={`${styles.statusPill} ${booking.paymentStatus === 'PAID' ? styles.statusPaid : booking.paymentStatus === 'PENDING' ? styles.statusPendingPayment : styles.statusUnpaid}`}>
+                    Payment: {booking.paymentStatus.toLowerCase()}
+                  </span>
+                </div>
 
                 {/* APPROVED spaces get an access pass QR key */}
                 {booking.status === 'APPROVED' && (
@@ -351,6 +360,12 @@ export default function BookingsPage() {
                 <div className={styles.modalDetailItem}>
                   <span className={styles.modalDetailLabel}>Valid Until</span>
                   <span className={styles.modalDetailValue}>{formatDateTime(selectedBooking.endTime)}</span>
+                </div>
+                <div className={styles.modalDetailItem}>
+                  <span className={styles.modalDetailLabel}>Payment Status</span>
+                  <span className={styles.modalDetailValue} style={{ color: selectedBooking.paymentStatus === 'PAID' ? '#10b981' : selectedBooking.paymentStatus === 'PENDING' ? '#b45309' : '#ef4444', textTransform: 'capitalize' }}>
+                    {selectedBooking.paymentStatus.toLowerCase()}
+                  </span>
                 </div>
               </div>
 

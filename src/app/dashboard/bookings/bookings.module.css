@@ -464,3 +464,7 @@
   border-color: #a7f3d0 !important;
 }
 
+.statusPaid { background-color: #ecfdf5; color: #065f46; }
+.statusPendingPayment { background-color: #fffbeb; color: #b45309; }
+.statusUnpaid { background-color: #fef2f2; color: #991b1b; }
+

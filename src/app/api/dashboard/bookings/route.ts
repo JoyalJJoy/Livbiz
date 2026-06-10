@@ -76,6 +76,10 @@ export async function GET() {
             endTime: b.endTime.toISOString(),
             totalPrice: Number(b.totalPrice),
             status: b.status,
+            paymentStatus: b.paymentStatus,
+            paymentMethod: b.paymentMethod,
+            paymentReference: b.paymentReference,
+            paymentDate: b.paymentDate ? b.paymentDate.toISOString() : null,
             ticket: formattedTickets[0] || null, // Map first ticket to singular 'ticket' property for dashboard home card compatibility
             tickets: formattedTickets,
           };

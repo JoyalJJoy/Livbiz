@@ -62,6 +62,10 @@ export async function GET(req: Request) {
         status: b.status,
         notes: b.notes,
         adminNotes: b.adminNotes,
+        paymentStatus: b.paymentStatus,
+        paymentMethod: b.paymentMethod,
+        paymentReference: b.paymentReference,
+        paymentDate: b.paymentDate ? b.paymentDate.toISOString() : null,
         createdAt: b.createdAt.toISOString(),
         tickets: tickets.map((tUnknown) => {
           const t = tUnknown as {
@@ -123,11 +127,19 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { bookingId, action, adminNotes } = await req.json();
+    const { bookingId, action, adminNotes, paymentStatus, paymentMethod, paymentReference, paymentDate } = await req.json();
 
     // Validate adminNotes length
     if (adminNotes !== undefined && typeof adminNotes === 'string' && adminNotes.length > 1000) {
       return NextResponse.json({ error: 'Admin notes must be 1000 characters or less.' }, { status: 400 });
+    }
+
+    let parsedPaymentDate: Date | null = null;
+    if (paymentDate) {
+      parsedPaymentDate = new Date(paymentDate);
+      if (isNaN(parsedPaymentDate.getTime())) {
+        return NextResponse.json({ error: 'Invalid payment date format.' }, { status: 400 });
+      }
     }
 
     if (!bookingId || !action) {
@@ -197,6 +209,10 @@ export async function PATCH(req: Request) {
             adminNotes: adminNotes || null,
             reviewedBy: adminId,
             reviewedAt: new Date(),
+            paymentStatus: paymentStatus || 'PENDING',
+            paymentMethod: paymentMethod || null,
+            paymentReference: paymentReference || null,
+            paymentDate: parsedPaymentDate,
           },
         }),
         ...updatedTickets.map(t => 
@@ -215,7 +231,14 @@ export async function PATCH(req: Request) {
         userId: adminId,
         targetId: bookingId,
         targetType: 'BOOKING',
-        changes: { status: 'APPROVED', adminNotes: adminNotes || null },
+        changes: { 
+          status: 'APPROVED', 
+          adminNotes: adminNotes || null,
+          paymentStatus: paymentStatus || 'PENDING',
+          paymentMethod: paymentMethod || null,
+          paymentReference: paymentReference || null,
+          paymentDate: parsedPaymentDate ? parsedPaymentDate.toISOString() : null,
+        },
         ipAddress: req.headers.get('x-forwarded-for') || undefined,
       });
       
@@ -448,7 +471,7 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const { bookingId, startTime, endTime, totalPrice, seats, seatIds, notes, adminNotes } = body;
+    const { bookingId, startTime, endTime, totalPrice, seats, seatIds, notes, adminNotes, paymentStatus, paymentMethod, paymentReference, paymentDate } = body;
 
     // Validate string field lengths
     if (notes !== undefined && typeof notes === 'string' && notes.length > 1000) {
@@ -484,6 +507,12 @@ export async function PUT(req: Request) {
     }
     if (notes !== undefined) updateData.notes = notes;
     if (adminNotes !== undefined) updateData.adminNotes = adminNotes;
+    if (paymentStatus !== undefined) updateData.paymentStatus = paymentStatus;
+    if (paymentMethod !== undefined) updateData.paymentMethod = paymentMethod || null;
+    if (paymentReference !== undefined) updateData.paymentReference = paymentReference || null;
+    if (paymentDate !== undefined) {
+      updateData.paymentDate = paymentDate ? new Date(paymentDate) : null;
+    }
 
     const updatedBooking = await prisma.booking.update({
       where: { id: bookingId },
