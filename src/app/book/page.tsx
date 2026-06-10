@@ -84,7 +84,7 @@ export default function BookPage() {
                 </li>
                 <li>
                   <CheckCircle2 size={16} className={styles.checkIcon} />
-                  <span>Seats 4–16 people comfortably</span>
+                  <span>Seats 6–12 people comfortably</span>
                 </li>
                 <li>
                   <CheckCircle2 size={16} className={styles.checkIcon} />

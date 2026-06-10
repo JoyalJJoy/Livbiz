@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import styles from './InteractiveFloorPlan.module.css';
 
 interface SeatPickerProps {
-  type: 'regular' | 'premium' | '4-seat' | '16-seat';
+  type: 'regular' | 'premium' | '6-seat' | '12-seat';
   bookedSeats?: string[];
   selectedSeats: string[];
   onToggleSeat: (id: string) => void;
@@ -39,16 +39,16 @@ const SEAT_POSITIONS: Record<string, { left: string; top: string }> = {
 
 const ROOM_ZONES = [
   {
-    id: '4-seat',
-    name: '4-Seat Conference Room',
+    id: '6-seat',
+    name: '6-Seat Conference Room',
     left: '18.99%',
     top: '22.46%',
     width: '26.22%',
     height: '35.16%'
   },
   {
-    id: '16-seat',
-    name: '16-Seat Conference Room',
+    id: '12-seat',
+    name: '12-Seat Conference Room',
     left: '75.51%',
     top: '70.31%',
     width: '27.27%',

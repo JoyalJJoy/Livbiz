@@ -92,33 +92,67 @@ async function main() {
     console.log('Created: Premium Day Pass');
   }
 
-  // 4. Create Meeting Room Slots
-  if (!slotNames.includes('4-Seat Conference Room')) {
+  // 4. Create/Update Meeting Room Slots
+  // Rename old 4-Seat Conference Room if it exists
+  const old4Seat = await prisma.slot.findFirst({
+    where: { name: '4-Seat Conference Room', campusId: mainCampus.id }
+  });
+  if (old4Seat) {
+    await prisma.slot.update({
+      where: { id: old4Seat.id },
+      data: {
+        name: '6-Seat Conference Room',
+        capacity: 6
+      }
+    });
+    console.log('Renamed 4-Seat to 6-Seat Conference Room');
+  }
+
+  // Rename old 16-Seat Conference Room if it exists
+  const old16Seat = await prisma.slot.findFirst({
+    where: { name: '16-Seat Conference Room', campusId: mainCampus.id }
+  });
+  if (old16Seat) {
+    await prisma.slot.update({
+      where: { id: old16Seat.id },
+      data: {
+        name: '12-Seat Conference Room',
+        capacity: 12
+      }
+    });
+    console.log('Renamed 16-Seat to 12-Seat Conference Room');
+  }
+
+  // Check the updated slots list
+  const updatedSlots = await prisma.slot.findMany({ where: { campusId: mainCampus.id } });
+  const updatedSlotNames = updatedSlots.map(s => s.name);
+
+  if (!updatedSlotNames.includes('6-Seat Conference Room')) {
     await prisma.slot.create({
       data: {
         campusId: mainCampus.id,
-        name: '4-Seat Conference Room',
+        name: '6-Seat Conference Room',
         type: 'MEETING_ROOM',
-        capacity: 4,
+        capacity: 6,
         pricePerUnit: 200.00,
         unit: 'HOUR',
       },
     });
-    console.log('Created: 4-Seat Conference Room');
+    console.log('Created: 6-Seat Conference Room');
   }
 
-  if (!slotNames.includes('16-Seat Conference Room')) {
+  if (!updatedSlotNames.includes('12-Seat Conference Room')) {
     await prisma.slot.create({
       data: {
         campusId: mainCampus.id,
-        name: '16-Seat Conference Room',
+        name: '12-Seat Conference Room',
         type: 'MEETING_ROOM',
-        capacity: 16,
+        capacity: 12,
         pricePerUnit: 500.00,
         unit: 'HOUR',
       },
     });
-    console.log('Created: 16-Seat Conference Room');
+    console.log('Created: 12-Seat Conference Room');
   }
 
   console.log('Seeding finished.');

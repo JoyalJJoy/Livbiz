@@ -16,7 +16,7 @@ const attendeeSchema = z.object({
 });
 const attendeesSchema = z.array(attendeeSchema);
 
-type RoomId = '4-seat' | '16-seat' | null;
+type RoomId = '6-seat' | '12-seat' | null;
 
 interface BookingState {
   step: number;
@@ -31,19 +31,19 @@ const TOTAL_STEPS = 6;
 
 const ROOMS = [
   {
-    id: '4-seat' as RoomId,
-    name: '4-Seat Conference Room',
-    dbName: '4-Seat Conference Room',
+    id: '6-seat' as RoomId,
+    name: '6-Seat Conference Room',
+    dbName: '6-Seat Conference Room',
     price: 200,
-    capacity: 4,
+    capacity: 6,
     features: ['Whiteboard', 'High-Speed WiFi', 'Air Conditioning', 'Power Backup'],
   },
   {
-    id: '16-seat' as RoomId,
-    name: '16-Seat Conference Room',
-    dbName: '16-Seat Conference Room',
+    id: '12-seat' as RoomId,
+    name: '12-Seat Conference Room',
+    dbName: '12-Seat Conference Room',
     price: 500,
-    capacity: 16,
+    capacity: 12,
     features: ['Projector', 'Whiteboard', 'High-Speed WiFi', 'Air Conditioning', 'Power Backup', 'Complimentary Coffee'],
   },
 ];
@@ -371,7 +371,7 @@ export default function MeetingRoomWizard() {
               <p className={styles.subTitle}>Select a room below or click it directly on the floor plan map</p>
               
               <InteractiveFloorPlan
-                type={state.roomId || '4-seat'}
+                type={state.roomId || '6-seat'}
                 selectedSeats={state.roomId ? [state.roomId] : []}
                 onToggleSeat={(roomId) => handleRoomSelect(roomId as RoomId)}
                 mode="room"
