@@ -1,0 +1,42 @@
+{
+  "createdAt": "2026-06-08T07:33:54.246Z",
+  "databaseHost": "aws-1-ap-northeast-1.pooler.supabase.com",
+  "tables": {
+    "User": {
+      "exists": false,
+      "rows": []
+    },
+    "Campus": {
+      "exists": false,
+      "rows": []
+    },
+    "Slot": {
+      "exists": false,
+      "rows": []
+    },
+    "Booking": {
+      "exists": false,
+      "rows": []
+    },
+    "Ticket": {
+      "exists": false,
+      "rows": []
+    },
+    "AuditLog": {
+      "exists": false,
+      "rows": []
+    },
+    "VerificationToken": {
+      "exists": false,
+      "rows": []
+    },
+    "Account": {
+      "exists": false,
+      "rows": []
+    },
+    "Session": {
+      "exists": false,
+      "rows": []
+    }
+  }
+}

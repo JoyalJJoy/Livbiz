@@ -844,3 +844,135 @@
   cursor: not-allowed;
 }
 
+/* FREQUENCY TOGGLE SELECTOR */
+.frequencyToggleContainer {
+  display: flex;
+  background-color: #f1f5f9;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.frequencyToggleBtn {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #475569;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.frequencyToggleBtn:hover {
+  color: #0f172a;
+}
+
+.frequencyToggleBtn.active {
+  background-color: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+/* MONTHLY SUBSCRIPTION DURATION CARD SELECTOR */
+.durationSelectorContainer {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background-color: #f8fafc;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.durationTitle {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.75rem 0;
+}
+
+.durationCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.durationCard {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.85rem 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.durationCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  border-color: #cbd5e1;
+}
+
+.durationCard.activeDuration {
+  background-color: #0f172a;
+  border-color: #0f172a;
+  color: #ffffff;
+}
+
+.durationCardHeader {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.durationCardPrice {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-bottom: 0.15rem;
+}
+
+.durationCard.activeDuration .durationCardPrice {
+  color: #10b981;
+}
+
+.durationCardRate {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.durationCard.activeDuration .durationCardRate {
+  color: #94a3b8;
+}
+
+.customRangeHelper {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+}
+
+.customRangeText {
+  font-size: 0.85rem;
+  color: #1e40af;
+}
+
+.customRangeTip {
+  font-size: 0.75rem;
+  color: #3b82f6;
+  margin: 0.25rem 0 0 0;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .durationCardsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+

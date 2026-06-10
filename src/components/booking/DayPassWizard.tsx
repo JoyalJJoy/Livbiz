@@ -18,6 +18,10 @@ interface BookingState {
   timeMode: 'full' | 'half' | 'custom';
   customStartTime: string;
   customEndTime: string;
+  bookingType: 'daily' | 'monthly';
+  monthlyStartDate: Date;
+  monthlyEndDate: Date;
+  monthlyDurationMode: '1month' | '2months' | '3months' | 'custom';
 }
 
 const TOTAL_STEPS = 5;
@@ -58,6 +62,10 @@ export default function DayPassWizard() {
   
   const today = new Date();
 
+  const defaultMonthlyEndDate = new Date(today);
+  defaultMonthlyEndDate.setMonth(defaultMonthlyEndDate.getMonth() + 1);
+  defaultMonthlyEndDate.setDate(defaultMonthlyEndDate.getDate() - 1);
+
   const [state, setState] = useState<BookingState>({
     step: 1,
     usersCount: 1,
@@ -66,11 +74,120 @@ export default function DayPassWizard() {
     selectedDates: [today], // Default to today
     timeMode: 'full',
     customStartTime: '09:00 AM',
-    customEndTime: '06:00 PM',
+    customEndTime: '08:00 PM', // Default exit time updated to 8:00 PM
+    bookingType: 'daily',
+    monthlyStartDate: today,
+    monthlyEndDate: defaultMonthlyEndDate,
+    monthlyDurationMode: '1month',
   });
 
   // Local state for calendar navigation
   const [currentCalendarDate, setCurrentCalendarDate] = useState<Date>(today);
+
+  // Dynamic unit price calculation based on timeMode and custom duration
+  let unitPrice = 350; // default full day
+  if (state.timeMode === 'half') {
+    unitPrice = 250;
+  } else if (state.timeMode === 'custom') {
+    const duration = getDurationInHours(state.customStartTime, state.customEndTime);
+    if (duration <= 5) {
+      unitPrice = 250;
+    } else {
+      unitPrice = 350;
+    }
+  }
+
+  let totalPrice = 0;
+  if (state.bookingType === 'monthly') {
+    let monthlyUnitPrice = 2250;
+    if (state.monthlyDurationMode === '1month') {
+      monthlyUnitPrice = 2250;
+    } else if (state.monthlyDurationMode === '2months') {
+      monthlyUnitPrice = 4500;
+    } else if (state.monthlyDurationMode === '3months') {
+      monthlyUnitPrice = 6750;
+    } else if (state.monthlyDurationMode === 'custom') {
+      const diffTime = Math.abs(state.monthlyEndDate.getTime() - state.monthlyStartDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      monthlyUnitPrice = Math.max(250, diffDays * 75);
+    }
+    totalPrice = monthlyUnitPrice * state.usersCount;
+  } else {
+    totalPrice = unitPrice * state.usersCount * Math.max(1, state.selectedDates.length);
+  }
+
+  const handleMonthlyDurationModeChange = (mode: '1month' | '2months' | '3months' | 'custom') => {
+    setState(s => {
+      let nextEnd = new Date(s.monthlyStartDate);
+      if (mode === '1month') {
+        nextEnd.setMonth(nextEnd.getMonth() + 1);
+        nextEnd.setDate(nextEnd.getDate() - 1);
+      } else if (mode === '2months') {
+        nextEnd.setMonth(nextEnd.getMonth() + 2);
+        nextEnd.setDate(nextEnd.getDate() - 1);
+      } else if (mode === '3months') {
+        nextEnd.setMonth(nextEnd.getMonth() + 3);
+        nextEnd.setDate(nextEnd.getDate() - 1);
+      }
+      return {
+        ...s,
+        monthlyDurationMode: mode,
+        monthlyEndDate: nextEnd,
+        bookingType: 'monthly',
+      };
+    });
+  };
+
+  const handleMonthlyDateClick = (day: number) => {
+    const calendarYear = currentCalendarDate.getFullYear();
+    const calendarMonth = currentCalendarDate.getMonth();
+    const clickedDate = new Date(calendarYear, calendarMonth, day);
+    
+    const todayCheck = new Date();
+    todayCheck.setHours(0, 0, 0, 0);
+    if (clickedDate < todayCheck) {
+      return;
+    }
+
+    setState(s => {
+      let nextStart = s.monthlyStartDate;
+      let nextEnd = s.monthlyEndDate;
+
+      if (s.monthlyDurationMode === 'custom') {
+        const isStartSameAsEnd = s.monthlyStartDate.getTime() === s.monthlyEndDate.getTime();
+        
+        if (isStartSameAsEnd) {
+          if (clickedDate > s.monthlyStartDate) {
+            nextEnd = clickedDate;
+          } else {
+            nextStart = clickedDate;
+            nextEnd = clickedDate;
+          }
+        } else {
+          nextStart = clickedDate;
+          nextEnd = clickedDate;
+        }
+      } else {
+        nextStart = clickedDate;
+        nextEnd = new Date(clickedDate);
+        
+        if (s.monthlyDurationMode === '1month') {
+          nextEnd.setMonth(nextEnd.getMonth() + 1);
+        } else if (s.monthlyDurationMode === '2months') {
+          nextEnd.setMonth(nextEnd.getMonth() + 2);
+        } else if (s.monthlyDurationMode === '3months') {
+          nextEnd.setMonth(nextEnd.getMonth() + 3);
+        }
+        nextEnd.setDate(nextEnd.getDate() - 1);
+      }
+
+      return {
+        ...s,
+        monthlyStartDate: nextStart,
+        monthlyEndDate: nextEnd,
+      };
+    });
+  };
 
   // Login & signup form state
   const [isSignUp, setIsSignUp] = useState(true);
@@ -101,25 +218,34 @@ export default function DayPassWizard() {
     }
   }, []);
 
-  const fetchBookedSeats = useCallback(async (targetDate: Date) => {
+  const fetchBookedSeats = useCallback(async (startD: Date, endD?: Date) => {
     try {
-      const y = targetDate.getFullYear();
-      const m = String(targetDate.getMonth() + 1).padStart(2, '0');
-      const d = String(targetDate.getDate()).padStart(2, '0');
-      const dateStr = `${y}-${m}-${d}`;
-      
       const slotsRes = await fetch('/api/slots?type=DAY_PASS');
-      if (slotsRes.ok) {
-        const slots = await slotsRes.json();
-        // Since all day passes on this campus are casual/regular, we query Regular Day Pass
-        const matchedSlot = slots.find((s: { name: string }) => s.name === 'Regular Day Pass');
-        if (matchedSlot) {
-          const res = await fetch(`/api/slots/booked-seats?slotId=${matchedSlot.id}&date=${dateStr}`);
-          if (res.ok) {
-            const data = await res.json();
-            setBookedSeats(data.bookedSeatIds || []);
-          }
-        }
+      if (!slotsRes.ok) return;
+      const slots = await slotsRes.json();
+      const matchedSlot = slots.find((s: { name: string }) => s.name === 'Regular Day Pass');
+      if (!matchedSlot) return;
+
+      let url = `/api/slots/booked-seats?slotId=${matchedSlot.id}`;
+      if (endD) {
+        const y1 = startD.getFullYear();
+        const m1 = String(startD.getMonth() + 1).padStart(2, '0');
+        const d1 = String(startD.getDate()).padStart(2, '0');
+        const y2 = endD.getFullYear();
+        const m2 = String(endD.getMonth() + 1).padStart(2, '0');
+        const d2 = String(endD.getDate()).padStart(2, '0');
+        url += `&startDate=${y1}-${m1}-${d1}&endDate=${y2}-${m2}-${d2}`;
+      } else {
+        const y = startD.getFullYear();
+        const m = String(startD.getMonth() + 1).padStart(2, '0');
+        const d = String(startD.getDate()).padStart(2, '0');
+        url += `&date=${y}-${m}-${d}`;
+      }
+
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        setBookedSeats(data.bookedSeatIds || []);
       }
     } catch (err) {
       console.error('Failed to fetch booked seats:', err);
@@ -130,12 +256,14 @@ export default function DayPassWizard() {
     void Promise.resolve().then(() => fetchAvailability(currentCalendarDate));
   }, [currentCalendarDate, fetchAvailability]);
 
-  // Fetch booked seats for the first selected date
+  // Fetch booked seats for the selected dates or range
   useEffect(() => {
-    if (state.selectedDates.length > 0) {
+    if (state.bookingType === 'monthly') {
+      void Promise.resolve().then(() => fetchBookedSeats(state.monthlyStartDate, state.monthlyEndDate));
+    } else if (state.selectedDates.length > 0) {
       void Promise.resolve().then(() => fetchBookedSeats(state.selectedDates[0]));
     }
-  }, [state.selectedDates, fetchBookedSeats]);
+  }, [state.bookingType, state.selectedDates, state.monthlyStartDate, state.monthlyEndDate, fetchBookedSeats]);
 
   const goNext = () => setState(s => ({ ...s, step: Math.min(s.step + 1, TOTAL_STEPS) }));
   const goBack = () => setState(s => ({ ...s, step: Math.max(s.step - 1, 1) }));
@@ -196,8 +324,7 @@ export default function DayPassWizard() {
       const matchedSlot = slots.find((s: { name: string }) => s.name === 'Regular Day Pass');
       if (!matchedSlot) throw new Error('Day pass slot not found');
 
-      // Create bookings concurrently for all chosen dates
-      const bookingPromises = state.selectedDates.map(async (selectedDate) => {
+      if (state.bookingType === 'monthly') {
         const startParts = state.customStartTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
         const endParts = state.customEndTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
         if (!startParts || !endParts) throw new Error('Invalid time format');
@@ -214,14 +341,12 @@ export default function DayPassWizard() {
         if (endAmpm === 'PM' && endHours !== 12) endHours += 12;
         if (endAmpm === 'AM' && endHours === 12) endHours = 0;
 
-        const startTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), startHours, startMinutes);
-        const endTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), endHours, endMinutes);
+        const startTime = new Date(state.monthlyStartDate.getFullYear(), state.monthlyStartDate.getMonth(), state.monthlyStartDate.getDate(), startHours, startMinutes);
+        const endTime = new Date(state.monthlyEndDate.getFullYear(), state.monthlyEndDate.getMonth(), state.monthlyEndDate.getDate(), endHours, endMinutes);
 
         if (endTime <= startTime) {
           endTime.setDate(endTime.getDate() + 1);
         }
-
-        const datePrice = unitPrice * state.usersCount;
 
         const bookingRes = await fetch('/api/bookings/create', {
           method: 'POST',
@@ -230,10 +355,11 @@ export default function DayPassWizard() {
             slotId: matchedSlot.id,
             startTime: startTime.toISOString(),
             endTime: endTime.toISOString(),
-            totalPrice: datePrice,
+            totalPrice: totalPrice,
             seats: state.usersCount,
             seatIds: state.selectedSeats,
             attendees: [{ name, email }],
+            notes: `Monthly Pass booking - duration: ${state.monthlyDurationMode}`,
           }),
         });
 
@@ -241,9 +367,56 @@ export default function DayPassWizard() {
           const errData = await bookingRes.json();
           throw new Error(errData.error || 'Failed to create booking');
         }
-      });
+      } else {
+        // Create bookings concurrently for all chosen dates
+        const bookingPromises = state.selectedDates.map(async (selectedDate) => {
+          const startParts = state.customStartTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
+          const endParts = state.customEndTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
+          if (!startParts || !endParts) throw new Error('Invalid time format');
 
-      await Promise.all(bookingPromises);
+          let startHours = parseInt(startParts[1]);
+          const startMinutes = parseInt(startParts[2]);
+          const startAmpm = startParts[3].toUpperCase();
+          if (startAmpm === 'PM' && startHours !== 12) startHours += 12;
+          if (startAmpm === 'AM' && startHours === 12) startHours = 0;
+
+          let endHours = parseInt(endParts[1]);
+          const endMinutes = parseInt(endParts[2]);
+          const endAmpm = endParts[3].toUpperCase();
+          if (endAmpm === 'PM' && endHours !== 12) endHours += 12;
+          if (endAmpm === 'AM' && endHours === 12) endHours = 0;
+
+          const startTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), startHours, startMinutes);
+          const endTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), endHours, endMinutes);
+
+          if (endTime <= startTime) {
+            endTime.setDate(endTime.getDate() + 1);
+          }
+
+          const datePrice = unitPrice * state.usersCount;
+
+          const bookingRes = await fetch('/api/bookings/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              slotId: matchedSlot.id,
+              startTime: startTime.toISOString(),
+              endTime: endTime.toISOString(),
+              totalPrice: datePrice,
+              seats: state.usersCount,
+              seatIds: state.selectedSeats,
+              attendees: [{ name, email }],
+            }),
+          });
+
+          if (!bookingRes.ok) {
+            const errData = await bookingRes.json();
+            throw new Error(errData.error || 'Failed to create booking');
+          }
+        });
+
+        await Promise.all(bookingPromises);
+      }
       router.push('/dashboard/bookings');
     } catch (err) {
       setLoginError(err instanceof Error ? err.message : 'Failed to create booking.');
@@ -311,20 +484,7 @@ export default function DayPassWizard() {
     return `${yyyy}-${mm}-${dd}`;
   };
 
-  // Dynamic unit price calculation based on timeMode and custom duration
-  let unitPrice = 200; // default full day
-  if (state.timeMode === 'half') {
-    unitPrice = 100;
-  } else if (state.timeMode === 'custom') {
-    const duration = getDurationInHours(state.customStartTime, state.customEndTime);
-    if (duration < 5) {
-      unitPrice = 100;
-    } else {
-      unitPrice = 200;
-    }
-  }
 
-  const totalPrice = unitPrice * state.usersCount * Math.max(1, state.selectedDates.length);
 
   // Dynamic Calendar Data calculation
   const calendarYear = currentCalendarDate.getFullYear();
@@ -485,10 +645,31 @@ export default function DayPassWizard() {
             </div>
           )}
 
-          {/* STEP 2: CHOOSE DATES (MULTI SELECT) */}
+          {/* STEP 2: CHOOSE DATES */}
           {state.step === 2 && (
             <>
-              <p className={styles.subTitle}>Select one or more dates for your booking (click to toggle)</p>
+              <div className={styles.frequencyToggleContainer}>
+                <button
+                  type="button"
+                  className={`${styles.frequencyToggleBtn} ${state.bookingType === 'daily' ? styles.active : ''}`}
+                  onClick={() => setState(s => ({ ...s, bookingType: 'daily' }))}
+                >
+                  Daily Pass
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.frequencyToggleBtn} ${state.bookingType === 'monthly' ? styles.active : ''}`}
+                  onClick={() => handleMonthlyDurationModeChange('1month')}
+                >
+                  Monthly Pass
+                </button>
+              </div>
+
+              <p className={styles.subTitle}>
+                {state.bookingType === 'monthly' 
+                  ? 'Select the starting date of your monthly workspace pass subscription'
+                  : 'Select one or more dates for your booking (click to toggle)'}
+              </p>
               
               <div className={styles.calendarWrapper}>
                 <div className={styles.calendarNav}>
@@ -519,9 +700,12 @@ export default function DayPassWizard() {
                     todayCheck.setHours(0, 0, 0, 0);
                     const isPast = cellDate < todayCheck;
                     
-                    const isSelected = state.selectedDates.some(
-                      d => d.getDate() === day && d.getMonth() === calendarMonth && d.getFullYear() === calendarYear
-                    );
+                    const isSelected = state.bookingType === 'monthly'
+                      ? (cellDate >= new Date(state.monthlyStartDate.getFullYear(), state.monthlyStartDate.getMonth(), state.monthlyStartDate.getDate()) &&
+                         cellDate <= new Date(state.monthlyEndDate.getFullYear(), state.monthlyEndDate.getMonth(), state.monthlyEndDate.getDate()))
+                      : state.selectedDates.some(
+                          d => d.getDate() === day && d.getMonth() === calendarMonth && d.getFullYear() === calendarYear
+                        );
 
                     const dateKey = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                     const avail = availability[dateKey];
@@ -538,7 +722,11 @@ export default function DayPassWizard() {
                           ${isDisabled ? styles.disabled : ''}
                           ${isFullyBooked && !isPast ? styles.fullyBooked : ''}
                         `}
-                        onClick={() => !isDisabled && handleDateToggle(day)}
+                        onClick={() => !isDisabled && (
+                          state.bookingType === 'monthly'
+                            ? handleMonthlyDateClick(day)
+                            : handleDateToggle(day)
+                        )}
                         title={isFullyBooked ? 'Fully booked' : isLimited ? `${avail.booked}/${avail.capacity} booked` : 'Available'}
                       >
                         <span>{day}</span>
@@ -557,6 +745,59 @@ export default function DayPassWizard() {
                   <div className={styles.legendItem}><div className={`${styles.legendDot} ${styles.dotLightGray}`} /><span>Selected</span></div>
                 </div>
               </div>
+
+              {state.bookingType === 'monthly' && (
+                <div className={styles.durationSelectorContainer}>
+                  <p className={styles.durationTitle}>Select Subscription Duration</p>
+                  <div className={styles.durationCardsGrid}>
+                    <div 
+                      className={`${styles.durationCard} ${state.monthlyDurationMode === '1month' ? styles.activeDuration : ''}`}
+                      onClick={() => handleMonthlyDurationModeChange('1month')}
+                    >
+                      <div className={styles.durationCardHeader}>1 Month</div>
+                      <div className={styles.durationCardPrice}>₹2,250</div>
+                      <div className={styles.durationCardRate}>₹75/day</div>
+                    </div>
+                    
+                    <div 
+                      className={`${styles.durationCard} ${state.monthlyDurationMode === '2months' ? styles.activeDuration : ''}`}
+                      onClick={() => handleMonthlyDurationModeChange('2months')}
+                    >
+                      <div className={styles.durationCardHeader}>2 Months</div>
+                      <div className={styles.durationCardPrice}>₹4,500</div>
+                      <div className={styles.durationCardRate}>₹75/day</div>
+                    </div>
+                    
+                    <div 
+                      className={`${styles.durationCard} ${state.monthlyDurationMode === '3months' ? styles.activeDuration : ''}`}
+                      onClick={() => handleMonthlyDurationModeChange('3months')}
+                    >
+                      <div className={styles.durationCardHeader}>3 Months</div>
+                      <div className={styles.durationCardPrice}>₹6,750</div>
+                      <div className={styles.durationCardRate}>₹75/day</div>
+                    </div>
+
+                    <div 
+                      className={`${styles.durationCard} ${state.monthlyDurationMode === 'custom' ? styles.activeDuration : ''}`}
+                      onClick={() => handleMonthlyDurationModeChange('custom')}
+                    >
+                      <div className={styles.durationCardHeader}>Custom Range</div>
+                      <div className={styles.durationCardPrice}>Flex</div>
+                      <div className={styles.durationCardRate}>₹75/day</div>
+                    </div>
+                  </div>
+
+                  {state.monthlyDurationMode === 'custom' && (
+                    <div className={styles.customRangeHelper}>
+                      <span className={styles.customRangeText}>
+                        Selected range: <strong>{formatDateString(state.monthlyStartDate)}</strong> to <strong>{formatDateString(state.monthlyEndDate)}</strong> 
+                        ({Math.ceil(Math.abs(state.monthlyEndDate.getTime() - state.monthlyStartDate.getTime()) / (1000 * 60 * 60 * 24)) + 1} days)
+                      </span>
+                      <p className={styles.customRangeTip}>Click a start date, then click an end date on the calendar above to define your custom range.</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           )}
 
@@ -568,14 +809,14 @@ export default function DayPassWizard() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {/* Full Day Card */}
                 <div 
-                  onClick={() => setState(s => ({ ...s, timeMode: 'full', customStartTime: '09:00 AM', customEndTime: '06:00 PM' }))}
+                  onClick={() => setState(s => ({ ...s, timeMode: 'full', customStartTime: '09:00 AM', customEndTime: '08:00 PM' }))}
                   style={{ cursor: 'pointer', padding: '1.25rem', border: '1px solid #e2e8f0', borderRadius: '12px', transition: 'all 0.2s', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: state.timeMode === 'full' ? '#f8fafc' : 'white', boxShadow: state.timeMode === 'full' ? '0 0 0 2px #0f172a' : 'none' }}
                 >
                   <div>
                     <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem' }}>Full Day</div>
-                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>09:00 AM - 06:00 PM (9 hours)</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>09:00 AM - 08:00 PM (11 hours)</div>
                   </div>
-                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.15rem' }}>₹200</div>
+                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.15rem' }}>₹350</div>
                 </div>
 
                 {/* Half Day Card */}
@@ -587,7 +828,7 @@ export default function DayPassWizard() {
                     <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem' }}>Half Day</div>
                     <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>01:00 PM - 06:00 PM (5 hours)</div>
                   </div>
-                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.15rem' }}>₹100</div>
+                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.15rem' }}>₹250</div>
                 </div>
 
                 {/* Custom Time Card */}
@@ -597,7 +838,7 @@ export default function DayPassWizard() {
                 >
                   <div>
                     <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem' }}>Custom Time</div>
-                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>Choose your own hours. Less than 5 hrs: ₹100 | 5+ hrs: ₹200</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>Choose your own hours. Less than 5 hrs: ₹250 | 5+ hrs: ₹350</div>
                   </div>
                   <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.15rem' }}>
                     {state.timeMode === 'custom' ? `₹${unitPrice}` : 'Flex'}
@@ -832,7 +1073,7 @@ export default function DayPassWizard() {
               {state.usersCount} USER{state.usersCount > 1 ? 'S' : ''}
             </div>
             <div className={styles.selectedPass}>
-              Casual Day Pass
+              {state.bookingType === 'monthly' ? 'Monthly Workspace Pass' : 'Casual Day Pass'}
             </div>
 
             <div className={styles.summaryBox}>
@@ -841,14 +1082,24 @@ export default function DayPassWizard() {
                 <span>{state.selectedSeats.length > 0 ? state.selectedSeats.join(', ') : '-'}</span>
               </div>
               
-              <div className={styles.summaryRow}>
-                <span>Dates ({state.selectedDates.length})</span>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.2rem', fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>
-                  {state.selectedDates.map(d => (
-                    <span key={d.getTime()}>{formatDateString(d)}</span>
-                  ))}
+              {state.bookingType === 'monthly' ? (
+                <div className={styles.summaryRow}>
+                  <span>Duration</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.2rem', fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>
+                    <span>From: {formatDateString(state.monthlyStartDate)}</span>
+                    <span>To: {formatDateString(state.monthlyEndDate)}</span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className={styles.summaryRow}>
+                  <span>Dates ({state.selectedDates.length})</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.2rem', fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>
+                    {state.selectedDates.map(d => (
+                      <span key={d.getTime()}>{formatDateString(d)}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
               
               <div className={styles.summaryRow}>
                 <span>Time Slot</span>
@@ -863,16 +1114,30 @@ export default function DayPassWizard() {
 
             <div className={styles.costBreakdown}>
               <div className={styles.costTitle}>COST BREAKDOWN</div>
-              <div className={styles.costRow} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.25rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.85rem', color: '#64748b' }}>
-                  <span>₹{unitPrice} × {state.usersCount} seat{state.usersCount > 1 ? 's' : ''}</span>
-                  <span>₹{unitPrice * state.usersCount} / day</span>
+              
+              {state.bookingType === 'monthly' ? (
+                <div className={styles.costRow} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.25rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.85rem', color: '#64748b' }}>
+                    <span>Package ({state.monthlyDurationMode === 'custom' ? 'Custom Range' : state.monthlyDurationMode.replace('1month', '1 Month').replace('months', ' Months')})</span>
+                    <span>₹{totalPrice / state.usersCount} / user</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.85rem', color: '#64748b' }}>
+                    <span>Users count</span>
+                    <span>× {state.usersCount}</span>
+                  </div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.85rem', color: '#64748b' }}>
-                  <span>Total Days</span>
-                  <span>× {state.selectedDates.length}</span>
+              ) : (
+                <div className={styles.costRow} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.25rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.85rem', color: '#64748b' }}>
+                    <span>₹{unitPrice} × {state.usersCount} seat{state.usersCount > 1 ? 's' : ''}</span>
+                    <span>₹{unitPrice * state.usersCount} / day</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.85rem', color: '#64748b' }}>
+                    <span>Total Days</span>
+                    <span>× {state.selectedDates.length}</span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <button 
                 type="button"

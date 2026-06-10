@@ -6,23 +6,39 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const slotId = searchParams.get('slotId');
     const dateParam = searchParams.get('date'); // YYYY-MM-DD
+    const startDateParam = searchParams.get('startDate'); // YYYY-MM-DD
+    const endDateParam = searchParams.get('endDate'); // YYYY-MM-DD
 
-    if (!slotId || !dateParam) {
-      return NextResponse.json({ error: 'Missing slotId or date' }, { status: 400 });
+    if (!slotId) {
+      return NextResponse.json({ error: 'Missing slotId' }, { status: 400 });
     }
 
-    const startOfDay = new Date(dateParam);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(startOfDay);
-    endOfDay.setDate(endOfDay.getDate() + 1);
+    let start: Date;
+    let end: Date;
+
+    if (startDateParam && endDateParam) {
+      start = new Date(startDateParam);
+      start.setHours(0, 0, 0, 0);
+      end = new Date(endDateParam);
+      end.setHours(23, 59, 59, 999);
+    } else if (dateParam) {
+      start = new Date(dateParam);
+      start.setHours(0, 0, 0, 0);
+      end = new Date(start);
+      end.setDate(end.getDate() + 1);
+    } else {
+      return NextResponse.json({ error: 'Missing date or range parameters' }, { status: 400 });
+    }
 
     const bookings = await prisma.booking.findMany({
       where: {
         slotId,
         status: { in: ['PENDING', 'APPROVED'] },
         startTime: {
-          gte: startOfDay,
-          lt: endOfDay,
+          lt: end,
+        },
+        endTime: {
+          gt: start,
         }
       },
       select: {
