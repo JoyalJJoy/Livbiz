@@ -34,7 +34,8 @@ const ROOMS = [
     id: '6-seat' as RoomId,
     name: '6-Seat Conference Room',
     dbName: '6-Seat Conference Room',
-    price: 200,
+    price: 250,
+    originalPrice: 500,
     capacity: 6,
     features: ['Whiteboard', 'High-Speed WiFi', 'Air Conditioning', 'Power Backup'],
   },
@@ -42,7 +43,8 @@ const ROOMS = [
     id: '12-seat' as RoomId,
     name: '12-Seat Conference Room',
     dbName: '12-Seat Conference Room',
-    price: 500,
+    price: 750,
+    originalPrice: 1500,
     capacity: 12,
     features: ['Projector', 'Whiteboard', 'High-Speed WiFi', 'Air Conditioning', 'Power Backup', 'Complimentary Coffee'],
   },
@@ -388,7 +390,12 @@ export default function MeetingRoomWizard() {
                       <div className={styles.iconWrapper}><Presentation size={20} /></div>
                       <div>
                         <div className={styles.cardTitle}>{room.name}</div>
-                        <div className={styles.cardPrice}><span>₹{room.price}</span>/hr</div>
+                        <div className={styles.cardPrice} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                          <span style={{ fontWeight: 800, color: '#0f172a' }}>₹{room.price}</span>
+                          <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: '0.8rem', fontWeight: 500 }}>₹{room.originalPrice}</span>
+                          <span style={{ backgroundColor: '#fee2e2', color: '#ef4444', fontSize: '0.65rem', fontWeight: 800, padding: '0.1rem 0.35rem', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>50% Offer</span>
+                          <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 500 }}>/hr</span>
+                        </div>
                       </div>
                     </div>
                     <ul className={styles.featureList}>
