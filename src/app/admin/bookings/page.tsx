@@ -321,8 +321,8 @@ export default function AdminBookingsPage() {
                       </span>
                     </td>
                     <td>
-                      <span className={`${styles.statusPill} ${b.paymentStatus === 'PAID' ? styles.statusPaid : b.paymentStatus === 'PENDING' ? styles.statusPendingPayment : styles.statusUnpaid}`}>
-                        {b.paymentStatus.toLowerCase()}
+                      <span className={`${styles.statusPill} ${b.paymentStatus === 'PAID' ? styles.statusPaid : (b.paymentStatus === 'PENDING' || !b.paymentStatus) ? styles.statusPendingPayment : styles.statusUnpaid}`}>
+                        {(b.paymentStatus || 'PENDING').toLowerCase()}
                       </span>
                     </td>
                     <td>
@@ -570,8 +570,8 @@ export default function AdminBookingsPage() {
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Payment Status</label>
                     <div style={{ display: 'flex', alignItems: 'center', height: '100%', minHeight: '38px', paddingLeft: '0.2rem' }}>
-                      <span className={`${styles.statusPill} ${detailsModal.paymentStatus === 'PAID' ? styles.statusPaid : detailsModal.paymentStatus === 'PENDING' ? styles.statusPendingPayment : styles.statusUnpaid}`}>
-                        {detailsModal.paymentStatus}
+                      <span className={`${styles.statusPill} ${detailsModal.paymentStatus === 'PAID' ? styles.statusPaid : (detailsModal.paymentStatus === 'PENDING' || !detailsModal.paymentStatus) ? styles.statusPendingPayment : styles.statusUnpaid}`}>
+                        {detailsModal.paymentStatus || 'PENDING'}
                       </span>
                     </div>
                   </div>

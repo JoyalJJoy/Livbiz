@@ -232,8 +232,8 @@ export default function BookingsPage() {
                   <span className={`${styles.statusPill} ${styles[`status${booking.status}`] || ''}`}>
                     {booking.status.toLowerCase()}
                   </span>
-                  <span className={`${styles.statusPill} ${booking.paymentStatus === 'PAID' ? styles.statusPaid : booking.paymentStatus === 'PENDING' ? styles.statusPendingPayment : styles.statusUnpaid}`}>
-                    Payment: {booking.paymentStatus.toLowerCase()}
+                  <span className={`${styles.statusPill} ${booking.paymentStatus === 'PAID' ? styles.statusPaid : (booking.paymentStatus === 'PENDING' || !booking.paymentStatus) ? styles.statusPendingPayment : styles.statusUnpaid}`}>
+                    Payment: {(booking.paymentStatus || 'PENDING').toLowerCase()}
                   </span>
                 </div>
 
@@ -363,8 +363,8 @@ export default function BookingsPage() {
                 </div>
                 <div className={styles.modalDetailItem}>
                   <span className={styles.modalDetailLabel}>Payment Status</span>
-                  <span className={styles.modalDetailValue} style={{ color: selectedBooking.paymentStatus === 'PAID' ? '#10b981' : selectedBooking.paymentStatus === 'PENDING' ? '#b45309' : '#ef4444', textTransform: 'capitalize' }}>
-                    {selectedBooking.paymentStatus.toLowerCase()}
+                  <span className={styles.modalDetailValue} style={{ color: selectedBooking.paymentStatus === 'PAID' ? '#10b981' : (selectedBooking.paymentStatus === 'PENDING' || !selectedBooking.paymentStatus) ? '#b45309' : '#ef4444', textTransform: 'capitalize' }}>
+                    {(selectedBooking.paymentStatus || 'PENDING').toLowerCase()}
                   </span>
                 </div>
               </div>
