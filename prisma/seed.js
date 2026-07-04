@@ -71,7 +71,7 @@ async function main() {
         name: 'Regular Day Pass',
         type: 'DAY_PASS',
         capacity: 50,
-        pricePerUnit: 200.00,
+        pricePerUnit: 350.00,
         unit: 'DAY',
       },
     });
@@ -85,7 +85,7 @@ async function main() {
         name: 'Premium Day Pass',
         type: 'DAY_PASS',
         capacity: 20,
-        pricePerUnit: 300.00,
+        pricePerUnit: 250.00,
         unit: 'DAY',
       },
     });

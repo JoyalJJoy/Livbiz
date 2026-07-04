@@ -99,17 +99,17 @@ export default function DayPassWizard() {
 
   let totalPrice = 0;
   if (state.bookingType === 'monthly') {
-    let monthlyUnitPrice = 2250;
+    let monthlyUnitPrice = 6500;
     if (state.monthlyDurationMode === '1month') {
-      monthlyUnitPrice = 2250;
+      monthlyUnitPrice = 6500;
     } else if (state.monthlyDurationMode === '2months') {
-      monthlyUnitPrice = 4500;
+      monthlyUnitPrice = 13000;
     } else if (state.monthlyDurationMode === '3months') {
-      monthlyUnitPrice = 6750;
+      monthlyUnitPrice = 19500;
     } else if (state.monthlyDurationMode === 'custom') {
       const diffTime = Math.abs(state.monthlyEndDate.getTime() - state.monthlyStartDate.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-      monthlyUnitPrice = Math.max(250, diffDays * 75);
+      monthlyUnitPrice = Math.max(250, diffDays * 217);
     }
     totalPrice = monthlyUnitPrice * state.usersCount;
   } else {
@@ -755,8 +755,8 @@ export default function DayPassWizard() {
                       onClick={() => handleMonthlyDurationModeChange('1month')}
                     >
                       <div className={styles.durationCardHeader}>1 Month</div>
-                      <div className={styles.durationCardPrice}>₹2,250</div>
-                      <div className={styles.durationCardRate}>₹75/day</div>
+                      <div className={styles.durationCardPrice}>₹6,500</div>
+                      <div className={styles.durationCardRate}>₹217/day</div>
                     </div>
                     
                     <div 
@@ -764,8 +764,8 @@ export default function DayPassWizard() {
                       onClick={() => handleMonthlyDurationModeChange('2months')}
                     >
                       <div className={styles.durationCardHeader}>2 Months</div>
-                      <div className={styles.durationCardPrice}>₹4,500</div>
-                      <div className={styles.durationCardRate}>₹75/day</div>
+                      <div className={styles.durationCardPrice}>₹13,000</div>
+                      <div className={styles.durationCardRate}>₹217/day</div>
                     </div>
                     
                     <div 
@@ -773,8 +773,8 @@ export default function DayPassWizard() {
                       onClick={() => handleMonthlyDurationModeChange('3months')}
                     >
                       <div className={styles.durationCardHeader}>3 Months</div>
-                      <div className={styles.durationCardPrice}>₹6,750</div>
-                      <div className={styles.durationCardRate}>₹75/day</div>
+                      <div className={styles.durationCardPrice}>₹19,500</div>
+                      <div className={styles.durationCardRate}>₹217/day</div>
                     </div>
 
                     <div 
@@ -783,7 +783,7 @@ export default function DayPassWizard() {
                     >
                       <div className={styles.durationCardHeader}>Custom Range</div>
                       <div className={styles.durationCardPrice}>Flex</div>
-                      <div className={styles.durationCardRate}>₹75/day</div>
+                      <div className={styles.durationCardRate}>₹217/day</div>
                     </div>
                   </div>
 
