@@ -117,30 +117,20 @@
   }
 }
 
-.mapPlaceholder {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: clamp(2rem, 4vw, 4rem);
-  color: #ffffff;
-  background-color: #101827;
-  background-image:
-    url("data:image/svg+xml,%3Csvg width='360' height='260' viewBox='0 0 360 260' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.06' stroke-width='2'%3E%3Cpath d='M16 35c42-18 91-2 105 38 13 37-9 72-47 75-32 2-56-20-55-51 1-26 23-47 49-44 22 2 39 21 36 43'/%3E%3Cpath d='M206 28c48 8 78 43 69 82-8 34-40 54-75 44-29-8-46-35-37-63 7-23 31-36 54-28'/%3E%3Ccircle cx='78' cy='204' r='34'/%3E%3Ccircle cx='288' cy='190' r='28'/%3E%3C/g%3E%3C/svg%3E"),
-    linear-gradient(135deg, #101827, #17233b);
+.mapEmbed {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  border: 0;
+  display: block;
 }
 
-.mapPlaceholder span {
+.contactLink {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.contactLink:hover {
   color: var(--color-brand-accent);
-  font-family: var(--font-heading);
-  font-size: 1.1rem;
-  font-weight: 800;
-}
-
-.mapPlaceholder strong {
-  color: #ffffff;
-  font-family: var(--font-heading);
-  font-size: clamp(2rem, 4vw, 4.5rem);
-  line-height: 1.05;
-  max-width: 560px;
 }

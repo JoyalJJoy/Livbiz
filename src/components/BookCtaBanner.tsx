@@ -20,7 +20,7 @@ export default function BookCtaBanner() {
           <div className={styles.card}>
             <div className={styles.imageWrapper}>
               <Image 
-                src="/images/desk-booking.png" 
+                src="/images/workspace-open-2.png" 
                 alt="Book a Desk" 
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -61,7 +61,7 @@ export default function BookCtaBanner() {
           <div className={styles.card}>
             <div className={styles.imageWrapper}>
               <Image 
-                src="/images/conference-booking.png" 
+                src="/images/meeting-room-3.png" 
                 alt="Book a Conference Room" 
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"

@@ -15,6 +15,8 @@
   font-size: 1rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .header h2 {
@@ -30,164 +32,111 @@
   max-width: 600px;
 }
 
-.card {
+/* Gallery Layout */
+.gallery {
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.1);
-  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+  gap: clamp(2.5rem, 5vw, 4rem);
 }
 
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1);
+.categoryBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
 }
 
-@media (min-width: 900px) {
-  .card {
-    flex-direction: row;
-    min-height: 430px;
+.categoryHeader h3 {
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  color: #202124;
+  margin-bottom: 0.35rem;
+}
+
+.categoryHeader p {
+  color: #5e626b;
+  font-size: 1rem;
+  max-width: 560px;
+}
+
+/* Image Grid */
+.imageGrid {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.twoCol {
+  grid-template-columns: 1fr;
+}
+
+.threeCol {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 600px) {
+  .twoCol {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .threeCol {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .imageCardWide {
+    grid-column: 1 / -1;
   }
 }
 
-.imageCol {
+@media (min-width: 1000px) {
+  .threeCol {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .imageCardWide {
+    grid-column: auto;
+  }
+}
+
+/* Image Cards */
+.imageCard {
   position: relative;
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16 / 10;
+  border-radius: 10px;
   overflow: hidden;
-}
-
-@media (min-width: 900px) {
-  .imageCol {
-    width: 48%;
-    aspect-ratio: auto;
-    min-height: 430px;
-  }
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+  cursor: default;
 }
 
 .image {
   object-fit: cover;
-  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
   will-change: transform;
 }
 
-.card:hover .image {
+.imageCard:hover .image {
   transform: scale(1.05);
 }
 
-.contentCol {
-  padding: clamp(1.75rem, 4vw, 4rem);
+/* Overlay on hover */
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(16, 24, 39, 0.65) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
   display: flex;
-  flex-direction: column;
-  flex: 1;
+  align-items: flex-end;
+  padding: 1.25rem;
 }
 
-.cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--space-sm);
+.imageCard:hover .imageOverlay {
+  opacity: 1;
 }
 
-.cardHeader h3 {
-  font-size: clamp(1.65rem, 2.5vw, 2.55rem);
-  color: #202124;
-  margin: 0;
-}
-
-.status {
-  background-color: rgba(255, 186, 1, 0.18);
-  color: #8c6100;
-  padding: 0.2rem 0.6rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.8rem;
-  font-weight: 600;
+.imageLabel {
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-}
-
-.description {
-  color: #5e626b;
-  font-size: 1.05rem;
-  margin-bottom: var(--space-md);
-  flex-grow: 1;
-}
-
-.amenities {
-  display: flex;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
-  flex-wrap: wrap;
-}
-
-.amenityBadge {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.8rem;
-  background-color: #f4f5f7;
-  border: 1px solid #e4e6ea;
-  border-radius: var(--radius-full);
-  color: #4e5662;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.amenityBadge:hover {
-  background-color: #101827;
-  color: white;
-  border-color: #101827;
-}
-
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid #e4e6ea;
-  padding-top: var(--space-md);
-  flex-wrap: wrap;
-  gap: var(--space-md);
-}
-
-.pricing {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.priceLabel {
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-}
-
-.priceValue {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #202124;
   font-family: var(--font-heading);
-}
-
-.priceUnit {
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-}
-
-.enquireBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  background-color: #101827;
-  color: #ffffff;
-  padding: 0.85rem 1.35rem;
-  border-radius: 6px;
-  font-weight: 800;
-  transition: transform 0.2s, background-color 0.2s;
-}
-
-.enquireBtn:hover {
-  background-color: #1a2540;
-  transform: translateY(-2px);
 }

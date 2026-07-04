@@ -24,97 +24,32 @@
   font-size: 1.1rem;
 }
 
-.gridTop {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-lg);
-}
-
-@media (min-width: 768px) {
-  .gridTop {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.card {
-  background-color: #f4f5f7;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-}
-
-.imageWrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-}
-
-.image {
-  object-fit: cover;
-}
-
-.content {
-  padding: var(--space-lg);
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.quoteIcon {
-  font-size: 3rem;
-  color: var(--color-brand-accent);
-  line-height: 0.5;
-  margin-bottom: var(--space-sm);
-  opacity: 0.5;
-}
-
-.quote {
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: #202124;
-  font-style: italic;
-  margin-bottom: var(--space-lg);
-  flex: 1;
-}
-
-.author h4 {
-  font-size: 1.1rem;
-  margin-bottom: 0.2rem;
-}
-
-.author p {
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-}
-
 /* Featured Card */
 .featuredCard {
   display: flex;
   flex-direction: column;
   background-color: #101827;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: var(--shadow-md);
-  margin-top: var(--space-lg);
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.12);
 }
 
 @media (min-width: 900px) {
   .featuredCard {
     flex-direction: row;
+    min-height: 440px;
   }
 }
 
 .featuredImageWrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 1/1;
+  aspect-ratio: 4/3;
 }
 
 @media (min-width: 900px) {
   .featuredImageWrapper {
-    width: 40%;
+    width: 42%;
     aspect-ratio: auto;
   }
 }
@@ -124,7 +59,7 @@
 }
 
 .featuredContent {
-  padding: var(--space-xl);
+  padding: clamp(1.75rem, 4vw, 3.5rem);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -136,20 +71,21 @@
   color: var(--color-brand-accent);
   line-height: 0.5;
   opacity: 0.5;
+  margin-bottom: var(--space-sm);
 }
 
 .featuredQuote {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
   color: #ffffff;
-  line-height: 1.2;
+  line-height: 1.25;
   margin-bottom: var(--space-md);
   font-family: var(--font-heading);
 }
 
 .featuredText {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
   margin-bottom: var(--space-xl);
 }
 
@@ -162,10 +98,4 @@
 .featuredAuthor p {
   font-size: 0.95rem;
   color: rgba(255, 255, 255, 0.62);
-}
-
-@media (min-width: 768px) {
-  .featuredQuote {
-    font-size: 2.5rem;
-  }
 }

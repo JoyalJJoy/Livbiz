@@ -7,21 +7,21 @@ const steps = [
     time: 'Easy Booking',
     title: 'Find a Time That Works for You',
     description: 'Browse available day passes and meeting rooms, select your slot, and secure your workspace in a few clicks.',
-    image: '/images/morning_concept.jpg'
+    image: '/images/workspace-open-1.png'
   },
   {
     id: 2,
     time: 'Arrive Ready',
     title: 'Walk Into a Focused Setup',
     description: 'Use the space for client calls, planning, desk work or team discussions without spending the day arranging basics.',
-    image: '/images/afternoon_synergy.jpg'
+    image: '/images/meeting-room-1.png'
   },
   {
     id: 3,
     time: 'Grow Steady',
     title: 'Scale Your Work Rhythm',
     description: 'Keep the flexibility of booking when needed, then move toward a more regular setup as your work expands.',
-    image: '/images/evening_connections.jpg'
+    image: '/images/conference-room-1.png'
   }
 ];
 
