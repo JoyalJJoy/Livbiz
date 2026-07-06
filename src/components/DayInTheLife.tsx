@@ -23,7 +23,7 @@ const steps = [
     label: 'Arrive Ready',
     title: 'Walk Into a Focused Setup',
     description: 'Use the space for client calls, planning, desk work or team discussions without spending the day arranging basics.',
-    image: '/images/meeting-room-1.png',
+    image: '/images/meeting-room-3.png',
     alt: 'Private meeting room space at LivBiz',
     rotation: '2deg',
     offsetX: '0px',
