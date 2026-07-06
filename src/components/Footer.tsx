@@ -1,110 +1,112 @@
-'use client';
-
-import React from 'react';
 import styles from './Footer.module.css';
+import Link from 'next/link';
+import { Calendar } from 'lucide-react';
 
 export default function Footer() {
-  const cols = 51;
-  const rows = 12;
-  const spacing = 16;
-  const radius = 3.5;
-  const width = (cols - 1) * spacing + radius * 2 + 10;
-  const height = (rows - 1) * spacing + radius * 2 + 10;
-
-  const circles = [];
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      // Normalise coordinates to center the heart
-      const x = (c - 25) / 7.5;
-      const y = -(r - 5.0) / 4.0; // Invert y since r increases downwards
-
-      // Heart equation: (x^2 + y^2 - 0.95)^3 - x^2 * y^3
-      const eq = Math.pow(x * x + y * y - 0.95, 3) - x * x * Math.pow(y, 3);
-
-      let color = '#E2DDD5'; // Light dot color
-      if (eq <= 0) {
-        color = '#1C1917'; // Heart color (charcoal)
-      } else if (eq < 0.12) {
-        color = '#8A8075'; // Anti-aliasing edge
-      } else if (eq < 0.28) {
-        color = '#B8AEA3'; // Outer smooth transition
-      }
-
-      const cx = c * spacing + radius + 5;
-      const cy = r * spacing + radius + 5;
-
-      circles.push(
-        <circle
-          key={`${r}-${c}`}
-          cx={cx}
-          cy={cy}
-          r={radius}
-          fill={color}
-        />
-      );
-    }
-  }
+  const brandName = "LivBizz";
 
   return (
     <footer className={styles.footer}>
-      <div className={styles.container}>
-        <div className={styles.card}>
+      <div className={`container ${styles.container}`}>
+        
+        {/* ── Top Footer Row ─────────────────────────────────── */}
+        <div className={styles.topRow}>
           
-          {/* Top Row: Brand Logo + Navigation Links */}
-          <div className={styles.topRow}>
-            <div className={styles.brand}>
-              <div className={styles.brandLogoRow}>
-                <div className={styles.brandLogoMark}>
-                  <img
-                    src="/images/logo.png"
-                    alt=""
-                    style={{ width: '85%', height: '85%', objectFit: 'contain', objectPosition: 'center 35%' }}
-                  />
-                </div>
-                <span className={styles.brandName}>LivBizz</span>
+          {/* Brand Col */}
+          <div className={styles.brandCol}>
+            
+            {/* Logo Row */}
+            <div className={styles.logoRow}>
+              <div className={styles.logoIcon}>
+                <img
+                  src="/images/logo.png"
+                  alt=""
+                  style={{ width: '85%', height: '85%', objectFit: 'contain', objectPosition: 'center 35%' }}
+                />
               </div>
+              <span className={styles.logoText}>LivBizz</span>
+              <span className={styles.subLabel}>Coworking Spaces</span>
             </div>
 
-            <div className={styles.linksGrid}>
-              <div className={styles.linkColumn}>
-                <a href="#workspace" className={styles.linkBold}>Workspace</a>
-                <a href="#booking" className={styles.linkBold}>Bookings</a>
-                <a href="#" className={styles.linkLight}>Privacy Policy</a>
-                <a href="#" className={styles.linkLight}>Terms of Service</a>
-                <a href="#" className={styles.linkLight}>Cookie Policy</a>
-              </div>
-              <div className={styles.linkColumn}>
-                <a href="#features" className={styles.linkBold}>Our Features</a>
-                <a href="#stories" className={styles.linkBold}>Reviews</a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={styles.linkLight}>Instagram</a>
-              </div>
+            {/* Typography Hook (Copy once. Reuse anytime.) */}
+            <div className={styles.hook}>
+              <div className={styles.hookMain}>Focus once.</div>
+              <div className={styles.hookItalic}>Grow anytime.</div>
             </div>
+
+            {/* Description */}
+            <p className={styles.description}>
+              LivBizz provides premium workspace and conference hubs, automatically equipped with high-speed internet, ergonomic setups, and business amenities.
+            </p>
+
+            {/* Book Workspace Button */}
+            <Link href="/book" className={styles.ctaBtn}>
+              <Calendar size={16} />
+              <span>Book Workspace</span>
+            </Link>
+
+            {/* Copyright */}
+            <div className={styles.copyright}>
+              &copy; {new Date().getFullYear()} LivBizz.com - All rights reserved
+            </div>
+
+            {/* Built with Heart */}
+            <div className={styles.builtBy}>
+              Built with <span className={styles.heart}>🤎</span> by LivBizz
+            </div>
+
           </div>
 
-          {/* Middle Row: Copyright + Registration Info */}
-          <div className={styles.middleRow}>
-            <p className={styles.infoText}>
-              &copy; {new Date().getFullYear()}, LivBizz Ltd. Bengaluru. All rights reserved.
-            </p>
-            <p className={styles.infoText}>
-              Registered in Karnataka.
-            </p>
-          </div>
+          {/* Links Grid */}
+          <div className={styles.linksGrid}>
+            
+            {/* Col 1: Menu */}
+            <div className={styles.linksCol}>
+              <h4>Menu</h4>
+              <ul className={styles.linksList}>
+                <li><Link href="#">Home</Link></li>
+                <li><Link href="#workspace">Spaces</Link></li>
+                <li><Link href="#experience">FAQ</Link></li>
+                <li><Link href="#booking">Pricing</Link></li>
+              </ul>
+            </div>
 
-          {/* Bottom Row: Heart Dot Grid */}
-          <div className={styles.dotGridContainer}>
-            <svg
-              viewBox={`0 0 ${width} ${height}`}
-              width="100%"
-              height="auto"
-              className={styles.dotGridSvg}
-              aria-hidden="true"
-            >
-              {circles}
-            </svg>
+            {/* Col 2: Navigation */}
+            <div className={styles.linksCol}>
+              <h4>Navigation</h4>
+              <ul className={styles.linksList}>
+                <li><Link href="#location">Contact</Link></li>
+                <li><Link href="#experience">Roadmap</Link></li>
+                <li><Link href="/privacy">Privacy policy</Link></li>
+                <li><Link href="/terms">Terms of service</Link></li>
+                <li><Link href="#location">Support portal</Link></li>
+              </ul>
+            </div>
+
+            {/* Col 3: Locations */}
+            <div className={styles.linksCol}>
+              <h4>Locations</h4>
+              <ul className={styles.linksList}>
+                <li><a href="https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac" target="_blank" rel="noopener noreferrer">Kothanur Hub</a></li>
+                <li><a href="https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac" target="_blank" rel="noopener noreferrer">Shakunthala Plaza-2</a></li>
+                <li><a href="https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac" target="_blank" rel="noopener noreferrer">Bengaluru HQ</a></li>
+                <li><Link href="#location">Partner spaces</Link></li>
+              </ul>
+            </div>
+
           </div>
 
         </div>
+
+        {/* ── Gigantic Background Watermark with letter hover glow ── */}
+        <div className={styles.watermark} aria-hidden="true">
+          {brandName.split("").map((char, index) => (
+            <span key={index} className={styles.watermarkChar}>
+              {char}
+            </span>
+          ))}
+        </div>
+
       </div>
     </footer>
   );

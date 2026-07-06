@@ -1,64 +1,73 @@
 .section {
-  padding-block: clamp(5rem, 10vw, 9rem); /* spacious Apple Store style section-to-section gap */
+  padding-top: clamp(4rem, 8vw, 7rem);
+  padding-bottom: 2rem; /* reduced so the overlapping CTA card aligns clean with footer */
   background-color: var(--color-bg, #F8F5F0);
   position: relative;
-}
-
-.container {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: clamp(2.5rem, 5vw, 4rem);
+  gap: clamp(2rem, 4vw, 3rem);
 }
 
 /* ── Section Header ─────────────────────────────────────────── */
-.header {
+.headerContainer {
   text-align: left;
-  max-width: 600px;
 }
 
 .kicker {
   font-family: var(--font-body, system-ui);
   font-size: 0.75rem;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.16em;
   color: var(--color-brand-accent, #B5973E);
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.75rem;
 }
 
-.header h2 {
+.headerContainer h2 {
   font-family: var(--font-serif, Georgia, serif);
-  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
   font-weight: 700;
   color: var(--color-text, #1C1917);
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+  letter-spacing: -0.02em;
   margin: 0;
+  line-height: 1.15;
 }
 
-/* ── Large Beautiful Map ────────────────────────────────────── */
-.mapWrapper {
+/* ── Map Container (With relative overlays on desktop) ──────── */
+.mapContainer {
   position: relative;
   width: 100%;
-  height: 350px;
-  border-radius: var(--radius-lg, 20px);
+  border-radius: var(--radius-xl, 28px);
   overflow: hidden;
   border: 1px solid var(--color-border, #E5DDD3);
   box-shadow: var(--shadow-lg);
-  background-color: var(--color-neutral-200, #F0EBE3);
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
 }
 
 @media (min-width: 768px) {
-  .mapWrapper {
-    height: 480px;
+  .mapContainer {
+    height: 520px;
+    display: block;
   }
 }
 
-.mapWrapper:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
+/* Background Google Map */
+.mapBackground {
+  width: 100%;
+  height: 300px; /* map height on mobile */
+  order: 2; /* below info card on mobile */
+}
+
+@media (min-width: 768px) {
+  .mapBackground {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    order: unset;
+  }
 }
 
 .mapEmbed {
@@ -70,92 +79,190 @@
   filter: sepia(0.12) saturate(0.85) brightness(0.95) contrast(0.96);
 }
 
-/* ── Horizontal Divider Line ────────────────────────────────── */
-.divider {
-  border: none;
-  height: 1px;
-  background-color: var(--color-border, #E5DDD3);
-  margin: 0;
+/* ── Floating Contact Info Card ────────────────────────────── */
+.infoCard {
   width: 100%;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  z-index: 2;
+  order: 1; /* top on mobile */
 }
 
-/* ── Info Columns Grid ──────────────────────────────────────── */
-.infoGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem;
-}
-
-@media (min-width: 580px) {
-  .infoGrid {
-    grid-template-columns: repeat(2, 1fr);
+@media (min-width: 768px) {
+  .infoCard {
+    position: absolute;
+    right: 2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 380px;
+    order: unset;
   }
 }
 
-@media (min-width: 900px) {
-  .infoGrid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-  }
+.infoCard h3 {
+  font-family: var(--font-heading, system-ui);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text, #1C1917);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--color-border, #E5DDD3);
 }
 
-/* ── Column Item ────────────────────────────────────────────── */
-.infoCol {
+.infoList {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0.85rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-.colHeader {
+.infoItem {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.iconWrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(181, 151, 62, 0.10);
+  border: 1px solid rgba(181, 151, 62, 0.20);
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .icon {
   color: var(--color-brand-accent, #B5973E);
-  flex-shrink: 0;
 }
 
-.infoCol h3 {
-  font-family: var(--font-heading, system-ui);
-  font-size: 1.05rem;
-  font-weight: 700;
+.infoItem p {
   color: var(--color-text, #1C1917);
+  font-size: 0.88rem;
+  line-height: 1.6;
   margin: 0;
 }
 
-.infoCol p {
-  font-size: 0.92rem;
-  line-height: 1.65;
-  color: var(--color-text-muted, #6B5E55);
-  margin: 0;
-}
-
-/* Text links */
-.textLink {
-  font-family: var(--font-body, system-ui);
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--color-brand-accent, #B5973E);
-  text-decoration: none;
-  display: inline-flex;
+/* Directions Button */
+.directionsBtn {
+  display: flex;
   align-items: center;
-  margin-top: 0.25rem;
-  transition: opacity 0.2s ease;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-text, #1C1917);
+  color: var(--color-bg, #F8F5F0);
+  text-align: center;
+  padding: 0.85rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  border: 2px solid var(--color-text, #1C1917);
+  box-shadow: 0 4px 12px rgba(28, 25, 23, 0.15);
 }
 
-.textLink:hover {
-  opacity: 0.8;
+.directionsBtn:hover {
+  background-color: var(--color-brand-accent, #B5973E);
+  border-color: var(--color-brand-accent, #B5973E);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(181, 151, 62, 0.30);
 }
 
 .contactLink {
   color: var(--color-text-muted, #6B5E55);
   text-decoration: none;
-  transition: color 0.2s ease;
+  font-weight: 500;
 }
 
 .contactLink:hover {
   color: var(--color-brand-accent, #B5973E);
+}
+
+/* ── Glass Island Base (VisionOS style) ────────────────────── */
+.glassIsland {
+  background: rgba(253, 252, 249, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: var(--radius-lg, 20px);
+  box-shadow: 
+    0 15px 35px rgba(28, 25, 23, 0.10),
+    0 5px 15px rgba(28, 25, 23, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* ── Overlapping Booking CTA Card ──────────────────────────── */
+.ctaWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .ctaWrapper {
+    margin-top: -2.5rem; /* overlaps bottom of map */
+  }
+}
+
+.ctaCard {
+  width: 90%;
+  max-width: 480px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  text-align: center;
+  border-radius: 20px;
+  box-shadow: 
+    0 20px 40px rgba(28, 25, 23, 0.15),
+    0 6px 15px rgba(28, 25, 23, 0.06);
+}
+
+@media (min-width: 600px) {
+  .ctaCard {
+    flex-direction: row;
+    text-align: left;
+    gap: 2rem;
+  }
+}
+
+.ctaCard p {
+  font-family: var(--font-heading, system-ui);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text, #1C1917);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.bookBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-text, #1C1917);
+  color: var(--color-bg, #F8F5F0);
+  padding: 0.8rem 1.4rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border: 2px solid var(--color-text, #1C1917);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(28, 25, 23, 0.12);
+  flex-shrink: 0;
+}
+
+.bookBtn:hover {
+  background-color: var(--color-brand-accent, #B5973E);
+  border-color: var(--color-brand-accent, #B5973E);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(181, 151, 62, 0.3);
 }
