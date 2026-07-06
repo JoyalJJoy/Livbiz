@@ -1,194 +1,199 @@
 .section {
   padding-block: clamp(4rem, 8vw, 8rem);
-  background-color: #f4f5f7;
+  background-color: #0D0D0D;
+  position: relative;
   overflow: hidden;
 }
 
-.container {
+.wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: clamp(2rem, 4vw, 3rem);
+  width: 100%;
+}
+
+/* ── Section Header Layout ─────────────────────────── */
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  width: 100%;
 }
 
 .header {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+  text-align: left;
 }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: #ffffff;
-  padding: 0.35rem 0.85rem;
-  border-radius: var(--radius-full);
-  border: 1px solid #e4e6ea;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #4e5662;
-  box-shadow: var(--shadow-sm);
-}
-
-.googleIcon {
-  width: 16px;
-  height: 16px;
+.kicker {
+  font-family: var(--font-body, system-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--color-brand-accent, #B5973E);
+  margin-bottom: 0.65rem;
 }
 
 .header h2 {
-  font-size: clamp(2.15rem, 4.1vw, 4rem);
-  color: #202124;
+  font-family: var(--font-heading, system-ui);
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.1;
   margin: 0;
 }
 
-.ratingSummary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  font-size: 1.05rem;
-  color: #5e626b;
-  flex-wrap: wrap;
-}
-
-.ratingVal {
-  font-weight: 800;
-  color: #202124;
-  font-size: 1.25rem;
-}
-
-.stars {
-  color: #ffba01;
-  letter-spacing: 0.1em;
-  font-size: 1.25rem;
-}
-
-.count {
-  font-size: 0.95rem;
-}
-
-/* Marquee Scroller */
-.marqueeContainer {
+/* ── Auto-Scrolling Marquee Track ─────────────────────────── */
+.carouselContainer {
   position: relative;
   width: 100%;
   overflow: hidden;
-  padding-block: 1rem;
-  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  padding-block: 1.5rem;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
 }
 
-.marqueeTrack {
+.scrollTrack {
   display: flex;
-  gap: var(--space-lg);
+  gap: 1.5rem;
   width: max-content;
-  animation: marquee 35s linear infinite;
+  animation: marquee 52s linear infinite;
+  will-change: transform;
 }
 
-.marqueeContainer:hover .marqueeTrack {
+.carouselContainer:hover .scrollTrack {
   animation-play-state: paused;
 }
 
 @keyframes marquee {
   0% {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    /* Since we duplicated the reviews, we scroll exactly half of the track's total width */
-    transform: translateX(-50%);
+    transform: translate3d(-33.333%, 0, 0);
   }
 }
 
-/* Review Card Styling */
-.reviewCard {
-  background-color: #ffffff;
-  width: clamp(280px, 80vw, 360px);
-  padding: var(--space-lg);
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
-  border: 1px solid #e4e6ea;
+/* ── Apple-style Review Card ──────────────────────────────── */
+.card {
+  flex: 0 0 320px;
+  background-color: #1D1D1F;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 28px;
+  padding: clamp(1.75rem, 3.5vw, 2.5rem);
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  user-select: none;
+  justify-content: space-between;
+  gap: 1.75rem;
+  min-height: 280px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease;
+  will-change: transform, box-shadow;
 }
 
-.reviewCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+@media (min-width: 640px) {
+  .card {
+    flex: 0 0 420px;
+    min-height: 320px;
+  }
 }
 
-.cardHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  position: relative;
+/* Pop up hover animation */
+.card:hover {
+  transform: translate3d(0, -10px, 0) scale(1.025);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
+  border-color: rgba(255, 255, 255, 0.15);
+  z-index: 5;
 }
 
-.avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+/* Stars Rating */
+.starsRow {
+  color: var(--color-brand-accent, #B5973E);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: left center;
+}
+
+.card:hover .starsRow {
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Typographic Highlight System */
+.quoteText {
+  font-family: var(--font-heading, system-ui);
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  line-height: 1.5;
+  font-weight: 600;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.highlight {
   color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.95rem;
-  font-family: var(--font-heading);
+  transition: color 0.3s ease;
 }
 
-.authorInfo {
+.card:hover .highlight {
+  color: var(--color-brand-accent, #B5973E);
+}
+
+.secondaryText {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Author Row with Muted Text Attribution ───────────────── */
+.authorRow {
   display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+  align-items: center;
+  gap: 1rem;
 }
 
 .authorInfo h4 {
-  margin: 0;
-  font-size: 1rem;
-  color: #202124;
-}
-
-.time {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-}
-
-.googleG {
-  position: absolute;
-  right: 0;
-  top: 0;
-  background-color: #4285F4;
-  color: #ffffff;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 0.7rem;
-  box-shadow: var(--shadow-sm);
-}
-
-.starsRow {
-  color: #ffba01;
-  display: flex;
-  gap: 0.1rem;
-  font-size: 1.1rem;
-}
-
-.reviewText {
-  margin: 0;
-  color: #4e5662;
+  font-family: var(--font-heading, system-ui);
   font-size: 0.95rem;
-  line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex-grow: 1;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 0.15rem 0;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover .authorInfo h4 {
+  transform: translate3d(6px, 0, 0);
+}
+
+.sourceText {
+  font-family: var(--font-body, system-ui);
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.card:hover .sourceText {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* Reduce motion override */
+@media (prefers-reduced-motion: reduce) {
+  .scrollTrack {
+    animation: none;
+    overflow-x: auto;
+  }
 }
