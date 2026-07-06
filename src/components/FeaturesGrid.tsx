@@ -29,9 +29,9 @@ export default function FeaturesGrid() {
     <section id="features" className={styles.section}>
       <div className={`container ${styles.container}`}>
         <div className={styles.header}>
-          <p className={styles.kicker}>2026</p>
+          <p className={styles.kicker}>Why LivBiz</p>
           <h2>
-            Designed for Focus. Built for Growth
+            Designed for Focus.<br />Built for Growth.
           </h2>
           <p>
             Flexible workspaces, meeting rooms and premium amenities designed to help freelancers, startups, and teams do their best work.
