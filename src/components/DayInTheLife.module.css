@@ -1,136 +1,205 @@
 .section {
   padding-block: clamp(4rem, 8vw, 8rem);
   background-color: var(--color-bg, #F8F5F0);
+  overflow: hidden;
   position: relative;
 }
 
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(3rem, 6vw, 4.5rem);
+}
+
+/* ── Section Header ─────────────────────────────────────────── */
 .header {
   text-align: center;
-  margin-bottom: var(--space-xl);
-  padding-inline: var(--space-md);
+  max-width: 800px;
 }
 
 .header h2 {
   font-family: var(--font-serif, Georgia, serif);
   font-size: clamp(2rem, 4vw, 3.8rem);
   font-weight: 700;
-  margin-bottom: var(--space-sm);
+  margin-bottom: 1.1rem;
   color: var(--color-text, #1C1917);
   letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .header p {
   color: var(--color-text-muted, #6B5E55);
   font-size: 1.05rem;
-  max-width: 600px;
-  margin-inline: auto;
   line-height: 1.7;
 }
 
-.scrollyContainer {
+/* ── Layered Card Deck Container ───────────────────────────── */
+.deckContainer {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 480px;
+  margin-block: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .deckContainer {
+    max-width: 1000px;
+    height: 420px;
+  }
+}
+
+/* ── Individual Layered Card ───────────────────────────────── */
+.card {
+  position: absolute;
+  width: 290px;
+  background-color: var(--color-bg-card, #FDFCF9);
+  border: 1px solid var(--color-border, #E5DDD3);
+  border-radius: var(--radius-lg, 20px);
+  overflow: hidden;
+  box-shadow: 
+    0 10px 25px rgba(28, 25, 23, 0.08),
+    0 4px 10px rgba(28, 25, 23, 0.04);
+  
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
-  position: relative;
+  
+  /* Initial stacked state positions */
+  transform: translate3d(var(--default-x), var(--default-y), 0) rotate(var(--default-rotate));
+  
+  /* Smooth transitions for fan out */
+  transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.65s ease,
+              border-color 0.3s ease;
+  will-change: transform, box-shadow;
 }
 
-@media (min-width: 900px) {
-  .scrollyContainer {
-    flex-direction: row;
-    align-items: flex-start;
+@media (min-width: 640px) {
+  .card {
+    width: 320px;
   }
 }
 
-.stickyCol {
-  width: 100%;
-  position: relative;
-}
-
-@media (min-width: 900px) {
-  .stickyCol {
-    width: 48%;
-    position: sticky;
-    top: 116px;
-  }
-}
-
-.imageContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  width: 100%;
-}
-
+/* ── Card Image Header ─────────────────────────────────────── */
 .imageWrapper {
   position: relative;
-  min-height: 170px;
-  aspect-ratio: 1;
-  border-radius: var(--radius-md, 12px);
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--color-border, #E5DDD3);
-}
-
-.featuredImage {
-  grid-column: 1 / -1;
+  width: 100%;
   aspect-ratio: 16 / 10;
-  min-height: 240px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--color-border, #E5DDD3);
 }
 
 .image {
   object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.contentCol {
-  width: 100%;
+.timeBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: rgba(28, 25, 23, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--color-brand-accent, #B5973E);
+  font-family: var(--font-body, system-ui);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-sm, 6px);
+  z-index: 2;
+}
+
+/* ── Card Body Content ─────────────────────────────────────── */
+.cardBody {
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
 }
 
-@media (min-width: 900px) {
-  .contentCol {
-    width: 52%;
-    padding-left: var(--space-xl);
-  }
-}
-
-.stepContent {
-  min-height: 260px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-bottom: 1px solid var(--color-border, #E5DDD3);
-}
-
-@media (min-width: 900px) {
-  .stepContent {
-    min-height: 330px;
-  }
-}
-
-.timeLabel {
+.label {
   display: inline-block;
   font-family: var(--font-body, system-ui);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   color: var(--color-brand-accent, #B5973E);
-  margin-bottom: var(--space-sm);
   font-weight: 700;
 }
 
-.stepContent h3 {
-  font-family: var(--font-serif, Georgia, serif);
-  font-size: clamp(1.75rem, 2.8vw, 2.65rem);
+.cardBody h3 {
+  font-family: var(--font-heading, system-ui);
+  font-size: 1.15rem;
   font-weight: 700;
-  margin-bottom: var(--space-md);
   color: var(--color-text, #1C1917);
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  margin: 0;
+  line-height: 1.25;
 }
 
-.stepContent p {
-  font-size: 1.05rem;
-  line-height: 1.75;
+.cardBody p {
+  font-family: var(--font-body, system-ui);
+  font-size: 0.85rem;
+  line-height: 1.6;
   color: var(--color-text-muted, #6B5E55);
+  margin: 0;
+}
+
+/* ── Fan Out Interactions (Desktop) ───────────────────────── */
+@media (min-width: 900px) {
+  /* Card 1 fans out to the left */
+  .deckContainer:hover .card:nth-child(1) {
+    transform: translate3d(-340px, 15px, 0) rotate(-6deg);
+  }
+  
+  /* Card 2 floats up in the center */
+  .deckContainer:hover .card:nth-child(2) {
+    transform: translate3d(0, -15px, 0) scale(1.03) rotate(0deg);
+    box-shadow: 
+      0 25px 50px rgba(28, 25, 23, 0.15),
+      0 8px 20px rgba(28, 25, 23, 0.06);
+    border-color: rgba(181, 151, 62, 0.25);
+    z-index: 10;
+  }
+  
+  /* Card 3 fans out to the right */
+  .deckContainer:hover .card:nth-child(3) {
+    transform: translate3d(340px, 15px, 0) rotate(6deg);
+  }
+}
+
+/* Individual card hover focus */
+.card:hover {
+  border-color: rgba(181, 151, 62, 0.4);
+  box-shadow: 
+    0 25px 45px rgba(28, 25, 23, 0.15),
+    0 8px 18px rgba(28, 25, 23, 0.05);
+  z-index: 20 !important;
+}
+
+.card:hover .image {
+  transform: scale(1.06);
+}
+
+/* ── Mobile Vertical Expand ────────────────────────────────── */
+@media (max-width: 899px) {
+  /* On touch/hover or scroll container action we stagger vertically */
+  .deckContainer:hover .card:nth-child(1) {
+    transform: translate3d(0, -140px, 0) rotate(-2deg);
+  }
+  
+  .deckContainer:hover .card:nth-child(2) {
+    transform: translate3d(0, 0, 0) scale(1.02) rotate(1deg);
+    z-index: 10;
+  }
+  
+  .deckContainer:hover .card:nth-child(3) {
+    transform: translate3d(0, 140px, 0) rotate(-1deg);
+  }
 }

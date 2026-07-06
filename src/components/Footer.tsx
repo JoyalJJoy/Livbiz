@@ -87,7 +87,7 @@ export default function Footer() {
               &copy; {new Date().getFullYear()}, LivBizz Ltd. Bengaluru. All rights reserved.
             </p>
             <p className={styles.infoText}>
-              Registered in Karnataka, India No.: 13044361
+              Registered in Karnataka.
             </p>
           </div>
 
