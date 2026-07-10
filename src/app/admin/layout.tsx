@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSupabaseAuth } from '@/components/SupabaseAuthProvider';
 import Link from 'next/link';
+import Image from 'next/image';
 import { LayoutDashboard, ClipboardList, ScanLine, ChevronDown, LogOut, Users, History } from 'lucide-react';
 import styles from './layout.module.css';
 
@@ -54,9 +55,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <header className={styles.topNavbar}>
         <div className={styles.logoArea} onClick={() => router.push('/admin')}>
           <div className={styles.logoContainer}>
-            <img 
+            <Image 
               src="/images/logo.png" 
               alt="LivBizz emblem" 
+              width={32}
+              height={32}
               className={styles.logoImage}
             />
           </div>

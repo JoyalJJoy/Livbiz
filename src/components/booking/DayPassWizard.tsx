@@ -118,7 +118,7 @@ export default function DayPassWizard() {
 
   const handleMonthlyDurationModeChange = (mode: '1month' | '2months' | '3months' | 'custom') => {
     setState(s => {
-      let nextEnd = new Date(s.monthlyStartDate);
+      const nextEnd = new Date(s.monthlyStartDate);
       if (mode === '1month') {
         nextEnd.setMonth(nextEnd.getMonth() + 1);
         nextEnd.setDate(nextEnd.getDate() - 1);

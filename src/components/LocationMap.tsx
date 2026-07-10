@@ -2,7 +2,7 @@
 
 import styles from './LocationMap.module.css';
 import Link from 'next/link';
-import { Clock, MapPin, Phone, Mail, Navigation, ArrowRight } from 'lucide-react';
+import { MapPin, Phone, Mail, Navigation, ArrowRight } from 'lucide-react';
 
 export default function LocationMap() {
   return (

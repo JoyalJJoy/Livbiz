@@ -142,7 +142,7 @@ export default function AdminBookingsPage() {
     const bookingId = paymentConfirmModal.id;
     setActionLoading(bookingId);
     
-    const body: Record<string, any> = {
+    const body: Record<string, unknown> = {
       bookingId,
       action: 'approve'
     };

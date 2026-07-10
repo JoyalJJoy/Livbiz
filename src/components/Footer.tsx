@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import styles from './Footer.module.css';
 import Link from 'next/link';
 import { Calendar } from 'lucide-react';
@@ -18,9 +19,12 @@ export default function Footer() {
             {/* Logo Row */}
             <div className={styles.logoRow}>
               <div className={styles.logoIcon}>
-                <img
+                <Image
                   src="/images/logo.png"
                   alt=""
+                  width={0}
+                  height={0}
+                  sizes="100vw"
                   style={{ width: '85%', height: '85%', objectFit: 'contain', objectPosition: 'center 35%' }}
                 />
               </div>

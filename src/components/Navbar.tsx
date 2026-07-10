@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import styles from './Navbar.module.css';
 import Link from 'next/link';
 import NavbarAccountButton from './NavbarAccountButton';
@@ -47,9 +48,12 @@ export default function Navbar() {
         <div className={styles.logo}>
           <Link href="/" onClick={() => setIsMobileOpen(false)}>
             <div className={styles.logoIcon}>
-              <img 
+              <Image 
                 src="/images/logo.png" 
                 alt="LivBizz emblem" 
+                width={0}
+                height={0}
+                sizes="100vw"
                 style={{ 
                   width: '80%', 
                   height: '80%', 

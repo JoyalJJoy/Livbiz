@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Loader2, ChevronLeft, ChevronRight, Eye, ShieldCheck, UserCog, Key, AlertTriangle } from 'lucide-react';
 import styles from './page.module.css';
 
@@ -12,7 +12,7 @@ interface AuditLog {
   userEmail: string | null;
   targetId: string;
   targetType: string;
-  changes: Record<string, any> | null;
+  changes: Record<string, unknown> | null;
   ipAddress: string | null;
   createdAt: string;
 }
@@ -25,26 +25,28 @@ export default function AdminAuditLogsPage() {
   const [totalLogs, setTotalLogs] = useState(0);
   const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
 
-  const fetchLogs = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/admin/audit-logs?page=${page}&limit=15`);
-      if (res.ok) {
-        const data = await res.json();
-        setLogs(data.logs || []);
-        setTotalPages(data.pagination?.totalPages || 1);
-        setTotalLogs(data.pagination?.total || 0);
-      }
-    } catch (err) {
-      console.error('Failed to fetch audit logs:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [page]);
-
   useEffect(() => {
+    let cancelled = false;
+    const fetchLogs = async () => {
+      try {
+        const res = await fetch(`/api/admin/audit-logs?page=${page}&limit=15`);
+        if (res.ok) {
+          const data = await res.json();
+          if (!cancelled) {
+            setLogs(data.logs || []);
+            setTotalPages(data.pagination?.totalPages || 1);
+            setTotalLogs(data.pagination?.total || 0);
+          }
+        }
+      } catch (err) {
+        if (!cancelled) console.error('Failed to fetch audit logs:', err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
     fetchLogs();
-  }, [fetchLogs]);
+    return () => { cancelled = true; };
+  }, [page]);
 
   const getActionBadgeClass = (action: string) => {
     if (action.includes('APPROVED')) return styles.badgeSuccess;
