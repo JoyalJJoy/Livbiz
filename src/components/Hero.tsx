@@ -8,10 +8,10 @@ export default function Hero() {
       <div className={`container ${styles.content}`}>
         <div className={styles.copy}>
           <p className={styles.eyebrow}>LivBizz Coworking</p>
-          <h1>Where Professionals Work Better</h1>
-          <p className={styles.serviceLine}>Private Office</p>
+          <h1>Your Workspace,<br />Ready When You Are</h1>
+          <p className={styles.serviceLine}>Day Pass &bull; Meeting Rooms</p>
           <p className={styles.subtitle}>
-            Flexible coworking spaces designed for focus, collaboration and growth at one thoughtfully managed campus.
+            Premium coworking with high-speed WiFi, ergonomic seating, and on-demand conference rooms. Book by the hour or the day — no commitments.
           </p>
           <Link href="/book" className={styles.bookingButton}>
             Online Booking <ArrowRight size={18} />

@@ -49,8 +49,9 @@
   max-width: 620px;
   font-size: clamp(3rem, 5.2vw, 5.5rem);
   line-height: 1.06;
-  letter-spacing: 0;
+  letter-spacing: -0.02em;
   margin-bottom: 1.25rem;
+  color: #ffffff;
   text-shadow: 0 20px 52px rgba(0, 0, 0, 0.34);
 }
 

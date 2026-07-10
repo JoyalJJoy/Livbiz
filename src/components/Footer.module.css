@@ -138,19 +138,6 @@
   margin-bottom: 0.65rem;
 }
 
-.builtBy {
-  font-family: var(--font-body, system-ui);
-  font-size: 0.76rem;
-  color: rgba(255, 255, 255, 0.25);
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.heart {
-  color: #a16207;
-}
-
 /* ── Links Right Grid ───────────────────────────────────────── */
 .linksGrid {
   display: grid;

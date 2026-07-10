@@ -46,24 +46,27 @@
   :root {
     /* Brand Colors */
     --color-brand-primary: #07323d;
-    --color-brand-secondary: #1d4f86;
+    --color-brand-secondary: #124a6e;
     --color-brand-accent: #ffba01;
     --color-brand-gold: #ffba01;
+    --color-brand-accent-dim: rgba(255, 186, 1, 0.12);
 
     /* Neutrals */
     --color-neutral-100: #ffffff;
     --color-neutral-200: #f5f3ee;
     --color-neutral-300: #e7e2d8;
     --color-neutral-500: #9b9a94;
+    --color-neutral-600: #7a7f7b;
     --color-neutral-700: #5a625f;
     --color-neutral-800: #263633;
-    --color-neutral-900: #202124;
+    --color-neutral-900: #1a1d21;
 
     /* Base Colors mapped */
     --color-bg: var(--color-neutral-100);
     --color-bg-alt: var(--color-neutral-200);
     --color-text: var(--color-neutral-900);
     --color-text-muted: var(--color-neutral-700);
+    --color-border: #e5ddd3;
 
     /* Typography */
     --font-heading: var(--font-poppins), var(--font-manrope), system-ui, sans-serif;
@@ -78,36 +81,44 @@
     --space-2xl: clamp(4rem, 2.5rem + 7vw, 8rem);
 
     /* Border Radius */
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 8px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
     --radius-full: 9999px;
 
     /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 8px 16px -4px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04);
+    --shadow-lg: 0 20px 40px -8px rgba(0,0,0,0.12), 0 4px 8px -4px rgba(0,0,0,0.06);
+    --shadow-xl: 0 32px 64px -12px rgba(0,0,0,0.16), 0 8px 16px -8px rgba(0,0,0,0.08);
   }
 }
 
 @layer base {
   body {
     font-family: var(--font-body);
-    line-height: 1.65;
+    line-height: 1.7;
     font-weight: 400;
+    font-size: 1rem;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     font-weight: 800;
-    line-height: 1.15;
+    line-height: 1.1;
     text-wrap: balance;
-    letter-spacing: 0;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
   }
   p {
     text-wrap: pretty;
     color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+  h2 {
+    letter-spacing: -0.025em;
   }
   
   /* Focus management */
@@ -134,6 +145,10 @@
   main > section:not(:first-child) {
     content-visibility: auto;
     contain-intrinsic-size: 720px;
+  }
+
+  section {
+    scroll-margin-top: 96px;
   }
   
   .flex-center {

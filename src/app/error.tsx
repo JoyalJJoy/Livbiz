@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect } from 'react';
+import * as Sentry from '@sentry/nextjs';
 
 export default function GlobalError({
   error,
@@ -12,6 +13,7 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     console.error('[LivBizz Error]', error);
+    Sentry.captureException(error);
   }, [error]);
 
   const isDev = process.env.NODE_ENV === 'development';

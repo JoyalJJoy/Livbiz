@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
+    "@sentry/nextjs": "^10.64.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.107.0",
     "date-fns": "^4.3.0",

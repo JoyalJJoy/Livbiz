@@ -51,8 +51,8 @@ function HighlightedQuote({ text }: { text: string }) {
 }
 
 export default function GoogleReviews() {
-  // Duplicate reviews to create a seamless infinite loop in the marquee track
-  const duplicatedReviews = [...reviews, ...reviews, ...reviews];
+  // Duplicate once for seamless infinite scroll
+  const duplicatedReviews = [...reviews, ...reviews];
 
   return (
     <section className={styles.section} id="stories" aria-label="Loved by Our Community">

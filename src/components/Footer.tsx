@@ -47,12 +47,7 @@ export default function Footer() {
 
             {/* Copyright */}
             <div className={styles.copyright}>
-              &copy; {new Date().getFullYear()} LivBizz.com - All rights reserved
-            </div>
-
-            {/* Built with Heart */}
-            <div className={styles.builtBy}>
-              Built with <span className={styles.heart}>🤎</span> by LivBizz
+              &copy; {new Date().getFullYear()} LivBizz.com &mdash; All rights reserved
             </div>
 
           </div>

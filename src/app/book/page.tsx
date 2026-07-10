@@ -13,7 +13,8 @@ export default function BookPage() {
       {/* ── Choose Your Path Section ─────────────────────── */}
       <section className={styles.chooseSection}>
         <div className={styles.chooseSectionInner}>
-          {/* Clean banner layout with no text or animation as requested */}
+          <h1 className={styles.chooseTitle}>Book Your Space</h1>
+          <p className={styles.chooseSubtitle}>Choose the workspace that fits your needs today.</p>
         </div>
         <svg className={styles.wave} viewBox="0 0 1440 88" preserveAspectRatio="none" aria-hidden="true">
           <path d="M0 50C276 78 511 78 814 54C1047 36 1203 19 1440 4V88H0V50Z" />
@@ -56,7 +57,7 @@ export default function BookPage() {
             </div>
             <div className={styles.pathCardImage}>
               <Image
-                src="/images/desk-booking.png"
+                src="/images/workspace-open-2.png"
                 alt="Professional working at a modern coworking desk"
                 width={360}
                 height={420}
@@ -98,7 +99,7 @@ export default function BookPage() {
             </div>
             <div className={styles.pathCardImage}>
               <Image
-                src="/images/conference-booking.png"
+                src="/images/conference-room-1.png"
                 alt="Modern conference room with presentation setup"
                 width={360}
                 height={420}

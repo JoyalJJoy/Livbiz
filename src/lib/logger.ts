@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { sendCriticalAlert } from './alert';
 
 type LogLevel = 'INFO' | 'WARN' | 'ERROR';
@@ -82,6 +83,19 @@ export const logger = {
   error(message: string, context?: ErrorContext) {
     const entry = buildEntry('ERROR', message, context);
     console.error(JSON.stringify(entry));
+
+    Sentry.withScope((scope) => {
+      if (context?.path) scope.setTag('path', context.path);
+      if (context?.method) scope.setTag('method', context.method);
+      if (context?.data) scope.setExtra('data', context.data);
+      if (context?.error) {
+        Sentry.captureException(context.error, {
+          extra: { message, ...(context.data ? { data: context.data } : {}) },
+        });
+      } else {
+        Sentry.captureMessage(message, 'error');
+      }
+    });
 
     // Asynchronously send alert email without blocking execution
     sendCriticalAlert(message, JSON.stringify(entry, null, 2)).catch((err) => {

@@ -72,11 +72,32 @@ function checkRateLimit(
 // Proxy Function (Next.js 16 named proxy export)
 // ---------------------------------------------------------------------------
 
+const protectedRoutes = ['/dashboard', '/admin'];
+const authRoutes = ['/login', '/reset-password'];
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Always refresh the Supabase auth session (for all routes)
-  const supabaseResponse = await updateSupabaseSession(request);
+  const { supabaseResponse, user } = await updateSupabaseSession(request);
+
+  // 2. Route protection — redirect unauthenticated users away from protected pages
+  const isProtected = protectedRoutes.some(route =>
+    pathname === route || pathname.startsWith(`${route}/`)
+  );
+  const isAuthRoute = authRoutes.some(route =>
+    pathname === route || pathname.startsWith(`${route}/`)
+  );
+
+  if (isProtected && !user) {
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (isAuthRoute && user) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
 
   // 2. Only apply rate-limiting to API routes
   if (!pathname.startsWith('/api/')) {

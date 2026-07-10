@@ -1,6 +1,6 @@
 .section {
   padding-block: clamp(4rem, 7vw, 7rem);
-  background-color: var(--color-bg, #F8F5F0);
+  background-color: var(--color-bg-alt);
   position: relative;
 }
 

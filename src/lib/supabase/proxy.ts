@@ -32,7 +32,7 @@ export async function updateSupabaseSession(request: NextRequest) {
 
   // IMPORTANT: Do NOT use getSession() here — it reads from storage only.
   // getUser() validates the token with the Supabase Auth server.
-  await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  return supabaseResponse;
+  return { supabaseResponse, user };
 }
