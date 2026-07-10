@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cached } from '@/lib/cache';
+import type { SlotType } from '@prisma/client';
 
 /**
  * GET /api/slots/availability?type=DAY_PASS&month=2026-06
@@ -32,7 +33,7 @@ export async function GET(req: Request) {
       async () => {
         // Get all slots of this type with their capacities
         const slots = await prisma.slot.findMany({
-          where: { type, isActive: true },
+          where: { type: type as SlotType, isActive: true },
           select: { id: true, name: true, capacity: true },
         });
 

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { createSupabaseAdminClient } from '@/lib/supabase/server';
+import { UserRole } from '@prisma/client';
 import type { Prisma } from '@prisma/client';
 import { createAuditLog } from '@/lib/audit';
 
@@ -13,7 +14,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const role = (session.user as unknown as { role?: string }).role;
+    const role = session.user.role;
     if (role !== 'SUPER_ADMIN' && role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -37,7 +38,7 @@ export async function GET(req: Request) {
     }
 
     if (filterRole !== 'ALL') {
-      whereClause.role = filterRole;
+      whereClause.role = filterRole as UserRole;
     }
 
     const [users, total] = await Promise.all([
@@ -123,7 +124,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const currentRole = (session.user as unknown as { role?: string }).role;
+    const currentRole = session.user.role;
     if (currentRole !== 'SUPER_ADMIN') {
       return NextResponse.json({ error: 'Forbidden: Only SUPER_ADMIN can change roles' }, { status: 403 });
     }
@@ -145,7 +146,7 @@ export async function PATCH(req: Request) {
     });
 
     // Log administrative action
-    const adminId = (session.user as unknown as { id: string }).id;
+    const adminId = session.user.id;
     await createAuditLog({
       action: 'USER_ROLE_CHANGED',
       userId: adminId,
@@ -173,7 +174,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const currentRole = (session.user as unknown as { role?: string }).role;
+    const currentRole = session.user.role;
     if (currentRole !== 'SUPER_ADMIN' && currentRole !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -253,7 +254,7 @@ export async function PUT(req: Request) {
     });
 
     // Log administrative action
-    const adminId = (session.user as unknown as { id: string }).id;
+    const adminId = session.user.id;
     await createAuditLog({
       action: 'USER_PROFILE_UPDATED',
       userId: adminId,
@@ -288,7 +289,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const currentRole = (session.user as unknown as { role?: string }).role;
+    const currentRole = session.user.role;
     if (currentRole !== 'SUPER_ADMIN' && currentRole !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -379,7 +380,7 @@ export async function POST(req: Request) {
     });
 
     // Log administrative action
-    const adminId = (session.user as unknown as { id: string }).id;
+    const adminId = session.user.id;
     await createAuditLog({
       action: 'USER_CREATED',
       userId: adminId,

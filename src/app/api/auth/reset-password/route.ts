@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     const ip = getClientIp(req);
     const rateLimit = isRateLimited(`reset-password:ip:${ip}`, 10);
 
-    if (rateLimit.success) {
+    if (rateLimit.limited) {
       return NextResponse.json(
         { error: 'Too many reset attempts. Please try again in a minute.' },
         { status: 429 }

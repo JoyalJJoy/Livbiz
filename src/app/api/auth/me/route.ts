@@ -9,13 +9,20 @@ import { getSession } from '@/lib/auth';
  * user's role and display name after authentication.
  */
 export async function GET() {
-  const session = await getSession();
+  try {
+    const session = await getSession();
 
-  if (!session) {
-    return NextResponse.json({ user: null }, { status: 401 });
+    if (!session) {
+      return NextResponse.json({ user: null }, { status: 401 });
+    }
+
+    return NextResponse.json({
+      user: session.user,
+    });
+  } catch {
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 },
+    );
   }
-
-  return NextResponse.json({
-    user: session.user,
-  });
 }

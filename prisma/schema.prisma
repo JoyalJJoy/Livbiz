@@ -8,6 +8,39 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum UserRole {
+  CLIENT
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum SlotType {
+  DAY_PASS
+  MEETING_ROOM
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum TicketStatus {
+  PENDING
+  VALID
+  USED
+  REVOKED
+  EXPIRED
+}
+
 // Core Models
 model User {
   // Stores the Supabase Auth user UUID from auth.users.
@@ -19,7 +52,7 @@ model User {
   phone         String?
   idType        String?
   idNumber      String?
-  role          String    @default("CLIENT")
+  role          UserRole  @default(CLIENT)
   emailVerified DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -54,7 +87,7 @@ model Slot {
   campusId     String
   campus       Campus   @relation(fields: [campusId], references: [id])
   name         String
-  type         String
+  type         SlotType
   capacity     Int      @default(1)
   pricePerUnit Float
   currency     String   @default("INR")
@@ -74,7 +107,7 @@ model Booking {
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   slotId     String
   slot       Slot      @relation(fields: [slotId], references: [id])
-  status     String    @default("PENDING")
+  status     BookingStatus    @default(PENDING)
   startTime  DateTime
   endTime    DateTime
   totalPrice Float
@@ -84,7 +117,7 @@ model Booking {
   adminNotes String?   @db.Text
   reviewedBy       String?
   reviewedAt       DateTime?
-  paymentStatus    String    @default("PENDING")
+  paymentStatus    PaymentStatus    @default(PENDING)
   paymentMethod    String?
   paymentReference String?
   paymentDate      DateTime?
@@ -107,7 +140,7 @@ model Ticket {
   user       User     @relation(fields: [userId], references: [id])
   code       String   @unique
   qrData     String   @db.Text
-  status     String   @default("VALID")
+  status     TicketStatus   @default(VALID)
   validFrom  DateTime
   validUntil DateTime
 
@@ -123,6 +156,7 @@ model Ticket {
 
   @@index([code])
   @@index([bookingId])
+  @@index([bookingId, status])
   @@index([userId, status])
   @@index([userId, status, validUntil])
   @@index([recipientEmail])

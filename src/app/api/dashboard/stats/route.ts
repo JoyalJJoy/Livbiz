@@ -11,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = (session.user as unknown as { id: string }).id;
+    const userId = session.user.id;
     const cacheKey = `dashboard:stats:${userId}`;
 
     const stats = await cached(

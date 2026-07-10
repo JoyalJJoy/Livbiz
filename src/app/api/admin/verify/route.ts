@@ -10,7 +10,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const role = (session.user as unknown as { role: string }).role;
+    const role = session.user.role;
     if (role !== 'SUPER_ADMIN' && role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
     }
 
     // Mark ticket as USED
-    const adminId = (session.user as unknown as { id: string }).id;
+    const adminId = session.user.id;
     await prisma.ticket.update({
       where: { id: ticket.id },
       data: {

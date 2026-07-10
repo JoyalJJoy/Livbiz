@@ -13,7 +13,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const role = (session.user as unknown as { role: string }).role;
+    const role = session.user.role;
     if (role !== 'SUPER_ADMIN' && role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -45,7 +45,7 @@ export async function GET(req: Request) {
     ]);
 
     const formatted = bookings.map((b) => {
-      const rawTickets: unknown = (b as unknown as { tickets?: unknown }).tickets;
+      const rawTickets: unknown = b.tickets;
       const tickets = Array.isArray(rawTickets) ? rawTickets : [];
 
       return {
@@ -121,8 +121,8 @@ export async function PATCH(req: Request) {
     const proto = req.headers.get('x-forwarded-proto') || 'http';
     const origin = `${proto}://${hostHeader}`;
 
-    const role = (session.user as unknown as { role: string }).role;
-    const adminId = (session.user as unknown as { id: string }).id;
+    const role = session.user.role;
+    const adminId = session.user.id;
     if (role !== 'SUPER_ADMIN' && role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -465,7 +465,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const role = (session.user as unknown as { role: string }).role;
+    const role = session.user.role;
     if (role !== 'SUPER_ADMIN' && role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -525,7 +525,7 @@ export async function PUT(req: Request) {
     });
 
     // Log administrative action
-    const adminId = (session.user as unknown as { id: string }).id;
+    const adminId = session.user.id;
     await createAuditLog({
       action: 'BOOKING_UPDATED',
       userId: adminId,

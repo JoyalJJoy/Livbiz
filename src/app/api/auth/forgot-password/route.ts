@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     const ip = getClientIp(req);
     const ipLimit = isRateLimited(`forgot-password:ip:${ip}`, 5);
 
-    if (ipLimit.success) {
+    if (ipLimit.limited) {
       return NextResponse.json(
         { error: 'Too many password recovery attempts. Please try again in a minute.' },
         { status: 429 }
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     }
 
     const emailLimit = isRateLimited(`forgot-password:email:${email}`, 3);
-    if (emailLimit.success) {
+    if (emailLimit.limited) {
       return NextResponse.json(
         { error: 'Too many recovery emails requested. Please try again shortly.' },
         { status: 429 }

@@ -7,7 +7,7 @@ const rateLimiterCache = new LRUCache<string, number>({
 });
 
 interface RateLimitResponse {
-  success: boolean;
+  limited: boolean;
   limit: number;
   remaining: number;
 }
@@ -22,18 +22,17 @@ export function isRateLimited(ip: string, limit: number): RateLimitResponse {
 
   if (currentHits >= limit) {
     return {
-      success: true, // Yes, they are rate limited
+      limited: true,
       limit,
       remaining: 0,
     };
   }
 
   const nextHits = currentHits + 1;
-  // Preserve remaining TTL if exists, otherwise set new TTL
   rateLimiterCache.set(ip, nextHits);
 
   return {
-    success: false, // No, they are not rate limited
+    limited: false,
     limit,
     remaining: Math.max(0, limit - nextHits),
   };

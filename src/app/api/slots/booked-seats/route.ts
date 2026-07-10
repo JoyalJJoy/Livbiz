@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import type { BookingStatus } from '@prisma/client';
 
 export async function GET(req: Request) {
   try {
@@ -33,7 +34,7 @@ export async function GET(req: Request) {
     const bookings = await prisma.booking.findMany({
       where: {
         slotId,
-        status: { in: ['PENDING', 'APPROVED'] },
+        status: { in: ['PENDING', 'APPROVED'] as BookingStatus[] },
         startTime: {
           lt: end,
         },

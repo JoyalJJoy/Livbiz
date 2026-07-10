@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     // 1. IP-based Rate Limiting (Max 10 check-in attempts per minute)
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || '127.0.0.1';
     const rateLimit = isRateLimited(ip, 10);
-    if (rateLimit.success) {
+    if (rateLimit.limited) {
       return NextResponse.json(
         { error: 'Too many check-in attempts. Please try again in 1 minute.' },
         { 

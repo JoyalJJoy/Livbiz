@@ -69,6 +69,55 @@ function checkRateLimit(
 }
 
 // ---------------------------------------------------------------------------
+// CSRF Protection Helpers
+// ---------------------------------------------------------------------------
+
+const STATE_CHANGING_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
+
+function isStateChangingMethod(method: string): boolean {
+  return STATE_CHANGING_METHODS.includes(method.toUpperCase());
+}
+
+function isValidOrigin(request: NextRequest): boolean {
+  const origin = request.headers.get('origin');
+  const referer = request.headers.get('referer');
+
+  // Browser-originated requests always include Origin or Referer.
+  // Their absence suggests a non-browser client (curl, Postman, server-to-server).
+  // Allow through if neither is present (API clients).
+  if (!origin && !referer) return true;
+
+  const host = request.headers.get('host') || '';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || '';
+
+  const allowedOrigins = [siteUrl];
+
+  // Derive the origin from the Host header (covers deployed environments)
+  const protocol = request.nextUrl.protocol || 'https:';
+  allowedOrigins.push(`${protocol}//${host}`);
+
+  // Allow localhost in development
+  if (process.env.NODE_ENV !== 'production') {
+    allowedOrigins.push('http://localhost:3000');
+  }
+
+  const extractOrigin = (url: string) => {
+    try { return new URL(url).origin; } catch { return null; }
+  };
+
+  if (origin) {
+    const o = extractOrigin(origin);
+    if (!o || !allowedOrigins.includes(o)) return false;
+  }
+  if (referer) {
+    const o = extractOrigin(referer);
+    if (!o || !allowedOrigins.includes(o)) return false;
+  }
+
+  return true;
+}
+
+// ---------------------------------------------------------------------------
 // Proxy Function (Next.js 16 named proxy export)
 // ---------------------------------------------------------------------------
 
@@ -99,9 +148,17 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  // 2. Only apply rate-limiting to API routes
+  // 2. Only apply rate-limiting + CSRF to API routes
   if (!pathname.startsWith('/api/')) {
     return supabaseResponse;
+  }
+
+  // 3. CSRF: block state-changing requests from unknown origins
+  if (isStateChangingMethod(request.method) && !isValidOrigin(request)) {
+    return NextResponse.json(
+      { error: 'Cross-site request blocked' },
+      { status: 403 },
+    );
   }
 
   // Resolve client IP — respect proxied header, fall back to 'anonymous'

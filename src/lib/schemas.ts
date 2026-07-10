@@ -9,6 +9,7 @@ export const bookingCreateSchema = z.object({
   endTime: z.string().datetime('Invalid end time format'),
   totalPrice: z.number().positive('Price must be positive'),
   seats: z.number().int().positive('Seats must be at least 1').optional(),
+  seatIds: z.array(z.string()).optional(),
   attendees: z.array(
     z.object({
       name: z.string().min(1, 'Attendee name is required'),

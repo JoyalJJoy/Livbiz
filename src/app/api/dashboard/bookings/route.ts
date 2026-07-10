@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = (session.user as unknown as { id: string }).id;
+    const userId = session.user.id;
     const cacheKey = `dashboard:bookings:${userId}`;
 
     const result = await cached(
@@ -36,7 +36,7 @@ export async function GET() {
 
         // Format list objects neatly for client dashboard consumes
         const formattedBookings = dbBookings.map((b) => {
-          const rawTickets: unknown = (b as unknown as { tickets?: unknown }).tickets;
+          const rawTickets: unknown = b.tickets;
           const tickets = Array.isArray(rawTickets) ? rawTickets : [];
 
           const formattedTickets = tickets.map((tUnknown) => {
@@ -106,7 +106,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = (session.user as unknown as { id: string }).id;
+    const userId = session.user.id;
     const { bookingId, action } = await req.json();
 
     if (!bookingId || action !== 'cancel') {
