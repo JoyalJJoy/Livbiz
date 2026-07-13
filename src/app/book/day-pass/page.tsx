@@ -16,6 +16,14 @@ export default function DayPassBookingPage() {
         justifyContent: 'center',
         minHeight: 'calc(100vh - 160px)'
       }}>
+        <style>{`
+          @media (max-width: 768px) {
+            main { padding-top: 80px !important; min-height: calc(100vh - 80px) !important; }
+          }
+          @media (max-width: 480px) {
+            main { padding-top: 70px !important; min-height: calc(100vh - 70px) !important; }
+          }
+        `}</style>
         <DayPassWizard />
       </main>
     </div>
