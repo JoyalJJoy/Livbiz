@@ -134,7 +134,7 @@ async function main() {
         name: '6-Seat Conference Room',
         type: 'MEETING_ROOM',
         capacity: 6,
-        pricePerUnit: 250.00, // 50% discount on ₹500
+        pricePerUnit: 500.00,
         unit: 'HOUR',
       },
     });
@@ -148,7 +148,7 @@ async function main() {
         name: '12-Seat Conference Room',
         type: 'MEETING_ROOM',
         capacity: 12,
-        pricePerUnit: 750.00, // 50% discount on ₹1500
+        pricePerUnit: 1500.00,
         unit: 'HOUR',
       },
     });
@@ -158,13 +158,13 @@ async function main() {
   // Update prices for existing slots
   await prisma.slot.updateMany({
     where: { name: '6-Seat Conference Room', campusId: mainCampus.id },
-    data: { pricePerUnit: 250.00 }
+    data: { pricePerUnit: 500.00 }
   });
   await prisma.slot.updateMany({
     where: { name: '12-Seat Conference Room', campusId: mainCampus.id },
-    data: { pricePerUnit: 750.00 }
+    data: { pricePerUnit: 1500.00 }
   });
-  console.log('Updated prices for Conference Rooms to reflect 50% Inaugural Offer (₹250 & ₹750)');
+  console.log('Updated prices for Conference Rooms');
 
   console.log('Seeding finished.');
 }
