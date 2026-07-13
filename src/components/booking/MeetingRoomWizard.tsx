@@ -22,9 +22,8 @@ interface BookingState {
   step: number;
   roomId: RoomId;
   date: Date | null;
-  timeMode: 'full' | 'half' | 'custom';
-  customStartTime: string;
-  customEndTime: string;
+  timeMode: 'full' | 'half';
+  halfDaySlot: 'morning' | 'afternoon';
 }
 
 const TOTAL_STEPS = 6;
@@ -48,18 +47,17 @@ const ROOMS = [
   },
 ];
 
-const BUSINESS_HOURS_START = [
-  '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM'
-];
+function getTimeForMode(mode: 'full' | 'half', halfDaySlot?: 'morning' | 'afternoon'): { start: string; end: string } {
+  if (mode === 'half') {
+    if (halfDaySlot === 'morning') return { start: '09:00 AM', end: '01:00 PM' };
+    return { start: '01:00 PM', end: '06:00 PM' };
+  }
+  return { start: '09:00 AM', end: '06:00 PM' };
+}
 
-const BUSINESS_HOURS_END = [
-  '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM', 
-  '05:30 PM', '06:00 PM', '06:30 PM', '07:00 PM', '07:30 PM', '08:00 PM'
-];
-
-function parseTimeStringToMinutes(timeStr: string): number {
+function parseTimeString(timeStr: string): { hours: number; minutes: number } {
   const parts = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
-  if (!parts) return 0;
+  if (!parts) return { hours: 0, minutes: 0 };
   let hours = parseInt(parts[1]);
   const minutes = parseInt(parts[2]);
   const ampm = parts[3].toUpperCase();
@@ -67,14 +65,7 @@ function parseTimeStringToMinutes(timeStr: string): number {
   if (ampm === 'PM' && hours !== 12) hours += 12;
   if (ampm === 'AM' && hours === 12) hours = 0;
 
-  return hours * 60 + minutes;
-}
-
-function getDurationInHours(startTime: string, endTime: string): number {
-  const startMin = parseTimeStringToMinutes(startTime);
-  const endMin = parseTimeStringToMinutes(endTime);
-  if (endMin <= startMin) return 0;
-  return (endMin - startMin) / 60;
+  return { hours, minutes };
 }
 
 export default function MeetingRoomWizard() {
@@ -87,10 +78,9 @@ export default function MeetingRoomWizard() {
   const [state, setState] = useState<BookingState>({
     step: 1,
     roomId: null,
-    date: today, // Default to today
+    date: today,
     timeMode: 'full',
-    customStartTime: '09:00 AM',
-    customEndTime: '06:00 PM',
+    halfDaySlot: 'afternoon',
   });
 
   const [currentCalendarDate, setCurrentCalendarDate] = useState<Date>(new Date());
@@ -131,9 +121,7 @@ export default function MeetingRoomWizard() {
   
   let duration = 9;
   if (state.timeMode === 'half') {
-    duration = 5;
-  } else if (state.timeMode === 'custom') {
-    duration = getDurationInHours(state.customStartTime, state.customEndTime);
+    duration = state.halfDaySlot === 'morning' ? 4 : 5;
   }
   
   const totalPrice = unitPrice * duration;
@@ -170,27 +158,12 @@ export default function MeetingRoomWizard() {
       if (!matchedSlot) throw new Error('Meeting room slot not found');
 
       const datePart = state.date!;
-      const startTimeStr = state.timeMode === 'full' ? '09:00 AM' : state.timeMode === 'half' ? '01:00 PM' : state.customStartTime;
-      const endTimeStr = state.timeMode === 'full' ? '06:00 PM' : state.timeMode === 'half' ? '06:00 PM' : state.customEndTime;
+      const { start, end } = getTimeForMode(state.timeMode, state.halfDaySlot);
+      const startParsed = parseTimeString(start);
+      const endParsed = parseTimeString(end);
 
-      const startParts = startTimeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
-      const endParts = endTimeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
-      if (!startParts || !endParts) throw new Error('Invalid time format');
-
-      let startHours = parseInt(startParts[1]);
-      const startMinutes = parseInt(startParts[2]);
-      const startAmpm = startParts[3].toUpperCase();
-      if (startAmpm === 'PM' && startHours !== 12) startHours += 12;
-      if (startAmpm === 'AM' && startHours === 12) startHours = 0;
-
-      let endHours = parseInt(endParts[1]);
-      const endMinutes = parseInt(endParts[2]);
-      const endAmpm = endParts[3].toUpperCase();
-      if (endAmpm === 'PM' && endHours !== 12) endHours += 12;
-      if (endAmpm === 'AM' && endHours === 12) endHours = 0;
-
-      const startTime = new Date(datePart.getFullYear(), datePart.getMonth(), datePart.getDate(), startHours, startMinutes);
-      const endTime = new Date(datePart.getFullYear(), datePart.getMonth(), datePart.getDate(), endHours, endMinutes);
+      const startTime = new Date(datePart.getFullYear(), datePart.getMonth(), datePart.getDate(), startParsed.hours, startParsed.minutes);
+      const endTime = new Date(datePart.getFullYear(), datePart.getMonth(), datePart.getDate(), endParsed.hours, endParsed.minutes);
 
       if (endTime <= startTime) {
         endTime.setDate(endTime.getDate() + 1);
@@ -479,7 +452,7 @@ export default function MeetingRoomWizard() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {/* Full Day Card */}
                 <div 
-                  onClick={() => setState(s => ({ ...s, timeMode: 'full', customStartTime: '09:00 AM', customEndTime: '06:00 PM' }))}
+                  onClick={() => setState(s => ({ ...s, timeMode: 'full' }))}
                   style={{ cursor: 'pointer', padding: '1.25rem', border: '1px solid #e2e8f0', borderRadius: '12px', transition: 'all 0.2s', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: state.timeMode === 'full' ? '#f8fafc' : 'white', boxShadow: state.timeMode === 'full' ? '0 0 0 2px #0f172a' : 'none' }}
                 >
                   <div>
@@ -491,60 +464,37 @@ export default function MeetingRoomWizard() {
 
                 {/* Half Day Card */}
                 <div 
-                  onClick={() => setState(s => ({ ...s, timeMode: 'half', customStartTime: '01:00 PM', customEndTime: '06:00 PM' }))}
+                  onClick={() => setState(s => ({ ...s, timeMode: 'half', halfDaySlot: 'afternoon' }))}
                   style={{ cursor: 'pointer', padding: '1.25rem', border: '1px solid #e2e8f0', borderRadius: '12px', transition: 'all 0.2s', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: state.timeMode === 'half' ? '#f8fafc' : 'white', boxShadow: state.timeMode === 'half' ? '0 0 0 2px #0f172a' : 'none' }}
                 >
                   <div>
                     <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem' }}>Half Day</div>
-                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>01:00 PM - 06:00 PM (5 hours)</div>
-                  </div>
-                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.15rem' }}>₹{unitPrice * 5}</div>
-                </div>
-
-                {/* Custom Time Card */}
-                <div 
-                  onClick={() => setState(s => ({ ...s, timeMode: 'custom' }))}
-                  style={{ cursor: 'pointer', padding: '1.25rem', border: '1px solid #e2e8f0', borderRadius: '12px', transition: 'all 0.2s', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: state.timeMode === 'custom' ? '#f8fafc' : 'white', boxShadow: state.timeMode === 'custom' ? '0 0 0 2px #0f172a' : 'none' }}
-                >
-                  <div>
-                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem' }}>Custom Time</div>
-                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>Choose your own hours. Charged hourly based on room rate.</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>Choose morning or afternoon session</div>
                   </div>
                   <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.15rem' }}>
-                    {state.timeMode === 'custom' ? `₹${totalPrice}` : 'Flex'}
+                    ₹{unitPrice * (state.halfDaySlot === 'morning' ? 4 : 5)}
                   </div>
                 </div>
               </div>
 
-              {/* Show dropdowns only when Custom Time is active */}
-              {state.timeMode === 'custom' && (
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
-                  <div className={styles.formGroup} style={{ flex: 1 }}>
-                    <label className={styles.formLabel}>ENTRY TIME</label>
-                    <select 
-                      className={styles.inputField} 
-                      style={{ paddingLeft: '1rem', cursor: 'pointer' }}
-                      value={state.customStartTime}
-                      onChange={(e) => setState(s => ({ ...s, customStartTime: e.target.value }))}
-                    >
-                      {BUSINESS_HOURS_START.map(t => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
+              {/* Morning/Afternoon selection when Half Day is active */}
+              {state.timeMode === 'half' && (
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <div
+                    onClick={() => setState(s => ({ ...s, halfDaySlot: 'morning' }))}
+                    style={{ cursor: 'pointer', flex: 1, padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '10px', textAlign: 'center', backgroundColor: state.halfDaySlot === 'morning' ? '#f8fafc' : 'white', boxShadow: state.halfDaySlot === 'morning' ? '0 0 0 2px #0f172a' : 'none' }}
+                  >
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Morning</div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>09:00 AM - 01:00 PM</div>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f172a', marginTop: '0.3rem' }}>₹{unitPrice * 4}</div>
                   </div>
-
-                  <div className={styles.formGroup} style={{ flex: 1 }}>
-                    <label className={styles.formLabel}>EXIT TIME</label>
-                    <select 
-                      className={styles.inputField} 
-                      style={{ paddingLeft: '1rem', cursor: 'pointer' }}
-                      value={state.customEndTime}
-                      onChange={(e) => setState(s => ({ ...s, customEndTime: e.target.value }))}
-                    >
-                      {BUSINESS_HOURS_END.map(t => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
+                  <div
+                    onClick={() => setState(s => ({ ...s, halfDaySlot: 'afternoon' }))}
+                    style={{ cursor: 'pointer', flex: 1, padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '10px', textAlign: 'center', backgroundColor: state.halfDaySlot === 'afternoon' ? '#f8fafc' : 'white', boxShadow: state.halfDaySlot === 'afternoon' ? '0 0 0 2px #0f172a' : 'none' }}
+                  >
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Afternoon</div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>01:00 PM - 06:00 PM</div>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f172a', marginTop: '0.3rem' }}>₹{unitPrice * 5}</div>
                   </div>
                 </div>
               )}
@@ -753,7 +703,7 @@ export default function MeetingRoomWizard() {
             <div className={styles.summaryBox}>
               <div className={styles.summaryRow}><span>Duration</span><span>{duration} hr{duration > 1 ? 's' : ''}</span></div>
               <div className={styles.summaryRow}><span>Date</span><span>{formatDateString(state.date)}</span></div>
-              <div className={styles.summaryRow}><span>Time</span><span>{state.timeMode === 'full' ? '09:00 AM - 06:00 PM' : state.timeMode === 'half' ? '01:00 PM - 06:00 PM' : `${state.customStartTime} - ${state.customEndTime}`}</span></div>
+              <div className={styles.summaryRow}><span>Time</span><span>{(() => { const { start, end } = getTimeForMode(state.timeMode, state.halfDaySlot); return `${start} \u2013 ${end}`; })()}</span></div>
               <div className={styles.summaryRow}><span>Payment</span><span>Pay at Desk</span></div>
             </div>
             <div className={styles.costBreakdown}>
