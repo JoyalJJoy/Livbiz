@@ -131,6 +131,27 @@
   box-shadow: 0 6px 18px rgba(255, 255, 255, 0.15);
 }
 
+.socialRow {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.socialLink:hover {
+  color: #0a66c2;
+}
+
 .copyright {
   font-family: var(--font-body, system-ui);
   font-size: 0.76rem;

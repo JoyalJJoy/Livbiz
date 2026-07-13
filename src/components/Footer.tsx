@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import styles from './Footer.module.css';
 import Link from 'next/link';
-import { Calendar } from 'lucide-react';
+import { Calendar, ExternalLink } from 'lucide-react';
 
 export default function Footer() {
   const brandName = "LivBizz";
@@ -48,6 +48,14 @@ export default function Footer() {
               <Calendar size={16} />
               <span>Book Workspace</span>
             </Link>
+
+            {/* Social */}
+            <div className={styles.socialRow}>
+              <a href="https://www.linkedin.com/company/liv-biz-co-working-conference-hub/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="LinkedIn">
+                <ExternalLink size={16} />
+                <span>LinkedIn</span>
+              </a>
+            </div>
 
             {/* Copyright */}
             <div className={styles.copyright}>
