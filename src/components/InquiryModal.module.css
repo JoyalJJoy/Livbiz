@@ -1,0 +1,53 @@
+/* Sits under the navbar (z-index 1000) and clears it, matching the /book wizard pages */
+.overlay {
+  --navbar-offset: 96px;
+
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--navbar-offset) 1rem 1rem;
+  background-color: #888f99;
+}
+
+/* Tall enough for the header plus the full inquiry form, capped by the space below the navbar */
+.overlay .modal {
+  height: min(870px, calc(100dvh - var(--navbar-offset) - 1rem));
+  min-height: 0;
+}
+
+.frameArea {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  border: none;
+  transform-origin: top left;
+}
+
+@media (max-width: 768px) {
+  .overlay {
+    --navbar-offset: 80px;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .overlay {
+    --navbar-offset: 70px;
+    padding: var(--navbar-offset) 0 0;
+  }
+
+  .overlay .modal {
+    height: calc(100dvh - var(--navbar-offset));
+  }
+}

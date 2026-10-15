@@ -1,7 +1,7 @@
 import styles from './BookCtaBanner.module.css';
-import Link from 'next/link';
 import Image from 'next/image';
 import { Monitor, Presentation, ArrowRight, Wifi, Coffee, Shield } from 'lucide-react';
+import { PROPEXCEL_LINKS } from '@/lib/propexcel-links';
 
 export default function BookCtaBanner() {
   return (
@@ -51,9 +51,9 @@ export default function BookCtaBanner() {
                 </li>
               </ul>
               
-              <Link href="/book/day-pass" className={styles.ctaButton}>
+              <a href={PROPEXCEL_LINKS.spaces} target="_blank" rel="noopener noreferrer" className={styles.ctaButton}>
                 Book a Desk <ArrowRight size={18} />
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -92,9 +92,9 @@ export default function BookCtaBanner() {
                 </li>
               </ul>
               
-              <Link href="/book/meeting-room" className={styles.ctaButton}>
+              <a href={PROPEXCEL_LINKS.amenities} target="_blank" rel="noopener noreferrer" className={styles.ctaButton}>
                 Book a Room <ArrowRight size={18} />
-              </Link>
+              </a>
             </div>
           </div>
         </div>

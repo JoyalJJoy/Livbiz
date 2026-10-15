@@ -1,9 +1,9 @@
 import styles from './page.module.css';
-import Link from 'next/link';
 import Image from 'next/image';
 import { Monitor, Presentation, ArrowRight, Wifi, Coffee, Shield, Clock, CheckCircle2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { PROPEXCEL_LINKS } from '@/lib/propexcel-links';
 
 export default function BookPage() {
   return (
@@ -50,10 +50,10 @@ export default function BookPage() {
                   <span>Flexible hourly & daily booking</span>
                 </li>
               </ul>
-              <Link href="/book/day-pass" className={styles.pathCta}>
+              <a href={PROPEXCEL_LINKS.spaces} target="_blank" rel="noopener noreferrer" className={styles.pathCta}>
                 <span>Book a Desk</span>
                 <ArrowRight size={18} />
-              </Link>
+              </a>
             </div>
             <div className={styles.pathCardImage}>
               <Image
@@ -92,10 +92,10 @@ export default function BookPage() {
                   <span>Hourly or full-day availability</span>
                 </li>
               </ul>
-              <Link href="/book/meeting-room" className={styles.pathCta}>
+              <a href={PROPEXCEL_LINKS.amenities} target="_blank" rel="noopener noreferrer" className={styles.pathCta}>
                 <span>Book a Room</span>
                 <ArrowRight size={18} />
-              </Link>
+              </a>
             </div>
             <div className={styles.pathCardImage}>
               <Image
