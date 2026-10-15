@@ -1,6 +1,6 @@
 import styles from './Hero.module.css';
-import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { PROPEXCEL_LINKS } from '@/lib/propexcel-links';
 
 export default function Hero() {
   return (
@@ -13,9 +13,9 @@ export default function Hero() {
           <p className={styles.subtitle}>
             Premium coworking with high-speed WiFi, ergonomic seating, and on-demand conference rooms. Book by the hour or the day — no commitments.
           </p>
-          <Link href="/book" className={styles.bookingButton}>
+          <a href={PROPEXCEL_LINKS.properties} target="_blank" rel="noopener noreferrer" className={styles.bookingButton}>
             Online Booking <ArrowRight size={18} />
-          </Link>
+          </a>
         </div>
 
         <div className={styles.illustration} aria-hidden="true">

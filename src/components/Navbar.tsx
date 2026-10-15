@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import styles from './Navbar.module.css';
 import Link from 'next/link';
 import NavbarAccountButton from './NavbarAccountButton';
-import { Phone, ChevronDown, Menu, X } from 'lucide-react';
+import InquiryModal from './InquiryModal';
+import { Phone, ChevronDown, Menu, X, MessageSquare } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Home' },
@@ -18,7 +19,15 @@ const navItems = [
 export default function Navbar() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isInquiryOpen, setIsInquiryOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const openInquiry = () => {
+    setIsContactOpen(false);
+    setIsMobileOpen(false);
+    setIsInquiryOpen(true);
+  };
+  const closeInquiry = useCallback(() => setIsInquiryOpen(false), []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -34,11 +43,8 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (isMobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    if (!isMobileOpen) return;
+    document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
   }, [isMobileOpen]);
 
@@ -98,6 +104,10 @@ export default function Navbar() {
                   <Phone size={14} className={styles.phoneIcon} />
                   <span>8095797304</span>
                 </a>
+                <button type="button" className={styles.dropdownItem} onClick={openInquiry}>
+                  <MessageSquare size={14} className={styles.phoneIcon} />
+                  <span>Send an Inquiry</span>
+                </button>
               </div>
             )}
           </div>
@@ -135,10 +145,13 @@ export default function Navbar() {
             <div className={styles.mobileContact}>
               <a href="tel:8088631765" className={styles.mobilePhone}>8088 631 765</a>
               <a href="tel:8095797304" className={styles.mobilePhone}>8095 797 304</a>
+              <button type="button" className={styles.mobilePhone} onClick={openInquiry}>Send an Inquiry</button>
             </div>
           </nav>
         </div>
       )}
+
+      {isInquiryOpen && <InquiryModal onClose={closeInquiry} />}
     </header>
   );
 }
