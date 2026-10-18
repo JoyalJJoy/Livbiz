@@ -1,0 +1,49 @@
+/* Single scroll: only the PropExcel iframe. Chrome (nav + footer) is fixed. */
+.page {
+  height: 100dvh;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.main {
+  --navbar-offset: 96px;
+  --footer-offset: 56px;
+
+  position: fixed;
+  top: var(--navbar-offset);
+  right: 0;
+  bottom: var(--footer-offset);
+  left: 0;
+  background-color: #ffffff;
+}
+
+.frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+@media (max-width: 900px) {
+  .main {
+    --footer-offset: 64px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    --navbar-offset: 80px;
+  }
+}
+
+@media (max-width: 640px) {
+  .main {
+    --footer-offset: 72px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    --navbar-offset: 70px;
+  }
+}

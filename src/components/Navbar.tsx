@@ -4,19 +4,45 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import styles from './Navbar.module.css';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import NavbarAccountButton from './NavbarAccountButton';
 import InquiryModal from './InquiryModal';
 import { Phone, ChevronDown, Menu, X, MessageSquare } from 'lucide-react';
 
-const navItems = [
-  { href: '/', label: 'Home' },
-  { href: '#booking', label: 'Booking' },
-  { href: '#workspace', label: 'Workspace' },
-  { href: '#stories', label: 'Reviews' },
-  { href: '#features', label: 'Features' },
+const navItems: { id: string | null; label: string }[] = [
+  { id: null, label: 'Home' },
+  { id: 'booking', label: 'Booking' },
+  { id: 'workspace', label: 'Workspace' },
+  { id: 'stories', label: 'Reviews' },
+  { id: 'features', label: 'Features' },
 ];
 
+/**
+ * Next.js <Link href="/#x"> stacks hashes (/#a#b). Navigate with a clean
+ * history replace on home, or a full assign when leaving /book/*.
+ */
+function navigateHomeSection(sectionId: string | null) {
+  const target = sectionId ? `/#${sectionId}` : '/';
+
+  if (window.location.pathname !== '/') {
+    window.location.assign(target);
+    return;
+  }
+
+  if (!sectionId) {
+    window.history.replaceState(null, '', '/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  window.history.replaceState(null, '', target);
+  document
+    .getElementById(sectionId)
+    ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 export default function Navbar() {
+  const pathname = usePathname();
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
@@ -28,6 +54,15 @@ export default function Navbar() {
     setIsInquiryOpen(true);
   };
   const closeInquiry = useCallback(() => setIsInquiryOpen(false), []);
+
+  const onNavClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    sectionId: string | null
+  ) => {
+    event.preventDefault();
+    setIsMobileOpen(false);
+    navigateHomeSection(sectionId);
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -52,39 +87,51 @@ export default function Navbar() {
     <header className={styles.header}>
       <div className={`container ${styles.navContainer}`}>
         <div className={styles.logo}>
-          <Link href="/" onClick={() => setIsMobileOpen(false)}>
+          <Link
+            href="/"
+            onClick={(e) => {
+              if (pathname === '/') {
+                e.preventDefault();
+                navigateHomeSection(null);
+              }
+              setIsMobileOpen(false);
+            }}
+          >
             <div className={styles.logoIcon}>
-              <Image 
-                src="/images/logo.png" 
-                alt="LivBizz emblem" 
+              <Image
+                src="/images/logo.png"
+                alt="LivBizz emblem"
                 width={0}
                 height={0}
                 sizes="100vw"
-                style={{ 
-                  width: '80%', 
-                  height: '80%', 
+                style={{
+                  width: '80%',
+                  height: '80%',
                   objectFit: 'contain',
-                  objectPosition: 'center 35%'
-                }} 
+                  objectPosition: 'center 35%',
+                }}
               />
             </div>
-            <span className={styles.logoText}>
-              LivBizz
-            </span>
+            <span className={styles.logoText}>LivBizz</span>
           </Link>
         </div>
 
         <nav className={styles.navLinks}>
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className={styles.link}>{item.label}</Link>
+            <a
+              key={item.label}
+              href={item.id ? `/#${item.id}` : '/'}
+              className={styles.link}
+              onClick={(e) => onNavClick(e, item.id)}
+            >
+              {item.label}
+            </a>
           ))}
         </nav>
 
         <div className={styles.action}>
-          
-          {/* Contact Dropdown */}
           <div className={styles.contactDropdown} ref={dropdownRef}>
-            <button 
+            <button
               onClick={() => setIsContactOpen(!isContactOpen)}
               className={`${styles.contactButton} ${isContactOpen ? styles.contactButtonActive : ''}`}
               aria-haspopup="true"
@@ -92,7 +139,13 @@ export default function Navbar() {
             >
               <Phone size={16} />
               <span>Contact</span>
-              <ChevronDown size={14} style={{ transform: isContactOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+              <ChevronDown
+                size={14}
+                style={{
+                  transform: isContactOpen ? 'rotate(180deg)' : 'none',
+                  transition: 'transform 0.2s ease',
+                }}
+              />
             </button>
             {isContactOpen && (
               <div className={styles.dropdownMenu}>
@@ -114,7 +167,6 @@ export default function Navbar() {
 
           <NavbarAccountButton />
 
-          {/* Hamburger Toggle */}
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
             className={styles.hamburger}
@@ -126,26 +178,31 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
       {isMobileOpen && (
         <div className={styles.mobileOverlay} onClick={() => setIsMobileOpen(false)}>
           <nav className={styles.mobileMenu} onClick={(e) => e.stopPropagation()}>
             <div className={styles.mobileLinks}>
               {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
+                <a
+                  key={item.label}
+                  href={item.id ? `/#${item.id}` : '/'}
                   className={styles.mobileLink}
-                  onClick={() => setIsMobileOpen(false)}
+                  onClick={(e) => onNavClick(e, item.id)}
                 >
                   {item.label}
-                </Link>
+                </a>
               ))}
             </div>
             <div className={styles.mobileContact}>
-              <a href="tel:8088631765" className={styles.mobilePhone}>8088 631 765</a>
-              <a href="tel:8095797304" className={styles.mobilePhone}>8095 797 304</a>
-              <button type="button" className={styles.mobilePhone} onClick={openInquiry}>Send an Inquiry</button>
+              <a href="tel:8088631765" className={styles.mobilePhone}>
+                8088 631 765
+              </a>
+              <a href="tel:8095797304" className={styles.mobilePhone}>
+                8095 797 304
+              </a>
+              <button type="button" className={styles.mobilePhone} onClick={openInquiry}>
+                Send an Inquiry
+              </button>
             </div>
           </nav>
         </div>

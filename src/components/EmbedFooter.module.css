@@ -1,0 +1,150 @@
+.footer {
+  --footer-height: 56px;
+
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  height: var(--footer-height);
+  background-color: #080808;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.inner {
+  height: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.logoIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background-color: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-family: var(--font-heading, system-ui);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.tagline {
+  font-family: var(--font-serif, Georgia, serif);
+  font-style: italic;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.15rem 1.15rem;
+  min-width: 0;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-body, system-ui);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: #ffffff;
+}
+
+.copy {
+  margin: 0;
+  font-family: var(--font-body, system-ui);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.28);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .footer {
+    --footer-height: 64px;
+  }
+
+  .tagline {
+    display: none;
+  }
+
+  .links {
+    gap: 0.15rem 0.85rem;
+  }
+
+  .link span {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer {
+    --footer-height: 72px;
+  }
+
+  .inner {
+    padding: 0.55rem 0.9rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    row-gap: 0.35rem;
+  }
+
+  .brand {
+    order: 1;
+  }
+
+  .copy {
+    order: 2;
+  }
+
+  .links {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 0.55rem 0.9rem;
+  }
+
+}
