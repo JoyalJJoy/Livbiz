@@ -71,10 +71,11 @@ export default function Footer() {
             <div className={styles.linksCol}>
               <h4>Menu</h4>
               <ul className={styles.linksList}>
-                <li><Link href="#">Home</Link></li>
-                <li><Link href="#workspace">Spaces</Link></li>
-                <li><Link href="#experience">FAQ</Link></li>
-                <li><Link href="#booking">Pricing</Link></li>
+                <li><Link href="/">Home</Link></li>
+                {/* Native <a> for hashes — Next Link stacks /#a#b */}
+                <li><a href="/#workspace">Spaces</a></li>
+                <li><a href="/#experience">FAQ</a></li>
+                <li><a href="/#booking">Pricing</a></li>
               </ul>
             </div>
 
@@ -82,11 +83,11 @@ export default function Footer() {
             <div className={styles.linksCol}>
               <h4>Navigation</h4>
               <ul className={styles.linksList}>
-                <li><Link href="#location">Contact</Link></li>
-                <li><Link href="#experience">Roadmap</Link></li>
+                <li><a href="/#location">Contact</a></li>
+                <li><a href="/#experience">Roadmap</a></li>
                 <li><Link href="/privacy">Privacy policy</Link></li>
                 <li><Link href="/terms">Terms of service</Link></li>
-                <li><Link href="#location">Support portal</Link></li>
+                <li><a href="/#location">Support portal</a></li>
               </ul>
             </div>
 
@@ -97,7 +98,7 @@ export default function Footer() {
                 <li><a href="https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac" target="_blank" rel="noopener noreferrer">Kothanur Hub</a></li>
                 <li><a href="https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac" target="_blank" rel="noopener noreferrer">Shakunthala Plaza-2</a></li>
                 <li><a href="https://maps.app.goo.gl/w8bGnBx2sFJgYsvs9?g_st=ac" target="_blank" rel="noopener noreferrer">Bengaluru HQ</a></li>
-                <li><Link href="#location">Partner spaces</Link></li>
+                <li><a href="/#location">Partner spaces</a></li>
               </ul>
             </div>
 
