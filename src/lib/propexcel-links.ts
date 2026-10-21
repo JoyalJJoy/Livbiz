@@ -1,9 +1,11 @@
 const PROPEXCEL_PUBLIC_BASE = 'https://livbiz.propexcel.com/public';
 
 // navbar=none: PropExcel embed chrome (section tabs only, no side/top app nav)
-// theme=light: match LivBizz's light site (overrides org dark preset in the iframe)
-// logo=0: hide PropExcel logo in embeds
-const EMBED_QUERY = 'navbar=none&theme=light&logo=0';
+// logo=0: hide PropExcel logo under the LivBiz header
+// Do NOT pass theme=light: it forces PropExcel generic default-light and skips
+// the org UI theme. LivBiz's saved public theme is already preset "light" with
+// their brand colors (Theme Settings).
+const EMBED_QUERY = 'navbar=none';
 
 export const PROPEXCEL_LINKS = {
   propertiesEmbed: `${PROPEXCEL_PUBLIC_BASE}/properties?viewBy=all&${EMBED_QUERY}`,
