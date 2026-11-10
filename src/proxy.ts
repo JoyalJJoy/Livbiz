@@ -122,7 +122,8 @@ function isValidOrigin(request: NextRequest): boolean {
 // ---------------------------------------------------------------------------
 
 const protectedRoutes = ['/dashboard', '/admin'];
-const authRoutes = ['/login', '/reset-password'];
+// /login embeds PropExcel guest auth — do not bounce Supabase sessions away from it.
+const authRoutes = ['/reset-password'];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
