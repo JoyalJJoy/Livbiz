@@ -1,14 +1,14 @@
 /**
  * Public catalog / auth embeds (propexcel-public-app).
  *
- * Demo (current): https://livbiz-public-demo.propexcel.com
+ * Prod (current): https://livbiz-public.propexcel.com
+ * Demo: https://livbiz-public-demo.propexcel.com
  * LOCAL: http://localhost:4300  — `npm run dev:public` in PropExcel
- * Prod: https://livbiz-public.propexcel.com
  *
  * No `/public` prefix on public-app hosts. Localhost needs `org=`; demo/prod
  * host binds org via KV (org query optional / may be stripped).
  */
-const PROPEXCEL_PUBLIC_BASE = 'https://livbiz-public-demo.propexcel.com';
+const PROPEXCEL_PUBLIC_BASE = 'https://livbiz-public.propexcel.com';
 
 // navbar=none: section tabs only (LivBiz owns top nav)
 // logo=0: hide PropExcel logo under the LivBiz header
